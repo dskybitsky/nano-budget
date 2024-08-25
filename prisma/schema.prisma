@@ -1,0 +1,78 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "linux-arm64-openssl-3.0.x"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Account {
+  id       String      @id @default(uuid())
+  name     String
+  type     AccountType
+  currency String
+  value    Float
+  order    Int         @default(0)
+  Category Category[]
+  Period   Period[]
+}
+
+enum AccountType {
+  checking
+  savings
+  credit
+}
+
+model Category {
+  id          String          @id @default(uuid())
+  accountId   String
+  type        TransactionType
+  name        String
+  icon        String
+  color       String
+  order       Int             @default(0)
+  account     Account         @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  Budget      Budget[]
+  Transaction Transaction[]
+}
+
+model Period {
+  id        String    @id @default(uuid())
+  accountId String
+  name      String
+  started   DateTime  @default(now())
+  ended     DateTime?
+  account   Account   @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  Budget    Budget[]
+}
+
+model Budget {
+  periodId   String
+  categoryId String
+  value      Float
+  category   Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  period     Period   @relation(fields: [periodId], references: [id], onDelete: Cascade)
+
+  @@id(name: "periodCategoryId", [periodId, categoryId])
+}
+
+model Transaction {
+  id         String          @id @default(uuid())
+  created    DateTime        @default(now())
+  executed   DateTime?
+  categoryId String
+  type       TransactionType
+  name       String
+  value      Float
+  category   Category        @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+}
+
+enum TransactionType {
+  debit
+  credit
+}
