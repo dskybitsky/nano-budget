@@ -6,6 +6,9 @@ import { indexBudget } from '@/actions/use-cases/index-budget';
 import { cookies } from 'next/headers';
 import { BudgetTable } from '@/components/budget/budget-table';
 import { Page } from '@/components/page';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '@/app/api/auth/[...nextauth]/route';
+import { redirect } from 'next/navigation';
 
 export const metadata: Metadata = {
     title: 'Budget',
@@ -13,6 +16,12 @@ export const metadata: Metadata = {
 };
 
 const BudgetPage = async () => {
+    const session = await getServerSession(authOptions);
+
+    if (!session) {
+        redirect('/api/auth/signin');
+    }
+
     const accountId = cookies().get('accountId')?.value;
     const periodId = cookies().get(`${accountId}_periodId`)?.value;
 
