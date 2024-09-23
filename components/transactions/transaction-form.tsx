@@ -12,6 +12,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { useTransactionForm } from '@/hooks/use-transaction-form';
 import { useEffect } from 'react';
 import { DateTimePicker } from '@/components/ui/datetime-picker';
+import { useCookies } from 'react-cookie';
 
 const TransactionFormSchema = z.object({
     categoryId: z.string(),
@@ -34,14 +35,20 @@ interface TransactionFormProps {
 }
 
 export const TransactionForm = ({ account, categories, transaction, formElementId, onValid }: TransactionFormProps) => {
+    const lastCategoryCookieName = `${account.id}_last_cat`;
+
+    const [cookies, setCookie] = useCookies([lastCategoryCookieName]);
+
+    const lastCategoryId = categories.find((c) => c.id === cookies[lastCategoryCookieName])?.id;
+
     const form = useTransactionForm(transaction, {
         resolver: zodResolver(TransactionFormSchema),
         defaultValues: {
-            categoryId: transaction?.categoryId,
+            categoryId: transaction?.categoryId ?? lastCategoryId,
             created: transaction?.created ?? moment().startOf('day').toDate(),
-            executed: transaction?.executed ?? (
-                account.type === AccountType.credit ? null : moment().startOf('day').toDate()
-            ),
+            executed:
+                transaction?.executed ??
+                (account.type === AccountType.credit ? null : moment().startOf('day').toDate()),
             type: transaction?.type ?? TransactionType.credit,
             name: transaction?.name ?? '',
             value: transaction?.value ?? 0,
@@ -122,6 +129,8 @@ export const TransactionForm = ({ account, categories, transaction, formElementI
                                             if (categoryType) {
                                                 form.setValue('type', categoryType);
                                             }
+
+                                            setCookie(lastCategoryCookieName, value);
                                         }
                                     }}
                                     value={field.value}
