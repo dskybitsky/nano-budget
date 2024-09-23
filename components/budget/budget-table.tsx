@@ -1,14 +1,13 @@
 'use client';
 
 import { Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Pencil } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import * as React from 'react';
 import { DialogTrigger } from '@/components/ui/dialog';
 import { BudgetFormDialog } from '@/components/budget/budget-form-dialog';
 import { Account, AccountType, Budget, Category, Period, TransactionType } from '@prisma/client';
-import { formatCurrency } from '@/lib/utils';
 import { CategoryImage } from '@/components/categories/category-image';
+import { useCustomFormatter } from '@/hooks/use-custom-formatter';
 
 interface BudgetTableProps {
     account: Account;
@@ -49,13 +48,14 @@ export const BudgetTable = ({
 
     const getTotalRest = () => getTotalPlanned() - getTotalExpected();
 
+    const format = useCustomFormatter();
+
     return (
         <Table>
             <TableHeader>
                 <TableRow>
                     <TableHead>Category</TableHead>
-                    <TableHead className="w-[100px] text-right">Planned</TableHead>
-                    <TableHead className="w-[20px] text-center"></TableHead>
+                    <TableHead className="w-[120px] text-right">Planned</TableHead>
                     <TableHead className="w-[100px] text-right">Expected</TableHead>
                     <TableHead className="w-[100px] text-right">Rest</TableHead>
                 </TableRow>
@@ -67,32 +67,30 @@ export const BudgetTable = ({
                             <CategoryImage category={category} className="h-6 w-6" />
                             <div className="ml-4 space-y-1">{category.name}</div>
                         </TableCell>
-                        <TableCell className="text-right">{formatCurrency(getPlanned(category), currency)}</TableCell>
-                        <TableCell>
+                        <TableCell className="text-right">
                             <BudgetFormDialog
                                 periodId={period.id}
                                 categoryId={category.id}
                                 budget={periodBudgets.get(category.id)}
                             >
                                 <DialogTrigger asChild>
-                                    <Button variant="ghost" className="h-8 w-8 p-0">
-                                        <Pencil className="h-4 w-4" />
+                                    <Button variant="secondary" className="h-8 min-w-24 p-2 text-right justify-end">
+                                        {format.narrowCurrency(getPlanned(category), currency)}
                                     </Button>
                                 </DialogTrigger>
                             </BudgetFormDialog>
                         </TableCell>
-                        <TableCell className="text-right">{formatCurrency(getExpected(category), currency)}</TableCell>
-                        <TableCell className="text-right">{formatCurrency(getRest(category), currency)}</TableCell>
+                        <TableCell className="text-right">{format.narrowCurrency(getExpected(category), currency)}</TableCell>
+                        <TableCell className="text-right">{format.narrowCurrency(getRest(category), currency)}</TableCell>
                     </TableRow>
                 ))}
             </TableBody>
             <TableFooter>
                 <TableRow>
                     <TableCell>Total</TableCell>
-                    <TableCell className="text-right">{formatCurrency(getTotalPlanned(), currency)}</TableCell>
-                    <TableCell />
-                    <TableCell className="text-right">{formatCurrency(getTotalExpected(), currency)}</TableCell>
-                    <TableCell className="text-right">{formatCurrency(getTotalRest(), currency)}</TableCell>
+                    <TableCell className="text-right">{format.narrowCurrency(getTotalPlanned(), currency)}</TableCell>
+                    <TableCell className="text-right">{format.narrowCurrency(getTotalExpected(), currency)}</TableCell>
+                    <TableCell className="text-right">{format.narrowCurrency(getTotalRest(), currency)}</TableCell>
                 </TableRow>
             </TableFooter>
         </Table>

@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { Category, Transaction, TransactionType } from '@prisma/client';
+import { Account, AccountType, Category, Transaction, TransactionType } from '@prisma/client';
 import { toast } from '@/hooks/use-toast';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useTransactionForm } from '@/hooks/use-transaction-form';
@@ -26,19 +26,22 @@ const TransactionFormSchema = z.object({
 });
 
 interface TransactionFormProps {
+    account: Account;
     categories: Category[];
     transaction?: Transaction;
     formElementId?: string;
     onValid?: () => void;
 }
 
-export const TransactionForm = ({ categories, transaction, formElementId, onValid }: TransactionFormProps) => {
+export const TransactionForm = ({ account, categories, transaction, formElementId, onValid }: TransactionFormProps) => {
     const form = useTransactionForm(transaction, {
         resolver: zodResolver(TransactionFormSchema),
         defaultValues: {
             categoryId: transaction?.categoryId,
             created: transaction?.created ?? moment().startOf('day').toDate(),
-            executed: transaction?.executed ?? moment().startOf('day').toDate(),
+            executed: transaction?.executed ?? (
+                account.type === AccountType.credit ? null : moment().startOf('day').toDate()
+            ),
             type: transaction?.type ?? TransactionType.credit,
             name: transaction?.name ?? '',
             value: transaction?.value ?? 0,

@@ -28,9 +28,9 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { DotsHorizontalIcon } from '@radix-ui/react-icons';
 import { DialogTrigger } from '@/components/ui/dialog';
-import { cn, formatCurrency } from '@/lib/utils';
+import { cn } from '@/lib/utils';
 import { TransactionTypeLabel } from '@/components/transactions/transaction-type-label';
-import { useFormatter } from 'next-intl';
+import { useCustomFormatter } from '@/hooks/use-custom-formatter';
 
 interface TransactionsTableProps {
     account: Account;
@@ -74,15 +74,13 @@ export const TransactionsTable = ({ account, categories, period, periodTransacti
         totalExpected += accountSign * sign * transaction.value;
     });
 
-    const format = useFormatter();
-
-    const periodStarted = format.dateTime(period.started, 'short');
-    const periodEnded = period.ended ? format.dateTime(period.ended, 'short') : 'indefinite';
+    const format = useCustomFormatter();
 
     return (
         <Table>
             <TableCaption>
-                A list of transactions for period from {periodStarted} until {periodEnded}.
+                A list of transactions for period from {format.dateTimeShort(period.started)} until{' '}
+                {format.dateTimeShort(period.ended, 'indefinite')}.
             </TableCaption>
             <TableHeader>
                 <TableRow>
@@ -98,18 +96,16 @@ export const TransactionsTable = ({ account, categories, period, periodTransacti
             <TableBody>
                 {periodTransactions.map((transaction) => (
                     <TableRow key={transaction.id} className={cn(transaction.executed ? '' : 'text-slate-400')}>
-                        <TableCell>{format.dateTime(transaction.created, 'short')}</TableCell>
-                        <TableCell>
-                            {transaction.executed ? format.dateTime(transaction.executed, 'short') : ''}
-                        </TableCell>
+                        <TableCell>{format.dateTimeShort(transaction.created)}</TableCell>
+                        <TableCell>{format.dateTimeShort(transaction.executed)}</TableCell>
                         <TableCell>{categoriesIndex.get(transaction.categoryId)?.name}</TableCell>
                         <TableCell>
                             <TransactionTypeLabel type={transaction.type} />
                         </TableCell>
                         <TableCell>{transaction.name}</TableCell>
-                        <TableCell className="text-right">{formatCurrency(transaction.value, currency)}</TableCell>
+                        <TableCell className="text-right">{format.narrowCurrency(transaction.value, currency)}</TableCell>
                         <TableCell className="text-center">
-                            <TransactionFormDialog categories={categories} transaction={transaction}>
+                            <TransactionFormDialog account={account} categories={categories} transaction={transaction}>
                                 <DropdownMenu>
                                     <DropdownMenuTrigger asChild>
                                         <Button variant="ghost" className="h-8 w-8 p-0">
@@ -144,9 +140,9 @@ export const TransactionsTable = ({ account, categories, period, periodTransacti
                 <TableRow>
                     <TableCell colSpan={5}>Total</TableCell>
                     <TableCell className="text-right">
-                        <p>{formatCurrency(totalActual, currency)}</p>
+                        <p>{format.narrowCurrency(totalActual, currency)}</p>
                         {totalActual != totalExpected && (
-                            <p className="text-slate-400">{formatCurrency(totalExpected, currency)}</p>
+                            <p className="text-slate-400">{format.narrowCurrency(totalExpected, currency)}</p>
                         )}
                     </TableCell>
                     <TableCell />

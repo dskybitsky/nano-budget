@@ -64,7 +64,7 @@ const TransactionsPage = async () => {
             title="Transactions"
             sideBlock={
                 <div>
-                    <TransactionFormDialog categories={categories}>
+                    <TransactionFormDialog account={account}  categories={categories}>
                         <DialogTrigger asChild>
                             <Button>
                                 <CirclePlus className="mr-2 h-4 w-4" />
