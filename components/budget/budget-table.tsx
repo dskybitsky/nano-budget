@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import * as React from 'react';
 import { DialogTrigger } from '@/components/ui/dialog';
 import { BudgetFormDialog } from '@/components/budget/budget-form-dialog';
-import { Account, AccountType, Budget, Category, Period, TransactionType } from '@prisma/client';
+import { Account, Budget, Category, Period } from '@prisma/client';
 import { CategoryImage } from '@/components/categories/category-image';
 import { useCustomFormatter } from '@/hooks/use-custom-formatter';
 
@@ -15,6 +15,7 @@ interface BudgetTableProps {
     period: Period;
     periodBudgets: Map<string, Budget>;
     periodTransactionSums: Map<string, number>;
+    periodTotal: { planned: number; expected: number };
 }
 
 export const BudgetTable = ({
@@ -23,30 +24,13 @@ export const BudgetTable = ({
     period,
     periodBudgets,
     periodTransactionSums,
+    periodTotal,
 }: BudgetTableProps) => {
     const { currency } = account;
 
     const getPlanned = (category: Category) => periodBudgets.get(category.id)?.value ?? 0;
     const getExpected = (category: Category) => periodTransactionSums.get(category.id) ?? 0;
     const getRest = (category: Category) => getPlanned(category) - getExpected(category);
-
-    const accountSign = account.type == AccountType.credit ? -1 : 1;
-
-    const getTotalPlanned = () =>
-        categories.reduce((acc, category) => {
-            const sign = category.type === TransactionType.debit ? 1 : -1;
-            acc += accountSign * sign * getPlanned(category);
-            return acc;
-        }, 0);
-
-    const getTotalExpected = () =>
-        categories.reduce((acc, category) => {
-            const sign = category.type === TransactionType.debit ? 1 : -1;
-            acc += accountSign * sign * getExpected(category);
-            return acc;
-        }, 0);
-
-    const getTotalRest = () => getTotalPlanned() - getTotalExpected();
 
     const format = useCustomFormatter();
 
@@ -92,11 +76,13 @@ export const BudgetTable = ({
             <TableFooter>
                 <TableRow>
                     <TableCell>Total</TableCell>
-                    <TableCell className="text-right">{format.narrowCurrency(getTotalPlanned(), currency)}</TableCell>
+                    <TableCell className="text-right">{format.narrowCurrency(periodTotal.planned, currency)}</TableCell>
                     <TableCell className="text-right hidden sm:table-cell">
-                        {format.narrowCurrency(getTotalExpected(), currency)}
+                        {format.narrowCurrency(periodTotal.expected, currency)}
                     </TableCell>
-                    <TableCell className="text-right">{format.narrowCurrency(getTotalRest(), currency)}</TableCell>
+                    <TableCell className="text-right">
+                        {format.narrowCurrency(periodTotal.planned - periodTotal.expected, currency)}
+                    </TableCell>
                 </TableRow>
             </TableFooter>
         </Table>

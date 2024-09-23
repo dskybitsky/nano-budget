@@ -1,7 +1,7 @@
 'use server';
 
 import prisma from '@/lib/prismadb';
-import { Account, AccountType, TransactionType } from '@prisma/client';
+import { Account, AccountType, CategoryType } from '@prisma/client';
 import { getAccountTransactions } from '@/actions/transaction';
 
 export const getAccount = async (id: string): Promise<Account | null> => {
@@ -29,7 +29,7 @@ export const getAccountBalance = async (id: string): Promise<{ expected: number;
     const accountSign = account.type == AccountType.credit ? -1 : 1;
 
     transactions.forEach((transaction) => {
-        const sign = transaction.type === TransactionType.credit ? -1 : 1;
+        const sign = transaction.category.type === CategoryType.credit ? -1 : 1;
 
         if (transaction.executed) {
             actual += accountSign * sign * transaction.value;

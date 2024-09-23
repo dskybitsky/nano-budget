@@ -1,4 +1,4 @@
-import { Account, Budget, Category, Period } from '@prisma/client';
+import { Account, AccountType, Budget, Category, CategoryType, Period } from '@prisma/client';
 import { getAccountCategories } from '@/actions/category';
 import { getAccountTransactions } from '@/actions/transaction';
 import { getPeriodBudget } from '@/actions/budget';
@@ -12,6 +12,7 @@ export interface BudgetIndexDto {
     period?: Period;
     periodBudgets?: Map<string, Budget>;
     periodTransactionSums?: Map<string, number>;
+    periodTotal?: { planned: number; expected: number };
 }
 
 export const indexBudget = async (accountId: string, periodId?: string): Promise<BudgetIndexDto | null> => {
@@ -50,25 +51,44 @@ export const indexBudget = async (accountId: string, periodId?: string): Promise
         return acc;
     }, new Map<string, number>());
 
+    const periodBudgets = categories.reduce((acc, category) => {
+        acc.set(
+            category.id,
+            budgetsIndex.get(category.id) ?? {
+                categoryId: category.id,
+                periodId: id,
+                value: 0,
+            },
+        );
+        return acc;
+    }, new Map<string, Budget>());
+
+    const periodTransactionSums = categories.reduce((acc, category) => {
+        acc.set(category.id, transactionsSumsIndex.get(category.id) ?? 0);
+        return acc;
+    }, new Map<string, number>());
+
+    const accountSign = account.type == AccountType.credit ? -1 : 1;
+
+    const periodTotal = categories.reduce(
+        (acc, category) => {
+            const sign = category.type === CategoryType.debit ? 1 : -1;
+
+            acc.planned += accountSign * sign * (periodBudgets.get(category.id)?.value ?? 0);
+            acc.expected += accountSign * sign * (periodTransactionSums.get(category.id) ?? 0);
+
+            return acc;
+        },
+        { planned: 0, expected: 0 },
+    );
+
     return {
         account,
         period,
         periods,
         categories,
-        periodBudgets: categories.reduce((acc, category) => {
-            acc.set(
-                category.id,
-                budgetsIndex.get(category.id) ?? {
-                    categoryId: category.id,
-                    periodId: id,
-                    value: 0,
-                },
-            );
-            return acc;
-        }, new Map<string, Budget>()),
-        periodTransactionSums: categories.reduce((acc, category) => {
-            acc.set(category.id, transactionsSumsIndex.get(category.id) ?? 0);
-            return acc;
-        }, new Map<string, number>()),
+        periodBudgets,
+        periodTransactionSums,
+        periodTotal,
     };
 };

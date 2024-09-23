@@ -6,14 +6,14 @@ import { Input } from '@/components/ui/input';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { Category, TransactionType } from '@prisma/client';
+import { Category, CategoryType } from '@prisma/client';
 import { useCategoryForm } from '@/hooks/use-category-form';
 import { useEffect } from 'react';
 import { toast } from '@/hooks/use-toast';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 const CategoryFormSchema = z.object({
-    type: z.enum([TransactionType.debit, TransactionType.credit]),
+    type: z.enum([CategoryType.debit, CategoryType.credit]),
     name: z
         .string()
         .min(2, { message: 'Name must be at least 2 characters.' })
@@ -34,7 +34,7 @@ export const CategoryForm = ({ accountId, category, formElementId, onValid }: Ca
     const form = useCategoryForm(accountId, category, {
         resolver: zodResolver(CategoryFormSchema),
         defaultValues: {
-            type: category?.type ?? TransactionType.credit,
+            type: category?.type ?? CategoryType.credit,
             name: category?.name ?? '',
             icon: category?.icon ?? '',
             color: category?.color ?? '',
@@ -73,10 +73,10 @@ export const CategoryForm = ({ accountId, category, formElementId, onValid }: Ca
                                         </SelectTrigger>
                                     </FormControl>
                                     <SelectContent>
-                                        <SelectItem key={TransactionType.debit} value={TransactionType.debit}>
+                                        <SelectItem key={CategoryType.debit} value={CategoryType.debit}>
                                             Debit
                                         </SelectItem>
-                                        <SelectItem key={TransactionType.credit} value={TransactionType.credit}>
+                                        <SelectItem key={CategoryType.credit} value={CategoryType.credit}>
                                             Credit
                                         </SelectItem>
                                     </SelectContent>

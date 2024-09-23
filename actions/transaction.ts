@@ -1,14 +1,14 @@
 'use server';
 
 import prisma from '@/lib/prismadb';
-import { Transaction } from '@prisma/client';
+import { Category, Transaction } from '@prisma/client';
 import { getAccountCategories } from '@/actions/category';
 
 export const getAccountTransactions = async (
     accountId: string,
     dateFrom: Date | null = null,
     dateTo: Date | null = null,
-): Promise<Transaction[]> => {
+): Promise<(Transaction & { category: Category })[]> => {
     const categories = await getAccountCategories(accountId);
 
     const categoriesIdList = categories.map((c) => c.id);
@@ -34,6 +34,7 @@ export const getAccountTransactions = async (
             ],
         },
         orderBy: { created: 'desc' },
+        include: { category: true },
     });
 };
 

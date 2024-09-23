@@ -34,7 +34,7 @@ const TransactionsPage = async () => {
         );
     }
 
-    const { account, periods, categories, period, periodTransactions } = transactionsIndexDto;
+    const { account, periods, categories, period, periodTransactions, periodTotal } = transactionsIndexDto;
 
     if (!periods.length) {
         return (
@@ -46,7 +46,7 @@ const TransactionsPage = async () => {
         );
     }
 
-    if (!period || !periodTransactions) {
+    if (!period || !periodTransactions || !periodTotal) {
         return (
             <Page title="Transactions">
                 <div className="flex justify-end items-end w-full">
@@ -83,6 +83,7 @@ const TransactionsPage = async () => {
                 categories={categories}
                 period={period}
                 periodTransactions={periodTransactions}
+                periodTotal={periodTotal}
             />
         </Page>
     );

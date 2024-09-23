@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { Account, AccountType, Category, Transaction, TransactionType } from '@prisma/client';
+import { Account, AccountType, Category, Transaction } from '@prisma/client';
 import { toast } from '@/hooks/use-toast';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useTransactionForm } from '@/hooks/use-transaction-form';
@@ -18,7 +18,6 @@ const TransactionFormSchema = z.object({
     categoryId: z.string(),
     created: z.date(),
     executed: z.date().nullish(),
-    type: z.enum([TransactionType.debit, TransactionType.credit]),
     name: z
         .string()
         .min(2, { message: 'Name must be at least 2 characters.' })
@@ -49,7 +48,6 @@ export const TransactionForm = ({ account, categories, transaction, formElementI
             executed:
                 transaction?.executed ??
                 (account.type === AccountType.credit ? null : moment().startOf('day').toDate()),
-            type: transaction?.type ?? TransactionType.credit,
             name: transaction?.name ?? '',
             value: transaction?.value ?? 0,
         },
@@ -68,8 +66,6 @@ export const TransactionForm = ({ account, categories, transaction, formElementI
     };
 
     useEffect(() => reset(transaction), [reset, transaction]);
-
-    const getCategoryType = (categoryId: string) => categories.find((c) => c.id === categoryId)?.type;
 
     return (
         <Form {...form}>
@@ -117,19 +113,13 @@ export const TransactionForm = ({ account, categories, transaction, formElementI
                         control={form.control}
                         name="categoryId"
                         render={({ field }) => (
-                            <FormItem className="col-span-3">
+                            <FormItem className="col-span-6">
                                 <FormLabel>Category</FormLabel>
                                 <Select
                                     onValueChange={(value) => {
                                         field.onChange(value);
 
                                         if (!transaction) {
-                                            const categoryType = getCategoryType(value);
-
-                                            if (categoryType) {
-                                                form.setValue('type', categoryType);
-                                            }
-
                                             setCookie(lastCategoryCookieName, value);
                                         }
                                     }}
@@ -149,35 +139,6 @@ export const TransactionForm = ({ account, categories, transaction, formElementI
                                     </SelectContent>
                                 </Select>
                                 <FormDescription>Choose the category this transaction falls under.</FormDescription>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
-                    <FormField
-                        control={form.control}
-                        name="type"
-                        render={({ field }) => (
-                            <FormItem className="col-span-3">
-                                <FormLabel>Type</FormLabel>
-                                <Select onValueChange={field.onChange} value={field.value}>
-                                    <FormControl>
-                                        <SelectTrigger>
-                                            <SelectValue placeholder="Select transaction type" />
-                                        </SelectTrigger>
-                                    </FormControl>
-                                    <SelectContent>
-                                        <SelectItem key={TransactionType.debit} value={TransactionType.debit}>
-                                            Debit
-                                        </SelectItem>
-                                        <SelectItem key={TransactionType.credit} value={TransactionType.credit}>
-                                            Credit
-                                        </SelectItem>
-                                    </SelectContent>
-                                </Select>
-                                <FormDescription>
-                                    Choose the transaction type - debit (&quot;income&quot;) or credit
-                                    (&quot;expense&quot;).
-                                </FormDescription>
                                 <FormMessage />
                             </FormItem>
                         )}

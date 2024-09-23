@@ -1,6 +1,6 @@
 'use client';
 
-import { Account, AccountType, Category, Period, Transaction, TransactionType } from '@prisma/client';
+import { Account, Category, Period, Transaction } from '@prisma/client';
 import {
     Table,
     TableBody,
@@ -29,7 +29,6 @@ import {
 import { DotsHorizontalIcon } from '@radix-ui/react-icons';
 import { DialogTrigger } from '@/components/ui/dialog';
 import { cn } from '@/lib/utils';
-import { TransactionTypeLabel } from '@/components/transactions/transaction-type-label';
 import { useCustomFormatter } from '@/hooks/use-custom-formatter';
 
 interface TransactionsTableProps {
@@ -37,9 +36,16 @@ interface TransactionsTableProps {
     categories: Category[];
     period: Period;
     periodTransactions: Transaction[];
+    periodTotal: { expected: number; actual: number };
 }
 
-export const TransactionsTable = ({ account, categories, period, periodTransactions }: TransactionsTableProps) => {
+export const TransactionsTable = ({
+    account,
+    categories,
+    period,
+    periodTransactions,
+    periodTotal,
+}: TransactionsTableProps) => {
     const router = useRouter();
 
     const { currency } = account;
@@ -59,21 +65,6 @@ export const TransactionsTable = ({ account, categories, period, periodTransacti
         return acc;
     }, new Map<string, Category>());
 
-    let totalActual = 0;
-    let totalExpected = 0;
-
-    const accountSign = account.type == AccountType.credit ? -1 : 1;
-
-    periodTransactions.forEach((transaction) => {
-        const sign = transaction.type == TransactionType.credit ? -1 : 1;
-
-        if (transaction.executed) {
-            totalActual += accountSign * sign * transaction.value;
-        }
-
-        totalExpected += accountSign * sign * transaction.value;
-    });
-
     const format = useCustomFormatter();
 
     return (
@@ -87,7 +78,6 @@ export const TransactionsTable = ({ account, categories, period, periodTransacti
                     <TableHead className="w-[200px]">Created</TableHead>
                     <TableHead className="hidden sm:table-cell w-[200px]">Executed</TableHead>
                     <TableHead className="hidden sm:table-cell">Category</TableHead>
-                    <TableHead className="hidden sm:table-cell">Type</TableHead>
                     <TableHead>Name</TableHead>
                     <TableHead className="w-[100px] text-right">Value</TableHead>
                     <TableHead className="w-[50px] text-center"></TableHead>
@@ -100,9 +90,6 @@ export const TransactionsTable = ({ account, categories, period, periodTransacti
                         <TableCell className="hidden sm:block">{format.dateTimeShort(transaction.executed)}</TableCell>
                         <TableCell className="hidden sm:table-cell">
                             {categoriesIndex.get(transaction.categoryId)?.name}
-                        </TableCell>
-                        <TableCell className="hidden sm:table-cell">
-                            <TransactionTypeLabel type={transaction.type} />
                         </TableCell>
                         <TableCell>{transaction.name}</TableCell>
                         <TableCell className="text-right">
@@ -148,9 +135,9 @@ export const TransactionsTable = ({ account, categories, period, periodTransacti
                     <TableCell className="hidden sm:table-cell" />
                     <TableCell />
                     <TableCell className="text-right">
-                        <p>{format.narrowCurrency(totalActual, currency)}</p>
-                        {totalActual != totalExpected && (
-                            <p className="text-slate-400">{format.narrowCurrency(totalExpected, currency)}</p>
+                        <p>{format.narrowCurrency(periodTotal.actual, currency)}</p>
+                        {Math.abs(periodTotal.actual - periodTotal.expected) < 0.01 && (
+                            <p className="text-slate-400">{format.narrowCurrency(periodTotal.expected, currency)}</p>
                         )}
                     </TableCell>
                     <TableCell />

@@ -37,7 +37,7 @@ const BudgetPage = async () => {
         );
     }
 
-    const { account, periods, categories, period, periodBudgets, periodTransactionSums } = budgetIndexDto;
+    const { account, periods, categories, period, periodBudgets, periodTransactionSums, periodTotal } = budgetIndexDto;
 
     if (!periods.length) {
         return (
@@ -49,7 +49,7 @@ const BudgetPage = async () => {
         );
     }
 
-    if (!period || !periodBudgets || !periodTransactionSums) {
+    if (!period || !periodBudgets || !periodTransactionSums || !periodTotal) {
         return (
             <Page title="Budget">
                 <div className="flex justify-end items-end w-full">
@@ -73,6 +73,7 @@ const BudgetPage = async () => {
                 period={period}
                 periodBudgets={periodBudgets}
                 periodTransactionSums={periodTransactionSums}
+                periodTotal={periodTotal}
             />
         </Page>
     );
