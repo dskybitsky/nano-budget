@@ -8,8 +8,17 @@ import { DialogTrigger } from '@/components/ui/dialog';
 import { indexTransactions } from '@/actions/use-cases/index-transactions';
 import { Page } from '@/components/page';
 import PeriodSwitcher from '@/components/period/period-switcher';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '@/app/api/auth/[...nextauth]/route';
+import { redirect } from 'next/navigation';
 
 const TransactionsPage = async () => {
+    const session = await getServerSession(authOptions);
+
+    if (!session) {
+        redirect('/api/auth/signin');
+    }
+
     const accountId = cookies().get('accountId')?.value;
     const periodId = cookies().get(`${accountId}_periodId`)?.value;
 

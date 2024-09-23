@@ -15,6 +15,9 @@ import { AlertDialogTrigger } from '@/components/ui/alert-dialog';
 import { AccountDeleteDialog } from '@/components/accounts/account-delete-dialog';
 import { PeriodsTable } from '@/components/period/periods-table';
 import { PeriodFormDialog } from '@/components/period/period-form-dialog';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '@/app/api/auth/[...nextauth]/route';
+import { redirect } from 'next/navigation';
 
 export const metadata: Metadata = {
     title: 'Account',
@@ -22,6 +25,12 @@ export const metadata: Metadata = {
 };
 
 const AccountPage = async () => {
+    const session = await getServerSession(authOptions);
+
+    if (!session) {
+        redirect('/api/auth/signin');
+    }
+
     const accountId = cookies().get('accountId')?.value;
     const accountViewDto = accountId ? await viewAccount(accountId) : null;
 
