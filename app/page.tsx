@@ -2,8 +2,8 @@ import { Metadata } from 'next';
 
 import { Page } from '@/components/page';
 import { getServerSession } from 'next-auth';
-import { redirect, useRouter } from 'next/navigation';
-import { authOptions } from '@/app/api/auth/[...nextauth]/route';
+import { redirect } from 'next/navigation';
+import { authOptions } from '@/lib/authOptions';
 
 export const metadata: Metadata = {
     title: 'Dashboard',

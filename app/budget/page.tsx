@@ -1,14 +1,14 @@
 import { Metadata } from 'next';
 
 import * as React from 'react';
-import PeriodSwitcher from '@/components/period/period-switcher';
-import { indexBudget } from '@/actions/use-cases/index-budget';
 import { cookies } from 'next/headers';
-import { BudgetTable } from '@/components/budget/budget-table';
-import { Page } from '@/components/page';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 import { redirect } from 'next/navigation';
+import { getServerSession } from 'next-auth';
+import { indexBudget } from '@/actions/use-cases/index-budget';
+import { Page } from '@/components/page';
+import PeriodSwitcher from '@/components/period/period-switcher';
+import { BudgetTable } from '@/components/budget/budget-table';
+import { authOptions } from '@/lib/authOptions';
 
 export const metadata: Metadata = {
     title: 'Budget',

@@ -9,8 +9,8 @@ import { indexTransactions } from '@/actions/use-cases/index-transactions';
 import { Page } from '@/components/page';
 import PeriodSwitcher from '@/components/period/period-switcher';
 import { getServerSession } from 'next-auth';
-import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 import { redirect } from 'next/navigation';
+import { authOptions } from '@/lib/authOptions';
 
 const TransactionsPage = async () => {
     const session = await getServerSession(authOptions);
