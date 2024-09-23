@@ -16,8 +16,8 @@ import { AccountDeleteDialog } from '@/components/accounts/account-delete-dialog
 import { PeriodsTable } from '@/components/period/periods-table';
 import { PeriodFormDialog } from '@/components/period/period-form-dialog';
 import { getServerSession } from 'next-auth';
-import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 import { redirect } from 'next/navigation';
+import { authOptions } from '@/lib/authOptions';
 
 export const metadata: Metadata = {
     title: 'Account',
