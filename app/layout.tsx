@@ -55,7 +55,7 @@ const RootLayout = async ({ children }: { children: React.ReactNode }) => {
                     }}
                 >
                     <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
-                        <div className="hidden flex-col md:flex">
+                        <div className="flex-col">
                             <Header accounts={accounts} accountId={accountId} accountBalance={accountBalance} />
                             {children}
                         </div>

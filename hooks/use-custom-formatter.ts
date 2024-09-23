@@ -11,6 +11,6 @@ export const useCustomFormatter = () => {
         narrowCurrency(value: number, currency: string): string {
             const roundValue = value < 0 && value > -0.01 ? Math.abs(value) : value;
             return format.number(roundValue, { style: 'currency', currency, currencyDisplay: 'narrowSymbol' });
-        }
-    }
-}
+        },
+    };
+};

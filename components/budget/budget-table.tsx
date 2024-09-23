@@ -56,7 +56,7 @@ export const BudgetTable = ({
                 <TableRow>
                     <TableHead>Category</TableHead>
                     <TableHead className="w-[120px] text-right">Planned</TableHead>
-                    <TableHead className="w-[100px] text-right">Expected</TableHead>
+                    <TableHead className="w-[100px] text-right hidden sm:table-cell">Expected</TableHead>
                     <TableHead className="w-[100px] text-right">Rest</TableHead>
                 </TableRow>
             </TableHeader>
@@ -80,8 +80,12 @@ export const BudgetTable = ({
                                 </DialogTrigger>
                             </BudgetFormDialog>
                         </TableCell>
-                        <TableCell className="text-right">{format.narrowCurrency(getExpected(category), currency)}</TableCell>
-                        <TableCell className="text-right">{format.narrowCurrency(getRest(category), currency)}</TableCell>
+                        <TableCell className="text-right hidden sm:table-cell">
+                            {format.narrowCurrency(getExpected(category), currency)}
+                        </TableCell>
+                        <TableCell className="text-right">
+                            {format.narrowCurrency(getRest(category), currency)}
+                        </TableCell>
                     </TableRow>
                 ))}
             </TableBody>
@@ -89,7 +93,9 @@ export const BudgetTable = ({
                 <TableRow>
                     <TableCell>Total</TableCell>
                     <TableCell className="text-right">{format.narrowCurrency(getTotalPlanned(), currency)}</TableCell>
-                    <TableCell className="text-right">{format.narrowCurrency(getTotalExpected(), currency)}</TableCell>
+                    <TableCell className="text-right hidden sm:table-cell">
+                        {format.narrowCurrency(getTotalExpected(), currency)}
+                    </TableCell>
                     <TableCell className="text-right">{format.narrowCurrency(getTotalRest(), currency)}</TableCell>
                 </TableRow>
             </TableFooter>

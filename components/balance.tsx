@@ -15,7 +15,7 @@ export const Balance = ({ actual, expected, currency }: BalanceProps) => {
     return (
         <span className="text-nowrap">
             <span className="font-semibold">Balance:</span> {actualCurrency}{' '}
-            <span className="text-slate-400">(→{expectedCurrency})</span>
+            <span className="hidden sm:inline text-slate-400">(→{expectedCurrency})</span>
         </span>
     );
 };

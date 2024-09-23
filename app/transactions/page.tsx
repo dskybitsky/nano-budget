@@ -64,11 +64,11 @@ const TransactionsPage = async () => {
             title="Transactions"
             sideBlock={
                 <div>
-                    <TransactionFormDialog account={account}  categories={categories}>
+                    <TransactionFormDialog account={account} categories={categories}>
                         <DialogTrigger asChild>
                             <Button>
-                                <CirclePlus className="mr-2 h-4 w-4" />
-                                <span>Create Transaction</span>
+                                <CirclePlus className="h-4 w-4" />
+                                <span className="hidden sm:flex ml-2">Create Transaction</span>
                             </Button>
                         </DialogTrigger>
                     </TransactionFormDialog>

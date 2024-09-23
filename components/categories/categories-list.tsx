@@ -46,9 +46,7 @@ export const CategoriesList = ({ accountId, categories }: CategoriesListProps) =
                     <div className="ml-4 space-y-1">
                         <p className="text-sm font-medium leading-none">{category.name}</p>
                         <p className="text-sm text-muted-foreground">
-                            Type: &quot;
-                            <TransactionTypeLabel type={category.type} />
-                            &quot;. Order: {category.order}.
+                            #{category.order}: <TransactionTypeLabel type={category.type} /> category.
                         </p>
                     </div>
                     <div className="ml-auto font-medium">

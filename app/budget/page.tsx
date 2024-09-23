@@ -67,15 +67,13 @@ const BudgetPage = async () => {
             <div className="flex justify-end items-end w-full">
                 <PeriodSwitcher account={account} periods={periods} periodId={periodId} />
             </div>
-            <div className="flex justify-center p-8">
-                <BudgetTable
-                    account={account}
-                    categories={categories}
-                    period={period}
-                    periodBudgets={periodBudgets}
-                    periodTransactionSums={periodTransactionSums}
-                />
-            </div>
+            <BudgetTable
+                account={account}
+                categories={categories}
+                period={period}
+                periodBudgets={periodBudgets}
+                periodTransactionSums={periodTransactionSums}
+            />
         </Page>
     );
 };

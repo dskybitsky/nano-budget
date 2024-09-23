@@ -48,30 +48,8 @@ const AccountPage = async () => {
 
     return (
         <Page title={account.name}>
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-6">
-                <Card className="col-span-4">
-                    <CardHeader>
-                        <div className="flex items-center justify-between space-y-2">
-                            <CardTitle>Manage Account Categories</CardTitle>
-                            <div className="flex items-end space-x-2">
-                                <CategoryFormDialog accountId={accountId}>
-                                    <DialogTrigger asChild>
-                                        <Button>
-                                            <CirclePlus className="mr-2 h-4 w-4" />
-                                            Create Category
-                                        </Button>
-                                    </DialogTrigger>
-                                </CategoryFormDialog>
-                            </div>
-                        </div>
-                        <CardDescription>Manage income and expense categories for the account.</CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                        <CategoriesList accountId={accountId} categories={categories} />
-                    </CardContent>
-                    <CardFooter></CardFooter>
-                </Card>
-                <Card className="col-span-2">
+            <div className="grid gap-4 grid-cols-6">
+                <Card className="col-span-6 sm:col-span-2">
                     <CardHeader>
                         <CardTitle>Change Account Details</CardTitle>
                     </CardHeader>
@@ -84,6 +62,29 @@ const AccountPage = async () => {
                         </Button>
                     </CardFooter>
                 </Card>
+                <Card className="col-span-6 sm:col-span-4">
+                    <CardHeader>
+                        <div className="flex items-center justify-between space-y-2">
+                            <CardTitle>Manage Account Categories</CardTitle>
+                            <div className="flex items-end space-x-2">
+                                <CategoryFormDialog accountId={accountId}>
+                                    <DialogTrigger asChild>
+                                        <Button>
+                                            <CirclePlus className="h-4 w-4" />
+                                            <span className="hidden md:flex ml-2">Create Category</span>
+                                        </Button>
+                                    </DialogTrigger>
+                                </CategoryFormDialog>
+                            </div>
+                        </div>
+                        <CardDescription>Manage income and expense categories for the account.</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                        <CategoriesList accountId={accountId} categories={categories} />
+                    </CardContent>
+                    <CardFooter></CardFooter>
+                </Card>
+
                 <Card className="col-span-6">
                     <CardHeader>
                         <div className="flex items-center justify-between space-y-2">
@@ -92,8 +93,8 @@ const AccountPage = async () => {
                                 <PeriodFormDialog accountId={accountId}>
                                     <DialogTrigger asChild>
                                         <Button>
-                                            <CirclePlus className="mr-2 h-4 w-4" />
-                                            Create Period
+                                            <CirclePlus className="h-4 w-4" />
+                                            <span className="hidden sm:flex ml-2">Create Period</span>
                                         </Button>
                                     </DialogTrigger>
                                 </PeriodFormDialog>

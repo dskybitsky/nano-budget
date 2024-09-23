@@ -85,9 +85,9 @@ export const TransactionsTable = ({ account, categories, period, periodTransacti
             <TableHeader>
                 <TableRow>
                     <TableHead className="w-[200px]">Created</TableHead>
-                    <TableHead className="w-[200px]">Executed</TableHead>
-                    <TableHead>Category</TableHead>
-                    <TableHead>Type</TableHead>
+                    <TableHead className="hidden sm:table-cell w-[200px]">Executed</TableHead>
+                    <TableHead className="hidden sm:table-cell">Category</TableHead>
+                    <TableHead className="hidden sm:table-cell">Type</TableHead>
                     <TableHead>Name</TableHead>
                     <TableHead className="w-[100px] text-right">Value</TableHead>
                     <TableHead className="w-[50px] text-center"></TableHead>
@@ -97,13 +97,17 @@ export const TransactionsTable = ({ account, categories, period, periodTransacti
                 {periodTransactions.map((transaction) => (
                     <TableRow key={transaction.id} className={cn(transaction.executed ? '' : 'text-slate-400')}>
                         <TableCell>{format.dateTimeShort(transaction.created)}</TableCell>
-                        <TableCell>{format.dateTimeShort(transaction.executed)}</TableCell>
-                        <TableCell>{categoriesIndex.get(transaction.categoryId)?.name}</TableCell>
-                        <TableCell>
+                        <TableCell className="hidden sm:block">{format.dateTimeShort(transaction.executed)}</TableCell>
+                        <TableCell className="hidden sm:table-cell">
+                            {categoriesIndex.get(transaction.categoryId)?.name}
+                        </TableCell>
+                        <TableCell className="hidden sm:table-cell">
                             <TransactionTypeLabel type={transaction.type} />
                         </TableCell>
                         <TableCell>{transaction.name}</TableCell>
-                        <TableCell className="text-right">{format.narrowCurrency(transaction.value, currency)}</TableCell>
+                        <TableCell className="text-right">
+                            {format.narrowCurrency(transaction.value, currency)}
+                        </TableCell>
                         <TableCell className="text-center">
                             <TransactionFormDialog account={account} categories={categories} transaction={transaction}>
                                 <DropdownMenu>
@@ -138,7 +142,11 @@ export const TransactionsTable = ({ account, categories, period, periodTransacti
             </TableBody>
             <TableFooter>
                 <TableRow>
-                    <TableCell colSpan={5}>Total</TableCell>
+                    <TableCell>Total</TableCell>
+                    <TableCell className="hidden sm:table-cell" />
+                    <TableCell className="hidden sm:table-cell" />
+                    <TableCell className="hidden sm:table-cell" />
+                    <TableCell />
                     <TableCell className="text-right">
                         <p>{format.narrowCurrency(totalActual, currency)}</p>
                         {totalActual != totalExpected && (
