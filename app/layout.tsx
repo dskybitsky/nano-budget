@@ -23,7 +23,7 @@ const RootLayout = async ({ children }: { children: React.ReactNode }) => {
     const messages = await getMessages();
 
     return (
-        <html lang={locale}>
+        <html lang={locale} className="min-w-[380px]">
             <head>
                 <link rel="icon" type="png" href="logo.png" />
             </head>
