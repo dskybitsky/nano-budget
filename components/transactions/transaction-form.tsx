@@ -1,7 +1,6 @@
 'use client';
 
 import * as React from 'react';
-import moment from 'moment';
 import { Input } from '@/components/ui/input';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -46,10 +45,8 @@ export const TransactionForm = ({ account, categories, transaction, onValid, but
         resolver: zodResolver(TransactionFormSchema),
         defaultValues: {
             categoryId: transaction?.categoryId ?? lastCategoryId,
-            created: transaction?.created ?? moment().startOf('day').toDate(),
-            executed:
-                transaction?.executed ??
-                (account.type === AccountType.credit ? null : moment().startOf('day').toDate()),
+            created: transaction?.created ?? new Date(),
+            executed: transaction?.executed ?? (account.type === AccountType.credit ? null : new Date()),
             name: transaction?.name ?? '',
             value: transaction?.value ?? 0,
         },
