@@ -133,10 +133,9 @@ export const TransactionsTable = ({
                     <TableCell className="hidden sm:table-cell" />
                     <TableCell className="hidden sm:table-cell" />
                     <TableCell className="hidden sm:table-cell" />
-                    <TableCell />
                     <TableCell className="text-right">
                         <p>{format.narrowCurrency(periodTotal.actual, currency)}</p>
-                        {Math.abs(periodTotal.actual - periodTotal.expected) < 0.01 && (
+                        {Math.abs(periodTotal.actual - periodTotal.expected) > 0.01 && (
                             <p className="text-slate-400">{format.narrowCurrency(periodTotal.expected, currency)}</p>
                         )}
                     </TableCell>
