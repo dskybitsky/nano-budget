@@ -58,7 +58,9 @@ export const BudgetForm = ({ periodId, categoryId, budget, formElementId, onVali
                                 <FormControl>
                                     <Input type="number" min="0" step="0.01" placeholder="Amount" {...field} />
                                 </FormControl>
-                                <FormDescription className="hidden sm:block">Budget total planned amount.</FormDescription>
+                                <FormDescription className="hidden sm:block">
+                                    Budget total planned amount.
+                                </FormDescription>
                                 <FormMessage />
                             </FormItem>
                         )}
