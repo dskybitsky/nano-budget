@@ -147,7 +147,7 @@ export const TransactionForm = ({ account, categories, transaction, formElementI
                         control={form.control}
                         name="name"
                         render={({ field }) => (
-                            <FormItem className="col-span-4">
+                            <FormItem className="col-span-6 sm:col-span-4">
                                 <FormLabel>Name</FormLabel>
                                 <FormControl>
                                     <Input placeholder="New transaction" {...field} />
@@ -161,7 +161,7 @@ export const TransactionForm = ({ account, categories, transaction, formElementI
                         control={form.control}
                         name="value"
                         render={({ field }) => (
-                            <FormItem className="col-span-2">
+                            <FormItem className="col-span-6 sm:col-span-2">
                                 <FormLabel>Value</FormLabel>
                                 <FormControl>
                                     <Input type="number" min="0" step="0.01" placeholder="Amount" {...field} />

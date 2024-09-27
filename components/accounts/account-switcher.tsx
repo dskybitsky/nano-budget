@@ -86,7 +86,7 @@ export const AccountSwitcher = ({ accounts, accountId, className }: AccountSwitc
                                     />
                                     <AvatarFallback>SC</AvatarFallback>
                                 </Avatar>
-                                {selectedAccount.name}
+                                <span className="overflow-clip overflow-ellipsis mr-2">{selectedAccount.name}</span>
                             </>
                         )}
                         {!selectedAccount && <p>None</p>}
