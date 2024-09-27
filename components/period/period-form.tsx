@@ -65,7 +65,7 @@ export const PeriodForm = ({ accountId, period, formElementId, onValid }: Period
                                 <FormControl>
                                     <Input placeholder="New period" {...field} />
                                 </FormControl>
-                                <FormDescription>Name of the new period.</FormDescription>
+                                <FormDescription className="hidden sm:block">Name of the new period.</FormDescription>
                                 <FormMessage />
                             </FormItem>
                         )}
@@ -79,7 +79,9 @@ export const PeriodForm = ({ accountId, period, formElementId, onValid }: Period
                                 <FormControl>
                                     <DateTimePicker value={field.value} onChange={field.onChange} />
                                 </FormControl>
-                                <FormDescription>Date when the period starts.</FormDescription>
+                                <FormDescription className="hidden sm:block">
+                                    Date when the period starts.
+                                </FormDescription>
                                 <FormMessage />
                             </FormItem>
                         )}
@@ -97,7 +99,9 @@ export const PeriodForm = ({ accountId, period, formElementId, onValid }: Period
                                         onChange={field.onChange}
                                     />
                                 </FormControl>
-                                <FormDescription>Date when the period ends.</FormDescription>
+                                <FormDescription className="hidden sm:block">
+                                    Date when the period ends.
+                                </FormDescription>
                                 <FormMessage />
                             </FormItem>
                         )}

@@ -41,7 +41,7 @@ export const BudgetFormDialog = ({ periodId, categoryId, budget, children }: Bud
                     formElementId="budget-form"
                     onValid={closeDialog}
                 />
-                <DialogFooter>
+                <DialogFooter className="gap-y-2">
                     <Button variant="outline" onClick={closeDialog}>
                         Cancel
                     </Button>

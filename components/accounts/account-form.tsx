@@ -68,7 +68,9 @@ export const AccountForm = ({ account, formElementId, onValid }: AccountFormProp
                                 <FormControl>
                                     <Input placeholder="My checking account." {...field} />
                                 </FormControl>
-                                <FormDescription>Name of your bank account.</FormDescription>
+                                <FormDescription className="hidden sm:block">
+                                    Name of your bank account.
+                                </FormDescription>
                                 <FormMessage />
                             </FormItem>
                         )}
@@ -91,7 +93,7 @@ export const AccountForm = ({ account, formElementId, onValid }: AccountFormProp
                                         <SelectItem value={AccountType.credit}>Credit</SelectItem>
                                     </SelectContent>
                                 </Select>
-                                <FormDescription>
+                                <FormDescription className="hidden sm:block">
                                     Type of your account. It will affect balance calculation and available operations.
                                 </FormDescription>
                                 <FormMessage />
@@ -107,7 +109,7 @@ export const AccountForm = ({ account, formElementId, onValid }: AccountFormProp
                                 <FormControl>
                                     <Input placeholder="USD" {...field} />
                                 </FormControl>
-                                <FormDescription>Currency of the account.</FormDescription>
+                                <FormDescription className="hidden sm:block">Currency of the account.</FormDescription>
                                 <FormMessage />
                             </FormItem>
                         )}
@@ -121,7 +123,7 @@ export const AccountForm = ({ account, formElementId, onValid }: AccountFormProp
                                 <FormControl>
                                     <Input type="number" placeholder="0" step="0.01" {...field} />
                                 </FormControl>
-                                <FormDescription>Initial account balance.</FormDescription>
+                                <FormDescription className="hidden sm:block">Initial account balance.</FormDescription>
                                 <FormMessage />
                             </FormItem>
                         )}
@@ -135,7 +137,9 @@ export const AccountForm = ({ account, formElementId, onValid }: AccountFormProp
                                 <FormControl>
                                     <Input type="number" placeholder="0" step="1" {...field} />
                                 </FormControl>
-                                <FormDescription>View (sorting) position of the account.</FormDescription>
+                                <FormDescription className="hidden sm:block">
+                                    View (sorting) position of the account.
+                                </FormDescription>
                                 <FormMessage />
                             </FormItem>
                         )}

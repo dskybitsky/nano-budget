@@ -37,7 +37,7 @@ export const PeriodFormDialog = ({ accountId, period, children }: PeriodFormDial
                     <DialogDescription>{description}</DialogDescription>
                 </DialogHeader>
                 <PeriodForm accountId={accountId} period={period} formElementId="period-form" onValid={closeDialog} />
-                <DialogFooter>
+                <DialogFooter className="gap-y-2">
                     <Button variant="outline" onClick={closeDialog}>
                         Cancel
                     </Button>

@@ -81,7 +81,7 @@ export const CategoryForm = ({ accountId, category, formElementId, onValid }: Ca
                                         </SelectItem>
                                     </SelectContent>
                                 </Select>
-                                <FormDescription>
+                                <FormDescription className="hidden sm:block">
                                     Choose the transaction type - debit (&quot;income&quot;) or credit
                                     (&quot;expense&quot;).
                                 </FormDescription>
@@ -98,7 +98,7 @@ export const CategoryForm = ({ accountId, category, formElementId, onValid }: Ca
                                 <FormControl>
                                     <Input placeholder="New category" {...field} />
                                 </FormControl>
-                                <FormDescription>Name of the category.</FormDescription>
+                                <FormDescription className="hidden sm:block">Name of the category.</FormDescription>
                                 <FormMessage />
                             </FormItem>
                         )}
@@ -112,7 +112,7 @@ export const CategoryForm = ({ accountId, category, formElementId, onValid }: Ca
                                 <FormControl>
                                     <Input placeholder="URL" {...field} />
                                 </FormControl>
-                                <FormDescription>Icon of the category.</FormDescription>
+                                <FormDescription className="hidden sm:block">Icon of the category.</FormDescription>
                                 <FormMessage />
                             </FormItem>
                         )}
@@ -126,7 +126,7 @@ export const CategoryForm = ({ accountId, category, formElementId, onValid }: Ca
                                 <FormControl>
                                     <Input placeholder="#000000" {...field} />
                                 </FormControl>
-                                <FormDescription>Color of the category.</FormDescription>
+                                <FormDescription className="hidden sm:block">Color of the category.</FormDescription>
                                 <FormMessage />
                             </FormItem>
                         )}
@@ -140,7 +140,9 @@ export const CategoryForm = ({ accountId, category, formElementId, onValid }: Ca
                                 <FormControl>
                                     <Input type="number" placeholder="0" step="1" {...field} />
                                 </FormControl>
-                                <FormDescription>View (sorting) position of the category.</FormDescription>
+                                <FormDescription className="hidden sm:block">
+                                    View (sorting) position of the category.
+                                </FormDescription>
                                 <FormMessage />
                             </FormItem>
                         )}

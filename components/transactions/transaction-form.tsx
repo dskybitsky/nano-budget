@@ -70,7 +70,7 @@ export const TransactionForm = ({ account, categories, transaction, formElementI
     return (
         <Form {...form}>
             <form id={formElementId} onSubmit={form.handleSubmit(onFormValid)}>
-                <div className="grid gap-4 grid-cols-6 space-y-4 py-2 pb-4">
+                <div className="grid gap-x-4 grid-cols-6 space-y-4 py-2 pb-4">
                     <FormField
                         control={form.control}
                         name="created"
@@ -80,7 +80,7 @@ export const TransactionForm = ({ account, categories, transaction, formElementI
                                 <FormControl>
                                     <DateTimePicker value={field.value} onChange={field.onChange} />
                                 </FormControl>
-                                <FormDescription>
+                                <FormDescription className="hidden sm:block">
                                     Date when the transaction is planned to be executed. It will be used to relate
                                     unfulfilled transaction to a budget period.
                                 </FormDescription>
@@ -101,7 +101,7 @@ export const TransactionForm = ({ account, categories, transaction, formElementI
                                         onChange={field.onChange}
                                     />
                                 </FormControl>
-                                <FormDescription>
+                                <FormDescription className="hidden sm:block">
                                     Date when transaction was executed. It will be used to relate the transaction to a
                                     budget period.
                                 </FormDescription>
@@ -138,7 +138,9 @@ export const TransactionForm = ({ account, categories, transaction, formElementI
                                         ))}
                                     </SelectContent>
                                 </Select>
-                                <FormDescription>Choose the category this transaction falls under.</FormDescription>
+                                <FormDescription className="hidden sm:block">
+                                    Choose the category this transaction falls under.
+                                </FormDescription>
                                 <FormMessage />
                             </FormItem>
                         )}
@@ -152,7 +154,9 @@ export const TransactionForm = ({ account, categories, transaction, formElementI
                                 <FormControl>
                                     <Input placeholder="New transaction" {...field} />
                                 </FormControl>
-                                <FormDescription>Payee and/or description of the transaction.</FormDescription>
+                                <FormDescription className="hidden sm:block">
+                                    Payee and/or description of the transaction.
+                                </FormDescription>
                                 <FormMessage />
                             </FormItem>
                         )}
@@ -166,7 +170,9 @@ export const TransactionForm = ({ account, categories, transaction, formElementI
                                 <FormControl>
                                     <Input type="number" min="0" step="0.01" placeholder="Amount" {...field} />
                                 </FormControl>
-                                <FormDescription>Transaction monetary amount.</FormDescription>
+                                <FormDescription className="hidden sm:block">
+                                    Transaction monetary amount.
+                                </FormDescription>
                                 <FormMessage />
                             </FormItem>
                         )}
