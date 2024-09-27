@@ -13,6 +13,8 @@ import { useTransactionForm } from '@/hooks/use-transaction-form';
 import { useEffect } from 'react';
 import { DateTimePicker } from '@/components/ui/datetime-picker';
 import { useCookies } from 'react-cookie';
+import { UseFormReturn } from 'react-hook-form';
+import { Button } from '@/components/ui/button';
 
 const TransactionFormSchema = z.object({
     categoryId: z.string(),
@@ -29,11 +31,11 @@ interface TransactionFormProps {
     account: Account;
     categories: Category[];
     transaction?: Transaction;
-    formElementId?: string;
     onValid?: () => void;
+    buttonsRender?: (form: UseFormReturn<Transaction>) => React.ReactNode;
 }
 
-export const TransactionForm = ({ account, categories, transaction, formElementId, onValid }: TransactionFormProps) => {
+export const TransactionForm = ({ account, categories, transaction, onValid, buttonsRender }: TransactionFormProps) => {
     const lastCategoryCookieName = `${account.id}_last_cat`;
 
     const [cookies, setCookie] = useCookies([lastCategoryCookieName]);
@@ -67,9 +69,17 @@ export const TransactionForm = ({ account, categories, transaction, formElementI
 
     useEffect(() => reset(transaction), [reset, transaction]);
 
+    buttonsRender ??= (form) => (
+        <div>
+            <Button type="submit" disabled={form.formState.isSubmitting}>
+                Submit
+            </Button>
+        </div>
+    );
+
     return (
         <Form {...form}>
-            <form id={formElementId} onSubmit={form.handleSubmit(onFormValid)}>
+            <form onSubmit={form.handleSubmit(onFormValid)}>
                 <div className="grid gap-x-4 grid-cols-6 space-y-4 py-2 pb-4">
                     <FormField
                         control={form.control}
@@ -178,6 +188,7 @@ export const TransactionForm = ({ account, categories, transaction, formElementI
                         )}
                     />
                 </div>
+                {buttonsRender(form)}
             </form>
         </Form>
     );

@@ -11,6 +11,8 @@ import { useEffect } from 'react';
 import { toast } from '@/hooks/use-toast';
 import { usePeriodForm } from '@/hooks/use-period-form';
 import { DateTimePicker } from '@/components/ui/datetime-picker';
+import { UseFormReturn } from 'react-hook-form';
+import { Button } from '@/components/ui/button';
 
 const PeriodFormSchema = z.object({
     started: z.date(),
@@ -24,11 +26,11 @@ const PeriodFormSchema = z.object({
 interface PeriodFormProps {
     accountId: string;
     period?: Period;
-    formElementId?: string;
     onValid?: () => void;
+    buttonsRender?: (form: UseFormReturn<Period>) => React.ReactNode;
 }
 
-export const PeriodForm = ({ accountId, period, formElementId, onValid }: PeriodFormProps) => {
+export const PeriodForm = ({ accountId, period, onValid, buttonsRender }: PeriodFormProps) => {
     const form = usePeriodForm(accountId, period, {
         resolver: zodResolver(PeriodFormSchema),
         defaultValues: {
@@ -52,9 +54,17 @@ export const PeriodForm = ({ accountId, period, formElementId, onValid }: Period
 
     useEffect(() => reset(period), [reset, period]);
 
+    buttonsRender ??= (form) => (
+        <div>
+            <Button type="submit" disabled={form.formState.isSubmitting}>
+                Submit
+            </Button>
+        </div>
+    );
+
     return (
         <Form {...form}>
-            <form id={formElementId} onSubmit={form.handleSubmit(onFormValid)}>
+            <form onSubmit={form.handleSubmit(onFormValid)}>
                 <div className="space-y-4 py-2 pb-4">
                     <FormField
                         control={form.control}
@@ -108,13 +118,14 @@ export const PeriodForm = ({ accountId, period, formElementId, onValid }: Period
                     />
                     <FormField
                         name="entity"
-                        render={({ field }) => (
+                        render={() => (
                             <FormItem>
                                 <FormMessage />
                             </FormItem>
                         )}
                     />
                 </div>
+                {buttonsRender(form)}
             </form>
         </Form>
     );

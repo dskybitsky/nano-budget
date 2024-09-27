@@ -11,6 +11,8 @@ import { useCategoryForm } from '@/hooks/use-category-form';
 import { useEffect } from 'react';
 import { toast } from '@/hooks/use-toast';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Button } from '@/components/ui/button';
+import { UseFormReturn } from 'react-hook-form';
 
 const CategoryFormSchema = z.object({
     type: z.enum([CategoryType.debit, CategoryType.credit]),
@@ -26,11 +28,11 @@ const CategoryFormSchema = z.object({
 interface CategoryFormProps {
     accountId: string;
     category?: Category;
-    formElementId?: string;
     onValid?: () => void;
+    buttonsRender?: (form: UseFormReturn<Category>) => React.ReactNode;
 }
 
-export const CategoryForm = ({ accountId, category, formElementId, onValid }: CategoryFormProps) => {
+export const CategoryForm = ({ accountId, category, onValid, buttonsRender }: CategoryFormProps) => {
     const form = useCategoryForm(accountId, category, {
         resolver: zodResolver(CategoryFormSchema),
         defaultValues: {
@@ -56,9 +58,17 @@ export const CategoryForm = ({ accountId, category, formElementId, onValid }: Ca
 
     useEffect(() => reset(category), [reset, category]);
 
+    buttonsRender ??= (form) => (
+        <div>
+            <Button type="submit" disabled={form.formState.isSubmitting}>
+                Submit
+            </Button>
+        </div>
+    );
+
     return (
         <Form {...form}>
-            <form id={formElementId} onSubmit={form.handleSubmit(onFormValid)}>
+            <form onSubmit={form.handleSubmit(onFormValid)}>
                 <div className="space-y-4 py-2 pb-4">
                     <FormField
                         control={form.control}
@@ -148,6 +158,7 @@ export const CategoryForm = ({ accountId, category, formElementId, onValid }: Ca
                         )}
                     />
                 </div>
+                {buttonsRender(form)}
             </form>
         </Form>
     );

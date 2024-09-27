@@ -1,12 +1,12 @@
 import type { Metadata } from 'next';
 import { cookies } from 'next/headers';
 import './globals.css';
-import { ThemeProvider } from '@/components/ui/theme-provider';
 import { Header } from '@/components/header';
 import { Toaster } from '@/components/ui/toaster';
 import { getAccountBalance, getAllAccounts } from '@/actions/account';
 import { NextIntlClientProvider } from 'next-intl';
 import { getLocale, getMessages } from 'next-intl/server';
+import NextThemeProvider from '@/components/next-theme-provider';
 
 export const metadata: Metadata = {
     title: 'Nano Budget',
@@ -23,7 +23,7 @@ const RootLayout = async ({ children }: { children: React.ReactNode }) => {
     const messages = await getMessages();
 
     return (
-        <html lang={locale} className="min-w-[380px]">
+        <html suppressHydrationWarning={true} lang={locale} className="min-w-[380px]">
             <head>
                 <link rel="icon" type="png" href="logo.png" />
             </head>
@@ -54,13 +54,13 @@ const RootLayout = async ({ children }: { children: React.ReactNode }) => {
                         },
                     }}
                 >
-                    <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
+                    <NextThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
                         <div className="flex-col">
                             <Header accounts={accounts} accountId={accountId} accountBalance={accountBalance} />
                             {children}
                         </div>
                         <Toaster />
-                    </ThemeProvider>
+                    </NextThemeProvider>
                 </NextIntlClientProvider>
             </body>
         </html>

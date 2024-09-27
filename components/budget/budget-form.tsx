@@ -10,6 +10,8 @@ import { Budget } from '@prisma/client';
 import { useEffect } from 'react';
 import { toast } from '@/hooks/use-toast';
 import { useBudgetForm } from '@/hooks/use-budget-form';
+import { UseFormReturn } from 'react-hook-form';
+import { Button } from '@/components/ui/button';
 
 const BudgetFormSchema = z.object({
     value: z.coerce.number().min(0, { message: 'Value cannot be less than zero.' }),
@@ -19,11 +21,11 @@ interface BudgetFormProps {
     periodId: string;
     categoryId: string;
     budget?: Budget;
-    formElementId?: string;
     onValid?: () => void;
+    buttonsRender?: (form: UseFormReturn<Budget>) => React.ReactNode;
 }
 
-export const BudgetForm = ({ periodId, categoryId, budget, formElementId, onValid }: BudgetFormProps) => {
+export const BudgetForm = ({ periodId, categoryId, budget, onValid, buttonsRender }: BudgetFormProps) => {
     const form = useBudgetForm(categoryId, periodId, budget, {
         resolver: zodResolver(BudgetFormSchema),
         defaultValues: {
@@ -45,9 +47,17 @@ export const BudgetForm = ({ periodId, categoryId, budget, formElementId, onVali
 
     useEffect(() => reset(budget), [reset, budget]);
 
+    buttonsRender ??= (form) => (
+        <div>
+            <Button type="submit" disabled={form.formState.isSubmitting}>
+                Submit
+            </Button>
+        </div>
+    );
+
     return (
         <Form {...form}>
-            <form id={formElementId} onSubmit={form.handleSubmit(onFormValid)}>
+            <form onSubmit={form.handleSubmit(onFormValid)}>
                 <div className="space-y-4 py-2 pb-4">
                     <FormField
                         control={form.control}
@@ -66,6 +76,7 @@ export const BudgetForm = ({ periodId, categoryId, budget, formElementId, onVali
                         )}
                     />
                 </div>
+                {buttonsRender(form)}
             </form>
         </Form>
     );

@@ -38,17 +38,18 @@ export const BudgetFormDialog = ({ periodId, categoryId, budget, children }: Bud
                     periodId={periodId}
                     categoryId={categoryId}
                     budget={budget}
-                    formElementId="budget-form"
                     onValid={closeDialog}
+                    buttonsRender={(form) => (
+                        <DialogFooter className="gap-2">
+                            <Button variant="outline" onClick={closeDialog} disabled={form.formState.isSubmitting}>
+                                Cancel
+                            </Button>
+                            <Button type="submit" disabled={form.formState.isSubmitting}>
+                                Submit
+                            </Button>
+                        </DialogFooter>
+                    )}
                 />
-                <DialogFooter className="gap-y-2">
-                    <Button variant="outline" onClick={closeDialog}>
-                        Cancel
-                    </Button>
-                    <Button type="submit" form="budget-form">
-                        Submit
-                    </Button>
-                </DialogFooter>
             </DialogContent>
         </Dialog>
     );

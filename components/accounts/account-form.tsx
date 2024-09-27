@@ -11,6 +11,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { toast } from '@/hooks/use-toast';
 import { useEffect } from 'react';
 import { useAccountForm } from '@/hooks/use-account-form';
+import { Button } from '@/components/ui/button';
+import { UseFormReturn } from 'react-hook-form';
 
 const AccountFormSchema = z.object({
     name: z
@@ -25,11 +27,11 @@ const AccountFormSchema = z.object({
 
 interface AccountFormProps {
     account?: Account;
-    formElementId?: string;
     onValid?: () => void;
+    buttonsRender?: (form: UseFormReturn<Account>) => React.ReactNode;
 }
 
-export const AccountForm = ({ account, formElementId, onValid }: AccountFormProps) => {
+export const AccountForm = ({ account, onValid, buttonsRender }: AccountFormProps) => {
     const form = useAccountForm(account, {
         resolver: zodResolver(AccountFormSchema),
         defaultValues: {
@@ -55,9 +57,17 @@ export const AccountForm = ({ account, formElementId, onValid }: AccountFormProp
 
     useEffect(() => reset(account), [reset, account]);
 
+    buttonsRender ??= (form) => (
+        <div>
+            <Button type="submit" disabled={form.formState.isSubmitting}>
+                Submit
+            </Button>
+        </div>
+    );
+
     return (
         <Form {...form}>
-            <form id={formElementId} onSubmit={form.handleSubmit(onFormValid)}>
+            <form onSubmit={form.handleSubmit(onFormValid)}>
                 <div className="space-y-4 py-2 pb-4">
                     <FormField
                         control={form.control}
@@ -145,6 +155,7 @@ export const AccountForm = ({ account, formElementId, onValid }: AccountFormProp
                         )}
                     />
                 </div>
+                {buttonsRender(form)}
             </form>
         </Form>
     );

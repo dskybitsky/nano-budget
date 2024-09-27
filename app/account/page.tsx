@@ -6,7 +6,6 @@ import { Button } from '@/components/ui/button';
 import { CirclePlus, Trash } from 'lucide-react';
 import * as React from 'react';
 import { cookies } from 'next/headers';
-import { AccountForm } from '@/components/accounts/account-form';
 import { DialogTrigger } from '@/components/ui/dialog';
 import { viewAccount } from '@/actions/use-cases/view-account';
 import { CategoryFormDialog } from '@/components/categories/category-form-dialog';
@@ -18,6 +17,7 @@ import { PeriodFormDialog } from '@/components/period/period-form-dialog';
 import { getServerSession } from 'next-auth';
 import { redirect } from 'next/navigation';
 import { authOptions } from '@/lib/authOptions';
+import { AccountCard } from '@/components/accounts/account-card';
 
 export const metadata: Metadata = {
     title: 'Account',
@@ -49,19 +49,7 @@ const AccountPage = async () => {
     return (
         <Page title={account.name}>
             <div className="grid gap-4 grid-cols-6">
-                <Card className="col-span-6 sm:col-span-2">
-                    <CardHeader>
-                        <CardTitle>Change Account Details</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                        <AccountForm account={account} formElementId="card-account-update-form" />
-                    </CardContent>
-                    <CardFooter>
-                        <Button type="submit" form="card-account-update-form">
-                            Update
-                        </Button>
-                    </CardFooter>
-                </Card>
+                <AccountCard className="col-span-6 sm:col-span-2" account={account} />
                 <Card className="col-span-6 sm:col-span-4">
                     <CardHeader>
                         <div className="flex items-center justify-between space-y-2">
