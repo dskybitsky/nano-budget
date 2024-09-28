@@ -47,10 +47,19 @@ export const BudgetTable = ({
                     const planned = periodBudgets.get(category.id)?.value ?? 0;
                     const expected = periodTransactionSums.get(category.id)?.expected ?? 0;
                     const actual = periodTransactionSums.get(category.id)?.actual ?? 0;
-                    const rest = planned - expected;
+                    const restExpected = planned - expected;
+                    const restActual = planned - actual;
+
+                    let bgClassName = '';
+
+                    if (restActual < 0) {
+                        bgClassName = 'bg-red-100';
+                    } else if (restActual > 0) {
+                        bgClassName = 'bg-green-100';
+                    }
 
                     return (
-                        <TableRow key={category.id}>
+                        <TableRow key={category.id} className={bgClassName}>
                             <TableCell className="flex items-center">
                                 <CategoryImage category={category} className="h-6 w-6" />
                                 <div className="ml-4 space-y-1">{category.name}</div>
@@ -62,7 +71,7 @@ export const BudgetTable = ({
                                     budget={periodBudgets.get(category.id)}
                                 >
                                     <DialogTrigger asChild>
-                                        <Button variant="secondary" className="h-8 min-w-24 p-2 text-right justify-end">
+                                        <Button variant="outline" className="h-8 min-w-24 p-2 text-right justify-end">
                                             {format.narrowCurrency(planned, currency)}
                                         </Button>
                                     </DialogTrigger>
@@ -84,7 +93,7 @@ export const BudgetTable = ({
                                 </>
                             )}
                             <TableCell className="text-right font-semibold">
-                                {format.narrowCurrency(rest, currency)}
+                                {format.narrowCurrency(restExpected, currency)}
                             </TableCell>
                         </TableRow>
                     );
