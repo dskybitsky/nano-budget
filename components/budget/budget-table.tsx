@@ -8,6 +8,7 @@ import { BudgetFormDialog } from '@/components/budget/budget-form-dialog';
 import { Account, Budget, Category, Period } from '@prisma/client';
 import { CategoryImage } from '@/components/categories/category-image';
 import { useCustomFormatter } from '@/hooks/use-custom-formatter';
+import { currencyEq } from '@/lib/utils';
 
 interface BudgetTableProps {
     account: Account;
@@ -28,11 +29,6 @@ export const BudgetTable = ({
 }: BudgetTableProps) => {
     const { currency } = account;
 
-    const getPlanned = (category: Category) => periodBudgets.get(category.id)?.value ?? 0;
-    const getExpected = (category: Category) => periodTransactionSums.get(category.id)?.expected ?? 0;
-    const getActual = (category: Category) => periodTransactionSums.get(category.id)?.actual ?? 0;
-    const getRest = (category: Category) => getPlanned(category) - getExpected(category);
-
     const format = useCustomFormatter();
 
     return (
@@ -47,47 +43,72 @@ export const BudgetTable = ({
                 </TableRow>
             </TableHeader>
             <TableBody>
-                {categories.map((category) => (
-                    <TableRow key={category.id}>
-                        <TableCell className="flex items-center">
-                            <CategoryImage category={category} className="h-6 w-6" />
-                            <div className="ml-4 space-y-1">{category.name}</div>
-                        </TableCell>
-                        <TableCell className="text-right">
-                            <BudgetFormDialog
-                                periodId={period.id}
-                                categoryId={category.id}
-                                budget={periodBudgets.get(category.id)}
-                            >
-                                <DialogTrigger asChild>
-                                    <Button variant="secondary" className="h-8 min-w-24 p-2 text-right justify-end">
-                                        {format.narrowCurrency(getPlanned(category), currency)}
-                                    </Button>
-                                </DialogTrigger>
-                            </BudgetFormDialog>
-                        </TableCell>
-                        <TableCell className="text-right hidden sm:table-cell">
-                            {format.narrowCurrency(getExpected(category), currency)}
-                        </TableCell>
-                        <TableCell className="text-right hidden sm:table-cell">
-                            {format.narrowCurrency(getActual(category), currency)}
-                        </TableCell>
-                        <TableCell className="text-right">
-                            {format.narrowCurrency(getRest(category), currency)}
-                        </TableCell>
-                    </TableRow>
-                ))}
+                {categories.map((category) => {
+                    const planned = periodBudgets.get(category.id)?.value ?? 0;
+                    const expected = periodTransactionSums.get(category.id)?.expected ?? 0;
+                    const actual = periodTransactionSums.get(category.id)?.actual ?? 0;
+                    const rest = planned - expected;
+
+                    return (
+                        <TableRow key={category.id}>
+                            <TableCell className="flex items-center">
+                                <CategoryImage category={category} className="h-6 w-6" />
+                                <div className="ml-4 space-y-1">{category.name}</div>
+                            </TableCell>
+                            <TableCell className="text-right">
+                                <BudgetFormDialog
+                                    periodId={period.id}
+                                    categoryId={category.id}
+                                    budget={periodBudgets.get(category.id)}
+                                >
+                                    <DialogTrigger asChild>
+                                        <Button variant="secondary" className="h-8 min-w-24 p-2 text-right justify-end">
+                                            {format.narrowCurrency(planned, currency)}
+                                        </Button>
+                                    </DialogTrigger>
+                                </BudgetFormDialog>
+                            </TableCell>
+                            {currencyEq(expected, actual) && (
+                                <TableCell className="text-center hidden sm:table-cell" colSpan={2}>
+                                    {format.narrowCurrency(expected, currency)}
+                                </TableCell>
+                            )}
+                            {!currencyEq(expected, actual) && (
+                                <>
+                                    <TableCell className="text-right hidden sm:table-cell">
+                                        {format.narrowCurrency(expected, currency)}
+                                    </TableCell>
+                                    <TableCell className="text-right hidden sm:table-cell">
+                                        {format.narrowCurrency(actual, currency)}
+                                    </TableCell>
+                                </>
+                            )}
+                            <TableCell className="text-right font-semibold">
+                                {format.narrowCurrency(rest, currency)}
+                            </TableCell>
+                        </TableRow>
+                    );
+                })}
             </TableBody>
             <TableFooter>
                 <TableRow>
                     <TableCell>Total</TableCell>
                     <TableCell className="text-right">{format.narrowCurrency(periodTotal.planned, currency)}</TableCell>
-                    <TableCell className="text-right hidden sm:table-cell">
-                        {format.narrowCurrency(periodTotal.expected, currency)}
-                    </TableCell>
-                    <TableCell className="text-right hidden sm:table-cell">
-                        {format.narrowCurrency(periodTotal.actual, currency)}
-                    </TableCell>
+                    {currencyEq(periodTotal.expected, periodTotal.actual) && (
+                        <TableCell className="text-center hidden sm:table-cell" colSpan={2}>
+                            {format.narrowCurrency(periodTotal.expected, currency)}
+                        </TableCell>
+                    )}
+                    {!currencyEq(periodTotal.expected, periodTotal.actual) && (
+                        <>
+                            <TableCell className="text-right hidden sm:table-cell">
+                                {format.narrowCurrency(periodTotal.expected, currency)}
+                            </TableCell>
+                            <TableCell className="text-right hidden sm:table-cell">
+                                {format.narrowCurrency(periodTotal.actual, currency)}
+                            </TableCell>
+                        </>
+                    )}
                     <TableCell className="text-right">
                         {format.narrowCurrency(periodTotal.planned - periodTotal.expected, currency)}
                     </TableCell>
