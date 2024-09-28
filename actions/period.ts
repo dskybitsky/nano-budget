@@ -2,32 +2,38 @@
 
 import prisma from '@/lib/prismadb';
 import { Period } from '@prisma/client';
+import { cache, invalidate, Store } from '@/lib/cache';
+
+const accountPeriodsStore: Store<Period[]> = new Map<string, Period[]>();
 
 export const getAccountPeriods = async (accountId: string): Promise<Period[]> => {
-    return prisma.period.findMany({
-        where: { accountId },
-        orderBy: { started: 'asc' },
-    });
-};
-
-export const getPeriod = async (id: string): Promise<Period | null> => {
-    return prisma.period.findFirst({ where: { id } });
+    return cache(
+        accountPeriodsStore,
+        () =>
+            prisma.period.findMany({
+                where: { accountId },
+                orderBy: { started: 'asc' },
+            }),
+        accountId,
+    );
 };
 
 export const createPeriod = async (period: Omit<Period, 'id'>) => {
     await validatePeriod(period);
 
-    return prisma.period.create({ data: period });
+    return prisma.period.create({ data: period }).then((result) => invalidate(accountPeriodsStore, result.accountId));
 };
 
 export const updatePeriod = async (id: string, period: Partial<Omit<Period, 'id'>>) => {
     await validatePeriod({ ...period, id });
 
-    return prisma.period.update({ where: { id }, data: period });
+    return prisma.period
+        .update({ where: { id }, data: period })
+        .then((result) => invalidate(accountPeriodsStore, result.accountId));
 };
 
 export const deletePeriod = async (id: string) => {
-    return prisma.period.delete({ where: { id } });
+    return prisma.period.delete({ where: { id } }).then((result) => invalidate(accountPeriodsStore, result.accountId));
 };
 
 const validatePeriod = async (period: Partial<Period>) => {
