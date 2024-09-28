@@ -28,7 +28,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { DotsHorizontalIcon } from '@radix-ui/react-icons';
 import { DialogTrigger } from '@/components/ui/dialog';
-import { cn } from '@/lib/utils';
+import { cn, currencyEq } from '@/lib/utils';
 import { useCustomFormatter } from '@/hooks/use-custom-formatter';
 
 interface TransactionsTableProps {
@@ -135,7 +135,7 @@ export const TransactionsTable = ({
                     <TableCell className="hidden sm:table-cell" />
                     <TableCell className="text-right">
                         <p>{format.narrowCurrency(periodTotal.actual, currency)}</p>
-                        {Math.abs(periodTotal.actual - periodTotal.expected) > 0.01 && (
+                        {!currencyEq(periodTotal.actual, periodTotal.expected) && (
                             <p className="text-slate-400">{format.narrowCurrency(periodTotal.expected, currency)}</p>
                         )}
                     </TableCell>
