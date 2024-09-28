@@ -14,8 +14,8 @@ interface BudgetTableProps {
     categories: Category[];
     period: Period;
     periodBudgets: Map<string, Budget>;
-    periodTransactionSums: Map<string, number>;
-    periodTotal: { planned: number; expected: number };
+    periodTransactionSums: Map<string, { expected: number; actual: number }>;
+    periodTotal: { planned: number; expected: number; actual: number };
 }
 
 export const BudgetTable = ({
@@ -29,7 +29,8 @@ export const BudgetTable = ({
     const { currency } = account;
 
     const getPlanned = (category: Category) => periodBudgets.get(category.id)?.value ?? 0;
-    const getExpected = (category: Category) => periodTransactionSums.get(category.id) ?? 0;
+    const getExpected = (category: Category) => periodTransactionSums.get(category.id)?.expected ?? 0;
+    const getActual = (category: Category) => periodTransactionSums.get(category.id)?.actual ?? 0;
     const getRest = (category: Category) => getPlanned(category) - getExpected(category);
 
     const format = useCustomFormatter();
@@ -41,6 +42,7 @@ export const BudgetTable = ({
                     <TableHead>Category</TableHead>
                     <TableHead className="w-[120px] text-right">Planned</TableHead>
                     <TableHead className="w-[100px] text-right hidden sm:table-cell">Expected</TableHead>
+                    <TableHead className="w-[100px] text-right hidden sm:table-cell">Actual</TableHead>
                     <TableHead className="w-[100px] text-right">Rest</TableHead>
                 </TableRow>
             </TableHeader>
@@ -67,6 +69,9 @@ export const BudgetTable = ({
                         <TableCell className="text-right hidden sm:table-cell">
                             {format.narrowCurrency(getExpected(category), currency)}
                         </TableCell>
+                        <TableCell className="text-right hidden sm:table-cell">
+                            {format.narrowCurrency(getActual(category), currency)}
+                        </TableCell>
                         <TableCell className="text-right">
                             {format.narrowCurrency(getRest(category), currency)}
                         </TableCell>
@@ -79,6 +84,9 @@ export const BudgetTable = ({
                     <TableCell className="text-right">{format.narrowCurrency(periodTotal.planned, currency)}</TableCell>
                     <TableCell className="text-right hidden sm:table-cell">
                         {format.narrowCurrency(periodTotal.expected, currency)}
+                    </TableCell>
+                    <TableCell className="text-right hidden sm:table-cell">
+                        {format.narrowCurrency(periodTotal.actual, currency)}
                     </TableCell>
                     <TableCell className="text-right">
                         {format.narrowCurrency(periodTotal.planned - periodTotal.expected, currency)}

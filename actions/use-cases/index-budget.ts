@@ -11,8 +11,8 @@ export interface BudgetIndexDto {
     categories: Category[];
     period?: Period;
     periodBudgets?: Map<string, Budget>;
-    periodTransactionSums?: Map<string, number>;
-    periodTotal?: { planned: number; expected: number };
+    periodTransactionSums?: Map<string, { expected: number; actual: number }>;
+    periodTotal?: { planned: number; expected: number; actual: number };
 }
 
 export const indexBudget = async (accountId: string, periodId?: string): Promise<BudgetIndexDto | null> => {
@@ -41,15 +41,23 @@ export const indexBudget = async (accountId: string, periodId?: string): Promise
 
     const budgetsIndex = budget.reduce((acc, budget) => {
         acc.set(budget.categoryId, budget);
-
         return acc;
     }, new Map<string, Budget>());
 
     const transactionsSumsIndex = transactions.reduce((acc, transaction) => {
-        acc.set(transaction.categoryId, transaction.value + (acc.get(transaction.categoryId) ?? 0));
+        const { categoryId, value } = transaction;
 
+        let { expected, actual } = acc.get(categoryId) ?? { expected: 0, actual: 0 };
+
+        expected += value;
+
+        if (transaction.executed) {
+            actual += value;
+        }
+
+        acc.set(categoryId, { expected, actual });
         return acc;
-    }, new Map<string, number>());
+    }, new Map<string, { expected: number; actual: number }>());
 
     const periodBudgets = categories.reduce((acc, category) => {
         acc.set(
@@ -64,9 +72,9 @@ export const indexBudget = async (accountId: string, periodId?: string): Promise
     }, new Map<string, Budget>());
 
     const periodTransactionSums = categories.reduce((acc, category) => {
-        acc.set(category.id, transactionsSumsIndex.get(category.id) ?? 0);
+        acc.set(category.id, transactionsSumsIndex.get(category.id) ?? { expected: 0, actual: 0 });
         return acc;
-    }, new Map<string, number>());
+    }, new Map<string, { expected: number; actual: number }>());
 
     const accountSign = account.type == AccountType.credit ? -1 : 1;
 
@@ -75,11 +83,12 @@ export const indexBudget = async (accountId: string, periodId?: string): Promise
             const sign = category.type === CategoryType.debit ? 1 : -1;
 
             acc.planned += accountSign * sign * (periodBudgets.get(category.id)?.value ?? 0);
-            acc.expected += accountSign * sign * (periodTransactionSums.get(category.id) ?? 0);
+            acc.expected += accountSign * sign * (periodTransactionSums.get(category.id)?.expected ?? 0);
+            acc.actual += accountSign * sign * (periodTransactionSums.get(category.id)?.actual ?? 0);
 
             return acc;
         },
-        { planned: 0, expected: 0 },
+        { planned: 0, expected: 0, actual: 0 },
     );
 
     return {
