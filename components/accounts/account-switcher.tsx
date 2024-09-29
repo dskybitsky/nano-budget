@@ -78,7 +78,7 @@ export const AccountSwitcher = ({ accounts, accountId, className }: AccountSwitc
                     >
                         {selectedAccount && (
                             <>
-                                <AccountImage account={selectedAccount} className="mr-2 h-5 w-5" />
+                                <AccountImage account={selectedAccount} className="mr-2 h-6 w-6" />
                                 <span className="overflow-hidden overflow-ellipsis mr-2">{selectedAccount.name}</span>
                             </>
                         )}
@@ -104,7 +104,7 @@ export const AccountSwitcher = ({ accounts, accountId, className }: AccountSwitc
                                             }}
                                             className="text-sm"
                                         >
-                                            <AccountImage account={account} className="mr-2 h-5 w-5" />
+                                            <AccountImage account={account} className="mr-2 h-6 w-6" />
                                             {account.name}
                                             <CheckIcon
                                                 className={cn(

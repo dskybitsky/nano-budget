@@ -1,5 +1,3 @@
-import { Metadata } from 'next';
-
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { CategoriesList } from '@/components/categories/categories-list';
 import { Button } from '@/components/ui/button';
@@ -18,11 +16,6 @@ import { getServerSession } from 'next-auth';
 import { redirect } from 'next/navigation';
 import { authOptions } from '@/lib/authOptions';
 import { AccountCard } from '@/components/accounts/account-card';
-
-export const metadata: Metadata = {
-    title: 'Account',
-    description: 'Update account details and properties.',
-};
 
 const AccountPage = async () => {
     const session = await getServerSession(authOptions);

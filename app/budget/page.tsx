@@ -1,5 +1,3 @@
-import { Metadata } from 'next';
-
 import * as React from 'react';
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
@@ -9,11 +7,6 @@ import { Page } from '@/components/page';
 import PeriodSwitcher from '@/components/period/period-switcher';
 import { BudgetTable } from '@/components/budget/budget-table';
 import { authOptions } from '@/lib/authOptions';
-
-export const metadata: Metadata = {
-    title: 'Budget',
-    description: 'Current account budget.',
-};
 
 const BudgetPage = async () => {
     const session = await getServerSession(authOptions);

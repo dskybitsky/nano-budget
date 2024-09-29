@@ -37,8 +37,8 @@ export const BudgetTable = ({
                 <TableRow>
                     <TableHead>Category</TableHead>
                     <TableHead className="w-[120px] text-right">Planned</TableHead>
-                    <TableHead className="w-[100px] text-right hidden sm:table-cell">Expected</TableHead>
                     <TableHead className="w-[100px] text-right hidden sm:table-cell">Actual</TableHead>
+                    <TableHead className="w-[100px] text-right hidden sm:table-cell">Expected</TableHead>
                     <TableHead className="w-[100px] text-right">Rest</TableHead>
                 </TableRow>
             </TableHeader>
@@ -87,10 +87,10 @@ export const BudgetTable = ({
                             {!currencyEq(expected, actual) && (
                                 <>
                                     <TableCell className="text-right hidden sm:table-cell">
-                                        {format.narrowCurrency(expected, currency)}
+                                        {format.narrowCurrency(actual, currency)}
                                     </TableCell>
                                     <TableCell className="text-right hidden sm:table-cell">
-                                        {format.narrowCurrency(actual, currency)}
+                                        {format.narrowCurrency(expected, currency)}
                                     </TableCell>
                                 </>
                             )}
@@ -113,10 +113,10 @@ export const BudgetTable = ({
                     {!currencyEq(periodTotal.expected, periodTotal.actual) && (
                         <>
                             <TableCell className="text-right hidden sm:table-cell">
-                                {format.narrowCurrency(periodTotal.expected, currency)}
+                                {format.narrowCurrency(periodTotal.actual, currency)}
                             </TableCell>
                             <TableCell className="text-right hidden sm:table-cell">
-                                {format.narrowCurrency(periodTotal.actual, currency)}
+                                {format.narrowCurrency(periodTotal.expected, currency)}
                             </TableCell>
                         </>
                     )}
