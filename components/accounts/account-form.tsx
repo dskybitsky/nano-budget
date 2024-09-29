@@ -22,6 +22,7 @@ const AccountFormSchema = z.object({
     type: z.enum([AccountType.checking, AccountType.savings, AccountType.credit]),
     currency: z.string().max(5, { message: 'Currency can be maximum 5 characters.' }),
     value: z.coerce.number(),
+    icon: z.string().nullable(),
     order: z.coerce.number(),
 });
 
@@ -39,6 +40,7 @@ export const AccountForm = ({ account, onValid, buttonsRender }: AccountFormProp
             type: account?.type ?? AccountType.checking,
             currency: account?.currency ?? 'USD',
             value: account?.value ?? 0,
+            icon: account?.icon ?? '',
             order: account?.order ?? 0,
         },
     });
@@ -134,6 +136,20 @@ export const AccountForm = ({ account, onValid, buttonsRender }: AccountFormProp
                                     <Input type="number" placeholder="0" step="0.01" {...field} />
                                 </FormControl>
                                 <FormDescription className="hidden sm:block">Initial account balance.</FormDescription>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+                    <FormField
+                        control={form.control}
+                        name="icon"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Icon</FormLabel>
+                                <FormControl>
+                                    <Input placeholder="URL" {...field} />
+                                </FormControl>
+                                <FormDescription className="hidden sm:block">Icon for the account.</FormDescription>
                                 <FormMessage />
                             </FormItem>
                         )}

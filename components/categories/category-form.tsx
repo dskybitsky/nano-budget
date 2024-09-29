@@ -21,7 +21,6 @@ const CategoryFormSchema = z.object({
         .min(2, { message: 'Name must be at least 2 characters.' })
         .max(80, { message: 'Name can be maximum 80 characters.' }),
     icon: z.string().nullable(),
-    color: z.string().nullable(),
     order: z.coerce.number(),
 });
 
@@ -39,7 +38,6 @@ export const CategoryForm = ({ accountId, category, onValid, buttonsRender }: Ca
             type: category?.type ?? CategoryType.credit,
             name: category?.name ?? '',
             icon: category?.icon ?? '',
-            color: category?.color ?? '',
             order: category?.order ?? 0,
         },
     });
@@ -122,21 +120,7 @@ export const CategoryForm = ({ accountId, category, onValid, buttonsRender }: Ca
                                 <FormControl>
                                     <Input placeholder="URL" {...field} />
                                 </FormControl>
-                                <FormDescription className="hidden sm:block">Icon of the category.</FormDescription>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
-                    <FormField
-                        control={form.control}
-                        name="color"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>Color</FormLabel>
-                                <FormControl>
-                                    <Input placeholder="#000000" {...field} />
-                                </FormControl>
-                                <FormDescription className="hidden sm:block">Color of the category.</FormDescription>
+                                <FormDescription className="hidden sm:block">Icon for the category.</FormDescription>
                                 <FormMessage />
                             </FormItem>
                         )}

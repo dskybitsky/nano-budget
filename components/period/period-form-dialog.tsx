@@ -42,7 +42,12 @@ export const PeriodFormDialog = ({ accountId, period, children }: PeriodFormDial
                     onValid={closeDialog}
                     buttonsRender={(form) => (
                         <DialogFooter className="gap-2">
-                            <Button variant="outline" onClick={closeDialog} disabled={form.formState.isSubmitting}>
+                            <Button
+                                type="button"
+                                variant="outline"
+                                onClick={closeDialog}
+                                disabled={form.formState.isSubmitting}
+                            >
                                 Cancel
                             </Button>
                             <Button type="submit" disabled={form.formState.isSubmitting}>
