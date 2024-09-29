@@ -2,8 +2,6 @@
 
 import * as React from 'react';
 
-import { Button } from '@/components/ui/button';
-
 import {
     Dialog,
     DialogContent,
@@ -14,6 +12,7 @@ import {
 } from '@/components/ui/dialog';
 import { CategoryForm } from '@/components/categories/category-form';
 import { Category } from '@prisma/client';
+import { Button } from '@/components/ui/button';
 
 interface CategoryFormDialogProps extends React.HTMLAttributes<HTMLElement> {
     accountId: string;
@@ -39,17 +38,23 @@ export const CategoryFormDialog = ({ accountId, category, children }: CategoryFo
                 <CategoryForm
                     accountId={accountId}
                     category={category}
-                    formElementId="category-form"
                     onValid={closeDialog}
+                    buttonsRender={(form) => (
+                        <DialogFooter className="gap-2">
+                            <Button
+                                type="button"
+                                variant="outline"
+                                onClick={closeDialog}
+                                disabled={form.formState.isSubmitting}
+                            >
+                                Cancel
+                            </Button>
+                            <Button type="submit" disabled={form.formState.isSubmitting}>
+                                Submit
+                            </Button>
+                        </DialogFooter>
+                    )}
                 />
-                <DialogFooter>
-                    <Button variant="outline" onClick={closeDialog}>
-                        Cancel
-                    </Button>
-                    <Button type="submit" form="category-form">
-                        Submit
-                    </Button>
-                </DialogFooter>
             </DialogContent>
         </Dialog>
     );

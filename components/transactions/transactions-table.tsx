@@ -1,6 +1,6 @@
 'use client';
 
-import { Account, AccountType, Category, Period, Transaction, TransactionType } from '@prisma/client';
+import { Account, Category, Period, Transaction } from '@prisma/client';
 import {
     Table,
     TableBody,
@@ -28,18 +28,25 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { DotsHorizontalIcon } from '@radix-ui/react-icons';
 import { DialogTrigger } from '@/components/ui/dialog';
-import { cn, formatCurrency } from '@/lib/utils';
-import { TransactionTypeLabel } from '@/components/transactions/transaction-type-label';
-import { useFormatter } from 'next-intl';
+import { cn, currencyEq } from '@/lib/utils';
+import { useCustomFormatter } from '@/hooks/use-custom-formatter';
+import { CategoryImage } from '@/components/categories/category-image';
 
 interface TransactionsTableProps {
     account: Account;
     categories: Category[];
     period: Period;
-    periodTransactions: Transaction[];
+    periodTransactions: (Transaction & { category: Category })[];
+    periodTotal: { expected: number; actual: number };
 }
 
-export const TransactionsTable = ({ account, categories, period, periodTransactions }: TransactionsTableProps) => {
+export const TransactionsTable = ({
+    account,
+    categories,
+    period,
+    periodTransactions,
+    periodTotal,
+}: TransactionsTableProps) => {
     const router = useRouter();
 
     const { currency } = account;
@@ -54,42 +61,19 @@ export const TransactionsTable = ({ account, categories, period, periodTransacti
         router.refresh();
     };
 
-    const categoriesIndex = categories.reduce((acc, category) => {
-        acc.set(category.id, category);
-        return acc;
-    }, new Map<string, Category>());
-
-    let totalActual = 0;
-    let totalExpected = 0;
-
-    const accountSign = account.type == AccountType.credit ? -1 : 1;
-
-    periodTransactions.forEach((transaction) => {
-        const sign = transaction.type == TransactionType.credit ? -1 : 1;
-
-        if (transaction.executed) {
-            totalActual += accountSign * sign * transaction.value;
-        }
-
-        totalExpected += accountSign * sign * transaction.value;
-    });
-
-    const format = useFormatter();
-
-    const periodStarted = format.dateTime(period.started, 'short');
-    const periodEnded = period.ended ? format.dateTime(period.ended, 'short') : 'indefinite';
+    const format = useCustomFormatter();
 
     return (
         <Table>
             <TableCaption>
-                A list of transactions for period from {periodStarted} until {periodEnded}.
+                A list of transactions for period from {format.dateTimeShort(period.started)} until{' '}
+                {format.dateTimeShort(period.ended, 'indefinite')}.
             </TableCaption>
             <TableHeader>
                 <TableRow>
                     <TableHead className="w-[200px]">Created</TableHead>
-                    <TableHead className="w-[200px]">Executed</TableHead>
-                    <TableHead>Category</TableHead>
-                    <TableHead>Type</TableHead>
+                    <TableHead className="hidden sm:table-cell w-[200px]">Executed</TableHead>
+                    <TableHead className="hidden sm:table-cell">Category</TableHead>
                     <TableHead>Name</TableHead>
                     <TableHead className="w-[100px] text-right">Value</TableHead>
                     <TableHead className="w-[50px] text-center"></TableHead>
@@ -98,18 +82,28 @@ export const TransactionsTable = ({ account, categories, period, periodTransacti
             <TableBody>
                 {periodTransactions.map((transaction) => (
                     <TableRow key={transaction.id} className={cn(transaction.executed ? '' : 'text-slate-400')}>
-                        <TableCell>{format.dateTime(transaction.created, 'short')}</TableCell>
-                        <TableCell>
-                            {transaction.executed ? format.dateTime(transaction.executed, 'short') : ''}
+                        <TableCell>{format.dateTimeShort(transaction.created)}</TableCell>
+                        <TableCell className="hidden sm:table-cell">
+                            {format.dateTimeShort(transaction.executed)}
                         </TableCell>
-                        <TableCell>{categoriesIndex.get(transaction.categoryId)?.name}</TableCell>
-                        <TableCell>
-                            <TransactionTypeLabel type={transaction.type} />
+                        <TableCell className="hidden sm:table-cell">
+                            <div className="flex items-center">
+                                <CategoryImage category={transaction.category} className="h-6 w-6 text-xs mr-2" />
+                                {transaction.category.name}
+                            </div>
                         </TableCell>
-                        <TableCell>{transaction.name}</TableCell>
-                        <TableCell className="text-right">{formatCurrency(transaction.value, currency)}</TableCell>
+                        <TableCell>
+                            <div className="flex sm:hidden items-center">
+                                <CategoryImage category={transaction.category} className="h-6 w-6 text-xs mr-2" />
+                                {transaction.name}
+                            </div>
+                            <div className="hidden sm:inline">{transaction.name}</div>
+                        </TableCell>
+                        <TableCell className="text-right">
+                            {format.narrowCurrency(transaction.value, currency)}
+                        </TableCell>
                         <TableCell className="text-center">
-                            <TransactionFormDialog categories={categories} transaction={transaction}>
+                            <TransactionFormDialog account={account} categories={categories} transaction={transaction}>
                                 <DropdownMenu>
                                     <DropdownMenuTrigger asChild>
                                         <Button variant="ghost" className="h-8 w-8 p-0">
@@ -142,11 +136,13 @@ export const TransactionsTable = ({ account, categories, period, periodTransacti
             </TableBody>
             <TableFooter>
                 <TableRow>
-                    <TableCell colSpan={5}>Total</TableCell>
+                    <TableCell colSpan={2}>Total</TableCell>
+                    <TableCell className="hidden sm:table-cell" />
+                    <TableCell className="hidden sm:table-cell" />
                     <TableCell className="text-right">
-                        <p>{formatCurrency(totalActual, currency)}</p>
-                        {totalActual != totalExpected && (
-                            <p className="text-slate-400">{formatCurrency(totalExpected, currency)}</p>
+                        <p>{format.narrowCurrency(periodTotal.actual, currency)}</p>
+                        {!currencyEq(periodTotal.actual, periodTotal.expected) && (
+                            <p className="text-slate-400">{format.narrowCurrency(periodTotal.expected, currency)}</p>
                         )}
                     </TableCell>
                     <TableCell />

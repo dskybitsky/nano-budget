@@ -1,12 +1,12 @@
 import type { Metadata } from 'next';
 import { cookies } from 'next/headers';
 import './globals.css';
-import { ThemeProvider } from '@/components/ui/theme-provider';
 import { Header } from '@/components/header';
 import { Toaster } from '@/components/ui/toaster';
-import { getAccountBalance, getAllAccounts } from '@/actions/account';
 import { NextIntlClientProvider } from 'next-intl';
 import { getLocale, getMessages } from 'next-intl/server';
+import NextThemeProvider from '@/components/next-theme-provider';
+import { viewLayout } from '@/actions/use-cases/view-layout';
 
 export const metadata: Metadata = {
     title: 'Nano Budget',
@@ -16,16 +16,24 @@ export const metadata: Metadata = {
 const RootLayout = async ({ children }: { children: React.ReactNode }) => {
     const accountId = cookies().get('accountId')?.value;
 
-    const accounts = await getAllAccounts();
-    const accountBalance = accountId ? await getAccountBalance(accountId) : undefined;
+    const layoutViewDto = await viewLayout(accountId);
+
+    const { accounts, accountBalance } = layoutViewDto;
 
     const locale = await getLocale();
     const messages = await getMessages();
 
     return (
-        <html lang={locale}>
+        <html suppressHydrationWarning={true} lang={locale} className="min-w-[380px]">
             <head>
-                <link rel="icon" type="png" href="logo.png" />
+                <title>Nano Budget</title>
+                <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+                <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+                <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+                <link rel="manifest" href="/site.webmanifest" />
+                <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5" />
+                <meta name="msapplication-TileColor" content="#da532c" />
+                <meta name="theme-color" content="#ffffff" />
             </head>
             <body>
                 <NextIntlClientProvider
@@ -54,13 +62,13 @@ const RootLayout = async ({ children }: { children: React.ReactNode }) => {
                         },
                     }}
                 >
-                    <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
-                        <div className="hidden flex-col md:flex">
+                    <NextThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
+                        <div className="flex-col">
                             <Header accounts={accounts} accountId={accountId} accountBalance={accountBalance} />
                             {children}
                         </div>
                         <Toaster />
-                    </ThemeProvider>
+                    </NextThemeProvider>
                 </NextIntlClientProvider>
             </body>
         </html>

@@ -1,4 +1,4 @@
-import { Account, Category, Period, Transaction } from '@prisma/client';
+import { Account, AccountType, Category, Period, Transaction, CategoryType } from '@prisma/client';
 import { getAccountCategories } from '@/actions/category';
 import { getAccountTransactions } from '@/actions/transaction';
 import { getAccountPeriods } from '@/actions/period';
@@ -9,7 +9,8 @@ export interface TransactionsIndexDto {
     periods: Period[];
     categories: Category[];
     period?: Period;
-    periodTransactions?: Transaction[];
+    periodTransactions?: (Transaction & { category: Category })[];
+    periodTotal?: { expected: number; actual: number };
 }
 
 export const indexTransactions = async (accountId: string, periodId?: string): Promise<TransactionsIndexDto | null> => {
@@ -33,5 +34,22 @@ export const indexTransactions = async (accountId: string, periodId?: string): P
 
     const periodTransactions = await getAccountTransactions(accountId, started, ended);
 
-    return { account, periods, categories, period, periodTransactions };
+    const accountSign = account.type == AccountType.credit ? -1 : 1;
+
+    const periodTotal = periodTransactions.reduce(
+        (acc, transaction) => {
+            const sign = transaction.category.type == CategoryType.credit ? -1 : 1;
+
+            acc.expected += accountSign * sign * transaction.value;
+
+            if (transaction.executed) {
+                acc.actual += accountSign * sign * transaction.value;
+            }
+
+            return acc;
+        },
+        { expected: 0, actual: 0 },
+    );
+
+    return { account, periods, categories, period, periodTransactions, periodTotal };
 };

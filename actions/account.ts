@@ -1,53 +1,33 @@
 'use server';
 
 import prisma from '@/lib/prismadb';
-import { Account, AccountType, TransactionType } from '@prisma/client';
-import { getAccountTransactions } from '@/actions/transaction';
+import { Account } from '@prisma/client';
+import { revalidateTag } from 'next/cache';
+import { cache } from '@/lib/cache';
 
-export const getAccount = async (id: string): Promise<Account | null> => {
-    return prisma.account.findFirst({ where: { id } });
-};
+const ACCOUNT_CACHE_TAG = 'account';
+const ACCOUNT_CACHE_RETENTION = 3600;
 
-export const getAllAccounts = async (): Promise<Account[]> => {
-    return prisma.account.findMany({
-        orderBy: [{ order: 'asc' }, { name: 'asc' }],
-    });
-};
+export const getAccount = cache(
+    (id: string): Promise<Account | null> => prisma.account.findFirst({ where: { id } }),
+    ['get-account'],
+    { revalidate: ACCOUNT_CACHE_RETENTION, tags: [ACCOUNT_CACHE_TAG] },
+);
 
-export const getAccountBalance = async (id: string): Promise<{ expected: number; actual: number }> => {
-    const account = await getAccount(id);
-
-    if (!account) {
-        return { expected: 0, actual: 0 };
-    }
-
-    const transactions = await getAccountTransactions(id);
-
-    let actual = account.value;
-    let expected = account.value;
-
-    const accountSign = account.type == AccountType.credit ? -1 : 1;
-
-    transactions.forEach((transaction) => {
-        const sign = transaction.type === TransactionType.credit ? -1 : 1;
-
-        if (transaction.executed) {
-            actual += accountSign * sign * transaction.value;
-        }
-        expected += accountSign * sign * transaction.value;
-    });
-
-    return { actual, expected };
-};
+export const getAccounts = cache(
+    (): Promise<Account[]> => prisma.account.findMany({ orderBy: [{ order: 'asc' }, { name: 'asc' }] }),
+    ['get-accounts'],
+    { revalidate: ACCOUNT_CACHE_RETENTION, tags: [ACCOUNT_CACHE_TAG] },
+);
 
 export const createAccount = async (data: Omit<Account, 'id'>) => {
-    return prisma.account.create({ data });
+    return prisma.account.create({ data }).then(() => revalidateTag(ACCOUNT_CACHE_TAG));
 };
 
 export const updateAccount = async (id: string, data: Partial<Omit<Account, 'id'>>) => {
-    return prisma.account.update({ where: { id }, data });
+    return prisma.account.update({ where: { id }, data }).then(() => revalidateTag(ACCOUNT_CACHE_TAG));
 };
 
 export const deleteAccount = async (id: string) => {
-    return prisma.account.delete({ where: { id } });
+    return prisma.account.delete({ where: { id } }).then(() => revalidateTag(ACCOUNT_CACHE_TAG));
 };

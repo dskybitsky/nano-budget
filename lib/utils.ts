@@ -5,10 +5,6 @@ export function cn(...inputs: ClassValue[]) {
     return twMerge(clsx(inputs));
 }
 
-export function formatCurrency(value: number, currency: string): string {
-    try {
-        return Intl.NumberFormat('en', { style: 'currency', currency, currencyDisplay: 'narrowSymbol' }).format(value);
-    } catch (e) {
-        return value.toLocaleString();
-    }
+export function currencyEq(value1: number, value2: number): boolean {
+    return Math.abs(value1 - value2) < 0.01;
 }

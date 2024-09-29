@@ -36,15 +36,26 @@ export const PeriodFormDialog = ({ accountId, period, children }: PeriodFormDial
                     <DialogTitle>{title}</DialogTitle>
                     <DialogDescription>{description}</DialogDescription>
                 </DialogHeader>
-                <PeriodForm accountId={accountId} period={period} formElementId="period-form" onValid={closeDialog} />
-                <DialogFooter>
-                    <Button variant="outline" onClick={closeDialog}>
-                        Cancel
-                    </Button>
-                    <Button type="submit" form="period-form">
-                        Submit
-                    </Button>
-                </DialogFooter>
+                <PeriodForm
+                    accountId={accountId}
+                    period={period}
+                    onValid={closeDialog}
+                    buttonsRender={(form) => (
+                        <DialogFooter className="gap-2">
+                            <Button
+                                type="button"
+                                variant="outline"
+                                onClick={closeDialog}
+                                disabled={form.formState.isSubmitting}
+                            >
+                                Cancel
+                            </Button>
+                            <Button type="submit" disabled={form.formState.isSubmitting}>
+                                Submit
+                            </Button>
+                        </DialogFooter>
+                    )}
+                />
             </DialogContent>
         </Dialog>
     );

@@ -13,14 +13,15 @@ import {
     DialogTitle,
 } from '@/components/ui/dialog';
 import { TransactionForm } from '@/components/transactions/transaction-form';
-import { Category, Transaction } from '@prisma/client';
+import { Account, Category, Transaction } from '@prisma/client';
 
 interface TransactionFormDialogProps extends React.HTMLAttributes<HTMLElement> {
+    account: Account;
     categories: Category[];
     transaction?: Transaction;
 }
 
-export const TransactionFormDialog = ({ categories, transaction, children }: TransactionFormDialogProps) => {
+export const TransactionFormDialog = ({ account, categories, transaction, children }: TransactionFormDialogProps) => {
     const [showDialog, setShowDialog] = React.useState(false);
 
     const closeDialog = () => setShowDialog(false);
@@ -39,19 +40,26 @@ export const TransactionFormDialog = ({ categories, transaction, children }: Tra
                     <DialogDescription>{description}</DialogDescription>
                 </DialogHeader>
                 <TransactionForm
+                    account={account}
                     categories={categories}
                     transaction={transaction}
-                    formElementId="transaction-form"
                     onValid={closeDialog}
+                    buttonsRender={(form) => (
+                        <DialogFooter className="gap-2">
+                            <Button
+                                type="button"
+                                variant="outline"
+                                onClick={closeDialog}
+                                disabled={form.formState.isSubmitting}
+                            >
+                                Cancel
+                            </Button>
+                            <Button type="submit" disabled={form.formState.isSubmitting}>
+                                Submit
+                            </Button>
+                        </DialogFooter>
+                    )}
                 />
-                <DialogFooter>
-                    <Button variant="outline" onClick={closeDialog}>
-                        Cancel
-                    </Button>
-                    <Button type="submit" form="transaction-form">
-                        Submit
-                    </Button>
-                </DialogFooter>
             </DialogContent>
         </Dialog>
     );

@@ -34,7 +34,7 @@ const TransactionsPage = async () => {
         );
     }
 
-    const { account, periods, categories, period, periodTransactions } = transactionsIndexDto;
+    const { account, periods, categories, period, periodTransactions, periodTotal } = transactionsIndexDto;
 
     if (!periods.length) {
         return (
@@ -46,7 +46,7 @@ const TransactionsPage = async () => {
         );
     }
 
-    if (!period || !periodTransactions) {
+    if (!period || !periodTransactions || !periodTotal) {
         return (
             <Page title="Transactions">
                 <div className="flex justify-end items-end w-full">
@@ -64,11 +64,11 @@ const TransactionsPage = async () => {
             title="Transactions"
             sideBlock={
                 <div>
-                    <TransactionFormDialog categories={categories}>
+                    <TransactionFormDialog account={account} categories={categories}>
                         <DialogTrigger asChild>
                             <Button>
-                                <CirclePlus className="mr-2 h-4 w-4" />
-                                <span>Create Transaction</span>
+                                <CirclePlus className="h-4 w-4" />
+                                <span className="hidden sm:flex ml-2">Create Transaction</span>
                             </Button>
                         </DialogTrigger>
                     </TransactionFormDialog>
@@ -83,6 +83,7 @@ const TransactionsPage = async () => {
                 categories={categories}
                 period={period}
                 periodTransactions={periodTransactions}
+                periodTotal={periodTotal}
             />
         </Page>
     );

@@ -1,12 +1,9 @@
-import { Metadata } from 'next';
-
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { CategoriesList } from '@/components/categories/categories-list';
 import { Button } from '@/components/ui/button';
 import { CirclePlus, Trash } from 'lucide-react';
 import * as React from 'react';
 import { cookies } from 'next/headers';
-import { AccountForm } from '@/components/accounts/account-form';
 import { DialogTrigger } from '@/components/ui/dialog';
 import { viewAccount } from '@/actions/use-cases/view-account';
 import { CategoryFormDialog } from '@/components/categories/category-form-dialog';
@@ -18,11 +15,7 @@ import { PeriodFormDialog } from '@/components/period/period-form-dialog';
 import { getServerSession } from 'next-auth';
 import { redirect } from 'next/navigation';
 import { authOptions } from '@/lib/authOptions';
-
-export const metadata: Metadata = {
-    title: 'Account',
-    description: 'Update account details and properties.',
-};
+import { AccountCard } from '@/components/accounts/account-card';
 
 const AccountPage = async () => {
     const session = await getServerSession(authOptions);
@@ -48,8 +41,9 @@ const AccountPage = async () => {
 
     return (
         <Page title={account.name}>
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-6">
-                <Card className="col-span-4">
+            <div className="grid gap-4 grid-cols-6">
+                <AccountCard className="col-span-6 sm:col-span-2" account={account} />
+                <Card className="col-span-6 sm:col-span-4">
                     <CardHeader>
                         <div className="flex items-center justify-between space-y-2">
                             <CardTitle>Manage Account Categories</CardTitle>
@@ -57,8 +51,8 @@ const AccountPage = async () => {
                                 <CategoryFormDialog accountId={accountId}>
                                     <DialogTrigger asChild>
                                         <Button>
-                                            <CirclePlus className="mr-2 h-4 w-4" />
-                                            Create Category
+                                            <CirclePlus className="h-4 w-4" />
+                                            <span className="hidden md:flex ml-2">Create Category</span>
                                         </Button>
                                     </DialogTrigger>
                                 </CategoryFormDialog>
@@ -71,19 +65,7 @@ const AccountPage = async () => {
                     </CardContent>
                     <CardFooter></CardFooter>
                 </Card>
-                <Card className="col-span-2">
-                    <CardHeader>
-                        <CardTitle>Change Account Details</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                        <AccountForm account={account} formElementId="card-account-update-form" />
-                    </CardContent>
-                    <CardFooter>
-                        <Button type="submit" form="card-account-update-form">
-                            Update
-                        </Button>
-                    </CardFooter>
-                </Card>
+
                 <Card className="col-span-6">
                     <CardHeader>
                         <div className="flex items-center justify-between space-y-2">
@@ -92,8 +74,8 @@ const AccountPage = async () => {
                                 <PeriodFormDialog accountId={accountId}>
                                     <DialogTrigger asChild>
                                         <Button>
-                                            <CirclePlus className="mr-2 h-4 w-4" />
-                                            Create Period
+                                            <CirclePlus className="h-4 w-4" />
+                                            <span className="hidden sm:flex ml-2">Create Period</span>
                                         </Button>
                                     </DialogTrigger>
                                 </PeriodFormDialog>

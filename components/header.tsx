@@ -18,14 +18,14 @@ export const Header = ({ accounts, accountId, accountBalance }: HeaderProps) => 
     const currency = accounts.find((a) => a.id === accountId)?.currency ?? 'USD';
 
     return (
-        <div className="border-b">
-            <div className="flex h-16 items-center px-4">
-                <AccountSwitcher accounts={accounts} accountId={accountId} />
-                <MainNav className="mx-6" />
-                <div className="ml-auto flex items-center space-x-4">
-                    {accountBalance && <Balance currency={currency} {...accountBalance} />}
+        <div className="flex items-center flex-wrap sm:flex-nowrap border-b gap-y-4 p-4">
+            <AccountSwitcher className="mr-6" accounts={accounts} accountId={accountId} />
+            <MainNav className="order-2 sm:order-1" />
+            {accountBalance && (
+                <div className="ml-auto pl-0 sm:pl-4 flex items-center space-x-4 order-1 sm:order-2">
+                    <Balance currency={currency} {...accountBalance} />
                 </div>
-            </div>
+            )}
         </div>
     );
 };

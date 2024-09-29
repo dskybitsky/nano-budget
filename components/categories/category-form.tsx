@@ -6,38 +6,38 @@ import { Input } from '@/components/ui/input';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { Category, TransactionType } from '@prisma/client';
+import { Category, CategoryType } from '@prisma/client';
 import { useCategoryForm } from '@/hooks/use-category-form';
 import { useEffect } from 'react';
 import { toast } from '@/hooks/use-toast';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Button } from '@/components/ui/button';
+import { UseFormReturn } from 'react-hook-form';
 
 const CategoryFormSchema = z.object({
-    type: z.enum([TransactionType.debit, TransactionType.credit]),
+    type: z.enum([CategoryType.debit, CategoryType.credit]),
     name: z
         .string()
         .min(2, { message: 'Name must be at least 2 characters.' })
         .max(80, { message: 'Name can be maximum 80 characters.' }),
     icon: z.string().nullable(),
-    color: z.string().nullable(),
     order: z.coerce.number(),
 });
 
 interface CategoryFormProps {
     accountId: string;
     category?: Category;
-    formElementId?: string;
     onValid?: () => void;
+    buttonsRender?: (form: UseFormReturn<Category>) => React.ReactNode;
 }
 
-export const CategoryForm = ({ accountId, category, formElementId, onValid }: CategoryFormProps) => {
+export const CategoryForm = ({ accountId, category, onValid, buttonsRender }: CategoryFormProps) => {
     const form = useCategoryForm(accountId, category, {
         resolver: zodResolver(CategoryFormSchema),
         defaultValues: {
-            type: category?.type ?? TransactionType.credit,
+            type: category?.type ?? CategoryType.credit,
             name: category?.name ?? '',
             icon: category?.icon ?? '',
-            color: category?.color ?? '',
             order: category?.order ?? 0,
         },
     });
@@ -56,9 +56,17 @@ export const CategoryForm = ({ accountId, category, formElementId, onValid }: Ca
 
     useEffect(() => reset(category), [reset, category]);
 
+    buttonsRender ??= (form) => (
+        <div>
+            <Button type="submit" disabled={form.formState.isSubmitting}>
+                Submit
+            </Button>
+        </div>
+    );
+
     return (
         <Form {...form}>
-            <form id={formElementId} onSubmit={form.handleSubmit(onFormValid)}>
+            <form onSubmit={form.handleSubmit(onFormValid)}>
                 <div className="space-y-4 py-2 pb-4">
                     <FormField
                         control={form.control}
@@ -73,15 +81,15 @@ export const CategoryForm = ({ accountId, category, formElementId, onValid }: Ca
                                         </SelectTrigger>
                                     </FormControl>
                                     <SelectContent>
-                                        <SelectItem key={TransactionType.debit} value={TransactionType.debit}>
+                                        <SelectItem key={CategoryType.debit} value={CategoryType.debit}>
                                             Debit
                                         </SelectItem>
-                                        <SelectItem key={TransactionType.credit} value={TransactionType.credit}>
+                                        <SelectItem key={CategoryType.credit} value={CategoryType.credit}>
                                             Credit
                                         </SelectItem>
                                     </SelectContent>
                                 </Select>
-                                <FormDescription>
+                                <FormDescription className="hidden sm:block">
                                     Choose the transaction type - debit (&quot;income&quot;) or credit
                                     (&quot;expense&quot;).
                                 </FormDescription>
@@ -98,7 +106,7 @@ export const CategoryForm = ({ accountId, category, formElementId, onValid }: Ca
                                 <FormControl>
                                     <Input placeholder="New category" {...field} />
                                 </FormControl>
-                                <FormDescription>Name of the category.</FormDescription>
+                                <FormDescription className="hidden sm:block">Name of the category.</FormDescription>
                                 <FormMessage />
                             </FormItem>
                         )}
@@ -112,21 +120,7 @@ export const CategoryForm = ({ accountId, category, formElementId, onValid }: Ca
                                 <FormControl>
                                     <Input placeholder="URL" {...field} />
                                 </FormControl>
-                                <FormDescription>Icon of the category.</FormDescription>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
-                    <FormField
-                        control={form.control}
-                        name="color"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>Color</FormLabel>
-                                <FormControl>
-                                    <Input placeholder="#000000" {...field} />
-                                </FormControl>
-                                <FormDescription>Color of the category.</FormDescription>
+                                <FormDescription className="hidden sm:block">Icon for the category.</FormDescription>
                                 <FormMessage />
                             </FormItem>
                         )}
@@ -140,12 +134,15 @@ export const CategoryForm = ({ accountId, category, formElementId, onValid }: Ca
                                 <FormControl>
                                     <Input type="number" placeholder="0" step="1" {...field} />
                                 </FormControl>
-                                <FormDescription>View (sorting) position of the category.</FormDescription>
+                                <FormDescription className="hidden sm:block">
+                                    View (sorting) position of the category.
+                                </FormDescription>
                                 <FormMessage />
                             </FormItem>
                         )}
                     />
                 </div>
+                {buttonsRender(form)}
             </form>
         </Form>
     );

@@ -11,6 +11,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { toast } from '@/hooks/use-toast';
 import { useEffect } from 'react';
 import { useAccountForm } from '@/hooks/use-account-form';
+import { Button } from '@/components/ui/button';
+import { UseFormReturn } from 'react-hook-form';
 
 const AccountFormSchema = z.object({
     name: z
@@ -20,16 +22,17 @@ const AccountFormSchema = z.object({
     type: z.enum([AccountType.checking, AccountType.savings, AccountType.credit]),
     currency: z.string().max(5, { message: 'Currency can be maximum 5 characters.' }),
     value: z.coerce.number(),
+    icon: z.string().nullable(),
     order: z.coerce.number(),
 });
 
 interface AccountFormProps {
     account?: Account;
-    formElementId?: string;
     onValid?: () => void;
+    buttonsRender?: (form: UseFormReturn<Account>) => React.ReactNode;
 }
 
-export const AccountForm = ({ account, formElementId, onValid }: AccountFormProps) => {
+export const AccountForm = ({ account, onValid, buttonsRender }: AccountFormProps) => {
     const form = useAccountForm(account, {
         resolver: zodResolver(AccountFormSchema),
         defaultValues: {
@@ -37,6 +40,7 @@ export const AccountForm = ({ account, formElementId, onValid }: AccountFormProp
             type: account?.type ?? AccountType.checking,
             currency: account?.currency ?? 'USD',
             value: account?.value ?? 0,
+            icon: account?.icon ?? '',
             order: account?.order ?? 0,
         },
     });
@@ -55,9 +59,17 @@ export const AccountForm = ({ account, formElementId, onValid }: AccountFormProp
 
     useEffect(() => reset(account), [reset, account]);
 
+    buttonsRender ??= (form) => (
+        <div>
+            <Button type="submit" disabled={form.formState.isSubmitting}>
+                Submit
+            </Button>
+        </div>
+    );
+
     return (
         <Form {...form}>
-            <form id={formElementId} onSubmit={form.handleSubmit(onFormValid)}>
+            <form onSubmit={form.handleSubmit(onFormValid)}>
                 <div className="space-y-4 py-2 pb-4">
                     <FormField
                         control={form.control}
@@ -68,7 +80,9 @@ export const AccountForm = ({ account, formElementId, onValid }: AccountFormProp
                                 <FormControl>
                                     <Input placeholder="My checking account." {...field} />
                                 </FormControl>
-                                <FormDescription>Name of your bank account.</FormDescription>
+                                <FormDescription className="hidden sm:block">
+                                    Name of your bank account.
+                                </FormDescription>
                                 <FormMessage />
                             </FormItem>
                         )}
@@ -91,7 +105,7 @@ export const AccountForm = ({ account, formElementId, onValid }: AccountFormProp
                                         <SelectItem value={AccountType.credit}>Credit</SelectItem>
                                     </SelectContent>
                                 </Select>
-                                <FormDescription>
+                                <FormDescription className="hidden sm:block">
                                     Type of your account. It will affect balance calculation and available operations.
                                 </FormDescription>
                                 <FormMessage />
@@ -107,7 +121,7 @@ export const AccountForm = ({ account, formElementId, onValid }: AccountFormProp
                                 <FormControl>
                                     <Input placeholder="USD" {...field} />
                                 </FormControl>
-                                <FormDescription>Currency of the account.</FormDescription>
+                                <FormDescription className="hidden sm:block">Currency of the account.</FormDescription>
                                 <FormMessage />
                             </FormItem>
                         )}
@@ -121,7 +135,21 @@ export const AccountForm = ({ account, formElementId, onValid }: AccountFormProp
                                 <FormControl>
                                     <Input type="number" placeholder="0" step="0.01" {...field} />
                                 </FormControl>
-                                <FormDescription>Initial account balance.</FormDescription>
+                                <FormDescription className="hidden sm:block">Initial account balance.</FormDescription>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+                    <FormField
+                        control={form.control}
+                        name="icon"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Icon</FormLabel>
+                                <FormControl>
+                                    <Input placeholder="URL" {...field} />
+                                </FormControl>
+                                <FormDescription className="hidden sm:block">Icon for the account.</FormDescription>
                                 <FormMessage />
                             </FormItem>
                         )}
@@ -135,12 +163,15 @@ export const AccountForm = ({ account, formElementId, onValid }: AccountFormProp
                                 <FormControl>
                                     <Input type="number" placeholder="0" step="1" {...field} />
                                 </FormControl>
-                                <FormDescription>View (sorting) position of the account.</FormDescription>
+                                <FormDescription className="hidden sm:block">
+                                    View (sorting) position of the account.
+                                </FormDescription>
                                 <FormMessage />
                             </FormItem>
                         )}
                     />
                 </div>
+                {buttonsRender(form)}
             </form>
         </Form>
     );

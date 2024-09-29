@@ -4,7 +4,6 @@ import * as React from 'react';
 import { CaretSortIcon, CheckIcon, PlusCircledIcon } from '@radix-ui/react-icons';
 
 import { cn } from '@/lib/utils';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import {
     Command,
@@ -30,6 +29,7 @@ import { AccountForm } from '@/components/accounts/account-form';
 import { useCookies } from 'react-cookie';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
+import { AccountImage } from '@/components/accounts/account-image';
 
 type PopoverTriggerProps = React.ComponentPropsWithoutRef<typeof PopoverTrigger>;
 
@@ -78,15 +78,8 @@ export const AccountSwitcher = ({ accounts, accountId, className }: AccountSwitc
                     >
                         {selectedAccount && (
                             <>
-                                <Avatar className="mr-2 h-5 w-5">
-                                    <AvatarImage
-                                        src={`https://avatar.vercel.sh/${selectedAccount.type}.png`}
-                                        alt={selectedAccount.name}
-                                        className="grayscale"
-                                    />
-                                    <AvatarFallback>SC</AvatarFallback>
-                                </Avatar>
-                                {selectedAccount.name}
+                                <AccountImage account={selectedAccount} className="mr-2 h-6 w-6" />
+                                <span className="overflow-hidden overflow-ellipsis mr-2">{selectedAccount.name}</span>
                             </>
                         )}
                         {!selectedAccount && <p>None</p>}
@@ -111,14 +104,7 @@ export const AccountSwitcher = ({ accounts, accountId, className }: AccountSwitc
                                             }}
                                             className="text-sm"
                                         >
-                                            <Avatar className="mr-2 h-5 w-5">
-                                                <AvatarImage
-                                                    src={`https://avatar.vercel.sh/${account.type}.png`}
-                                                    alt={account.name}
-                                                    className="grayscale"
-                                                />
-                                                <AvatarFallback>SC</AvatarFallback>
-                                            </Avatar>
+                                            <AccountImage account={account} className="mr-2 h-6 w-6" />
                                             {account.name}
                                             <CheckIcon
                                                 className={cn(
@@ -155,15 +141,24 @@ export const AccountSwitcher = ({ accounts, accountId, className }: AccountSwitc
                     <DialogTitle>Create Account</DialogTitle>
                     <DialogDescription>Add a new account entry to be able to budget and track it.</DialogDescription>
                 </DialogHeader>
-                <AccountForm formElementId="switcher-account-create-form" onValid={closeDialog} />
-                <DialogFooter>
-                    <Button variant="outline" onClick={closeDialog}>
-                        Cancel
-                    </Button>
-                    <Button type="submit" form="switcher-account-create-form">
-                        Continue
-                    </Button>
-                </DialogFooter>
+                <AccountForm
+                    onValid={closeDialog}
+                    buttonsRender={(form) => (
+                        <DialogFooter className="gap-2">
+                            <Button
+                                type="button"
+                                variant="outline"
+                                onClick={closeDialog}
+                                disabled={form.formState.isSubmitting}
+                            >
+                                Cancel
+                            </Button>
+                            <Button type="submit" disabled={form.formState.isSubmitting}>
+                                Submit
+                            </Button>
+                        </DialogFooter>
+                    )}
+                />
             </DialogContent>
         </Dialog>
     );

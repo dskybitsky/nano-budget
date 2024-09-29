@@ -15,9 +15,9 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { DotsHorizontalIcon } from '@radix-ui/react-icons';
 import { DialogTrigger } from '@/components/ui/dialog';
-import { useFormatter } from 'next-intl';
 import { deletePeriod } from '@/actions/period';
 import { PeriodFormDialog } from '@/components/period/period-form-dialog';
+import { useCustomFormatter } from '@/hooks/use-custom-formatter';
 
 interface PeriodsTableProps {
     accountId: string;
@@ -37,7 +37,7 @@ export const PeriodsTable = ({ accountId, periods }: PeriodsTableProps) => {
         router.refresh();
     };
 
-    const format = useFormatter();
+    const format = useCustomFormatter();
 
     return (
         <Table>
@@ -54,8 +54,8 @@ export const PeriodsTable = ({ accountId, periods }: PeriodsTableProps) => {
                 {periods.map((period) => (
                     <TableRow key={period.id}>
                         <TableCell>{period.name}</TableCell>
-                        <TableCell>{format.dateTime(period.started, 'short')}</TableCell>
-                        <TableCell>{period.ended ? format.dateTime(period.ended, 'short') : ''}</TableCell>
+                        <TableCell>{format.dateTimeShort(period.started)}</TableCell>
+                        <TableCell>{format.dateTimeShort(period.ended)}</TableCell>
                         <TableCell>
                             <PeriodFormDialog accountId={accountId} period={period}>
                                 <DropdownMenu>
