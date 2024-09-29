@@ -14,6 +14,7 @@ import { DateTimePicker } from '@/components/ui/datetime-picker';
 import { useCookies } from 'react-cookie';
 import { UseFormReturn } from 'react-hook-form';
 import { Button } from '@/components/ui/button';
+import { CategoryImage } from '@/components/categories/category-image';
 
 const TransactionFormSchema = z.object({
     categoryId: z.string(),
@@ -140,7 +141,13 @@ export const TransactionForm = ({ account, categories, transaction, onValid, but
                                     <SelectContent>
                                         {categories.map((category) => (
                                             <SelectItem key={category.id} value={category.id}>
-                                                {category.name}
+                                                <div className="flex items-center">
+                                                    <CategoryImage
+                                                        category={category}
+                                                        className="h-6 w-6 text-xs mr-2"
+                                                    />
+                                                    {category.name}
+                                                </div>
                                             </SelectItem>
                                         ))}
                                     </SelectContent>

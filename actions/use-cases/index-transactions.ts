@@ -9,7 +9,7 @@ export interface TransactionsIndexDto {
     periods: Period[];
     categories: Category[];
     period?: Period;
-    periodTransactions?: Transaction[];
+    periodTransactions?: (Transaction & { category: Category })[];
     periodTotal?: { expected: number; actual: number };
 }
 

@@ -60,9 +60,11 @@ export const BudgetTable = ({
 
                     return (
                         <TableRow key={category.id} className={bgClassName}>
-                            <TableCell className="flex items-center">
-                                <CategoryImage category={category} className="h-6 w-6" />
-                                <div className="ml-4 space-y-1">{category.name}</div>
+                            <TableCell>
+                                <div className="flex items-center">
+                                    <CategoryImage category={category} className="h-8 w-8 text-xs mr-6" />
+                                    {category.name}
+                                </div>
                             </TableCell>
                             <TableCell className="text-right">
                                 <BudgetFormDialog

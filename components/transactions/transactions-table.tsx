@@ -30,12 +30,13 @@ import { DotsHorizontalIcon } from '@radix-ui/react-icons';
 import { DialogTrigger } from '@/components/ui/dialog';
 import { cn, currencyEq } from '@/lib/utils';
 import { useCustomFormatter } from '@/hooks/use-custom-formatter';
+import { CategoryImage } from '@/components/categories/category-image';
 
 interface TransactionsTableProps {
     account: Account;
     categories: Category[];
     period: Period;
-    periodTransactions: Transaction[];
+    periodTransactions: (Transaction & { category: Category })[];
     periodTotal: { expected: number; actual: number };
 }
 
@@ -60,11 +61,6 @@ export const TransactionsTable = ({
         router.refresh();
     };
 
-    const categoriesIndex = categories.reduce((acc, category) => {
-        acc.set(category.id, category);
-        return acc;
-    }, new Map<string, Category>());
-
     const format = useCustomFormatter();
 
     return (
@@ -87,11 +83,22 @@ export const TransactionsTable = ({
                 {periodTransactions.map((transaction) => (
                     <TableRow key={transaction.id} className={cn(transaction.executed ? '' : 'text-slate-400')}>
                         <TableCell>{format.dateTimeShort(transaction.created)}</TableCell>
-                        <TableCell className="hidden sm:block">{format.dateTimeShort(transaction.executed)}</TableCell>
                         <TableCell className="hidden sm:table-cell">
-                            {categoriesIndex.get(transaction.categoryId)?.name}
+                            {format.dateTimeShort(transaction.executed)}
                         </TableCell>
-                        <TableCell>{transaction.name}</TableCell>
+                        <TableCell className="hidden sm:table-cell">
+                            <div className="flex items-center">
+                                <CategoryImage category={transaction.category} className="h-6 w-6 text-xs mr-2" />
+                                {transaction.category.name}
+                            </div>
+                        </TableCell>
+                        <TableCell>
+                            <div className="flex sm:hidden items-center">
+                                <CategoryImage category={transaction.category} className="h-6 w-6 text-xs mr-2" />
+                                {transaction.name}
+                            </div>
+                            <div className="hidden sm:inline">{transaction.name}</div>
+                        </TableCell>
                         <TableCell className="text-right">
                             {format.narrowCurrency(transaction.value, currency)}
                         </TableCell>
