@@ -2,20 +2,17 @@
 
 import prisma from '@/lib/prismadb';
 import { Budget } from '@prisma/client';
-import { cache, invalidate, Store } from '@/lib/cache';
+import { revalidateTag } from 'next/cache';
+import { cache } from '@/lib/cache';
 
-const periodBudgetStore: Store<Budget[]> = new Map<string, Budget[]>();
+const BUDGET_CACHE_TAG = 'budget';
+const BUDGET_CACHE_RETENTION = 3600;
 
-export const getPeriodBudget = async (periodId: string): Promise<Budget[]> => {
-    return cache(
-        periodBudgetStore,
-        () =>
-            prisma.budget.findMany({
-                where: { periodId },
-            }),
-        periodId,
-    );
-};
+export const getPeriodBudget = cache(
+    (periodId: string): Promise<Budget[]> => prisma.budget.findMany({ where: { periodId } }),
+    ['get-period-budget'],
+    { revalidate: BUDGET_CACHE_RETENTION, tags: [BUDGET_CACHE_TAG] },
+);
 
 export const setBudget = async (data: Omit<Budget, 'id'>): Promise<void> => {
     await prisma.budget
@@ -29,5 +26,5 @@ export const setBudget = async (data: Omit<Budget, 'id'>): Promise<void> => {
                 },
             },
         })
-        .then((result) => invalidate(periodBudgetStore, result.periodId));
+        .then(() => revalidateTag(BUDGET_CACHE_TAG));
 };

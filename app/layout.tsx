@@ -3,10 +3,10 @@ import { cookies } from 'next/headers';
 import './globals.css';
 import { Header } from '@/components/header';
 import { Toaster } from '@/components/ui/toaster';
-import { getAccountBalance, getAllAccounts } from '@/actions/account';
 import { NextIntlClientProvider } from 'next-intl';
 import { getLocale, getMessages } from 'next-intl/server';
 import NextThemeProvider from '@/components/next-theme-provider';
+import { viewLayout } from '@/actions/use-cases/view-layout';
 
 export const metadata: Metadata = {
     title: 'Nano Budget',
@@ -16,8 +16,9 @@ export const metadata: Metadata = {
 const RootLayout = async ({ children }: { children: React.ReactNode }) => {
     const accountId = cookies().get('accountId')?.value;
 
-    const accounts = await getAllAccounts();
-    const accountBalance = accountId ? await getAccountBalance(accountId) : undefined;
+    const layoutViewDto = await viewLayout(accountId);
+
+    const { accounts, accountBalance } = layoutViewDto;
 
     const locale = await getLocale();
     const messages = await getMessages();

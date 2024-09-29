@@ -1,58 +1,20 @@
-export type Store<V> = Map<string, V | Store<V>>;
+import { unstable_cache } from 'next/cache';
+import { parse, stringify } from 'superjson';
 
-export const cache = async <V>(store: Store<V>, resolve: () => Promise<V>, ...keys: string[]): Promise<V> => {
-    return resolve();
+export const cache = <T, P extends unknown[]>(
+    fn: (...params: P) => Promise<T>,
+    keys: Parameters<typeof unstable_cache>[1],
+    opts: Parameters<typeof unstable_cache>[2],
+) => {
+    const wrap = async (params: unknown[]): Promise<string> => {
+        const result = await fn(...(params as P));
+        return stringify(result);
+    };
 
-    // if (keys.length === 0) {
-    //     return resolve();
-    // }
-    //
-    // if (keys.length === 1) {
-    //     const [key] = keys;
-    //
-    //     const cached = store.get(key);
-    //
-    //     if (cached !== undefined && !(cached instanceof Map)) {
-    //         return cached;
-    //     }
-    //
-    //     const value = await resolve();
-    //
-    //     store.set(key, value);
-    //
-    //     return value;
-    // }
-    //
-    // const [key, ...nextKeys] = keys;
-    //
-    // let subStore = store.get(key);
-    //
-    // if (!(subStore instanceof Map)) {
-    //     subStore = new Map();
-    //     store.set(key, subStore);
-    // }
-    //
-    // return cache(subStore, resolve, ...nextKeys);
-};
+    const cachedFn = unstable_cache(wrap, keys, opts);
 
-export const invalidate = <V>(store: Store<V>, ...keys: string[]): void => {
-    if (keys.length === 0) {
-        return;
-    }
-
-    if (keys.length === 1) {
-        const [key] = keys;
-
-        store.delete(key);
-    }
-
-    const [key, ...nextKeys] = keys;
-
-    let subStore = store.get(key);
-
-    if (subStore instanceof Map) {
-        invalidate(subStore, ...nextKeys);
-    }
-
-    store.delete(key);
+    return async (...params: P): Promise<T> => {
+        const result = await cachedFn(params);
+        return parse(result);
+    };
 };

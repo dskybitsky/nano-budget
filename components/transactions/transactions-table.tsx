@@ -129,8 +129,7 @@ export const TransactionsTable = ({
             </TableBody>
             <TableFooter>
                 <TableRow>
-                    <TableCell>Total</TableCell>
-                    <TableCell className="hidden sm:table-cell" />
+                    <TableCell colSpan={2}>Total</TableCell>
                     <TableCell className="hidden sm:table-cell" />
                     <TableCell className="hidden sm:table-cell" />
                     <TableCell className="text-right">

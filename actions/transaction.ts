@@ -2,75 +2,59 @@
 
 import prisma from '@/lib/prismadb';
 import { Category, Transaction } from '@prisma/client';
-import { getAccountCategories, getCategory } from '@/actions/category';
-import { cache, invalidate, Store } from '@/lib/cache';
+import { getAccountCategories } from '@/actions/category';
+import { revalidateTag } from 'next/cache';
+import { cache } from '@/lib/cache';
 
-const accountTransactionsStore: Store<Store<(Transaction & { category: Category })[]>> = new Map<
-    string,
-    Store<(Transaction & { category: Category })[]>
->();
+const TRANSACTION_CACHE_TAG = 'transaction';
+const TRANSACTION_CACHE_RETENTION = 3600;
 
-export const getAccountTransactions = async (
-    accountId: string,
-    dateFrom: Date | null = null,
-    dateTo: Date | null = null,
-): Promise<(Transaction & { category: Category })[]> => {
-    const categories = await getAccountCategories(accountId);
+export const getAccountTransactions = cache(
+    async (
+        accountId: string,
+        dateFrom: Date | null = null,
+        dateTo: Date | null = null,
+    ): Promise<(Transaction & { category: Category })[]> => {
+        const categories = await getAccountCategories(accountId);
 
-    const categoriesIdList = categories.map((c) => c.id).sort();
+        const categoriesIdList = categories.map((c) => c.id).sort();
 
-    const cacheKeyL2 = `${categoriesIdList.join('|')}:${dateFrom?.getTime() ?? '-'}:${dateTo?.getTime() ?? '-'}`;
-
-    return cache<(Transaction & { category: Category })[]>(
-        accountTransactionsStore,
-        () =>
-            prisma.transaction.findMany({
-                where: {
-                    categoryId: { in: categoriesIdList },
-                    AND: [
-                        ...(dateFrom
-                            ? [
-                                  {
-                                      OR: [
-                                          { executed: { gte: dateFrom } },
-                                          { executed: null, created: { gte: dateFrom } },
-                                      ],
-                                  },
-                              ]
-                            : []),
-                        ...(dateTo
-                            ? [
-                                  {
-                                      OR: [{ executed: { lte: dateTo } }, { executed: null, created: { lte: dateTo } }],
-                                  },
-                              ]
-                            : [{}]),
-                    ],
-                },
-                orderBy: { created: 'desc' },
-                include: { category: true },
-            }),
-        accountId,
-        cacheKeyL2,
-    );
-};
+        return prisma.transaction.findMany({
+            where: {
+                categoryId: { in: categoriesIdList },
+                AND: [
+                    ...(dateFrom
+                        ? [
+                              {
+                                  OR: [{ executed: { gte: dateFrom } }, { executed: null, created: { gte: dateFrom } }],
+                              },
+                          ]
+                        : []),
+                    ...(dateTo
+                        ? [
+                              {
+                                  OR: [{ executed: { lte: dateTo } }, { executed: null, created: { lte: dateTo } }],
+                              },
+                          ]
+                        : [{}]),
+                ],
+            },
+            orderBy: { created: 'desc' },
+            include: { category: true },
+        });
+    },
+    ['get-account-transactions'],
+    { revalidate: TRANSACTION_CACHE_RETENTION, tags: [TRANSACTION_CACHE_TAG] },
+);
 
 export const createTransaction = async (data: Omit<Transaction, 'id'>) => {
-    return prisma.transaction.create({ data }).then(({ categoryId }) => invalidateCategory(categoryId));
+    return prisma.transaction.create({ data }).then(() => revalidateTag(TRANSACTION_CACHE_TAG));
 };
 
 export const updateTransaction = async (id: string, data: Partial<Omit<Transaction, 'id'>>) => {
-    return prisma.transaction.update({ where: { id }, data }).then(({ categoryId }) => invalidateCategory(categoryId));
+    return prisma.transaction.update({ where: { id }, data }).then(() => revalidateTag(TRANSACTION_CACHE_TAG));
 };
 
 export const deleteTransaction = async (id: string) => {
-    return prisma.transaction.delete({ where: { id } }).then(({ categoryId }) => invalidateCategory(categoryId));
-};
-
-const invalidateCategory = async (categoryId: string) => {
-    const category = await getCategory(categoryId);
-
-    if (category) {
-        invalidate(accountTransactionsStore, category.accountId);
-    }
+    return prisma.transaction.delete({ where: { id } }).then(() => revalidateTag(TRANSACTION_CACHE_TAG));
 };
