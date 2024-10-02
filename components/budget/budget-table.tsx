@@ -8,7 +8,7 @@ import { BudgetFormDialog } from '@/components/budget/budget-form-dialog';
 import { Account, Budget, Category, Period } from '@prisma/client';
 import { CategoryImage } from '@/components/categories/category-image';
 import { useCustomFormatter } from '@/hooks/use-custom-formatter';
-import { currencyEq } from '@/lib/utils';
+import { currencyEq, currencyNeg, currencyPos } from '@/lib/utils';
 
 interface BudgetTableProps {
     account: Account;
@@ -52,9 +52,9 @@ export const BudgetTable = ({
 
                     let bgClassName = '';
 
-                    if (restActual < 0) {
+                    if (currencyNeg(restActual)) {
                         bgClassName = 'bg-red-100';
-                    } else if (restActual > 0) {
+                    } else if (currencyPos(restActual)) {
                         bgClassName = 'bg-green-100';
                     }
 
@@ -73,7 +73,10 @@ export const BudgetTable = ({
                                     budget={periodBudgets.get(category.id)}
                                 >
                                     <DialogTrigger asChild>
-                                        <Button variant="outline" className="h-8 min-w-24 p-2 text-right justify-end">
+                                        <Button
+                                            variant="secondary"
+                                            className="h-8 min-w-24 p-2 text-right justify-end font-normal"
+                                        >
                                             {format.narrowCurrency(planned, currency)}
                                         </Button>
                                     </DialogTrigger>

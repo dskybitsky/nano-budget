@@ -11,6 +11,8 @@ import {
     DropdownMenu,
     DropdownMenuContent,
     DropdownMenuItem,
+    DropdownMenuLabel,
+    DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { DotsHorizontalIcon } from '@radix-ui/react-icons';
@@ -66,6 +68,8 @@ export const PeriodsTable = ({ accountId, periods }: PeriodsTableProps) => {
                                         </Button>
                                     </DropdownMenuTrigger>
                                     <DropdownMenuContent align="end">
+                                        <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                                        <DropdownMenuSeparator />
                                         <DialogTrigger asChild>
                                             <DropdownMenuItem>
                                                 <Pencil className="mr-2 h-4 w-4" />
