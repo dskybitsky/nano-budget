@@ -2,7 +2,6 @@
 
 import * as React from 'react';
 
-import { Input } from '@/components/ui/input';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
@@ -12,6 +11,7 @@ import { toast } from '@/hooks/use-toast';
 import { useBudgetForm } from '@/hooks/use-budget-form';
 import { UseFormReturn } from 'react-hook-form';
 import { Button } from '@/components/ui/button';
+import { CurrencyInput } from '@/components/ui/currency-input';
 
 const BudgetFormSchema = z.object({
     value: z.coerce.number().min(0, { message: 'Value cannot be less than zero.' }),
@@ -66,7 +66,7 @@ export const BudgetForm = ({ periodId, categoryId, budget, onValid, buttonsRende
                             <FormItem>
                                 <FormLabel>Value</FormLabel>
                                 <FormControl>
-                                    <Input type="number" min="0" step="0.01" placeholder="Amount" {...field} />
+                                    <CurrencyInput placeholder="Amount" {...field} />
                                 </FormControl>
                                 <FormDescription className="hidden sm:block">
                                     Budget total planned amount.
