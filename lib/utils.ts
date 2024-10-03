@@ -5,16 +5,6 @@ export function cn(...inputs: ClassValue[]) {
     return twMerge(clsx(inputs));
 }
 
-export function currencyEq(value1: number, value2: number): boolean {
-    return Math.abs(value1 - value2) < currencyEps;
+export function currencyRound(value: number): number {
+    return Math.round((value + Number.EPSILON) * 100) / 100;
 }
-
-export function currencyNeg(value: number): boolean {
-    return value <= -1 * currencyEps;
-}
-
-export function currencyPos(value: number): boolean {
-    return value >= currencyEps;
-}
-
-const currencyEps = 0.01;

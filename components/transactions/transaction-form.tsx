@@ -15,6 +15,7 @@ import { useCookies } from 'react-cookie';
 import { UseFormReturn } from 'react-hook-form';
 import { Button } from '@/components/ui/button';
 import { CategoryImage } from '@/components/categories/category-image';
+import { CurrencyInput } from '@/components/ui/currency-input';
 
 const TransactionFormSchema = z.object({
     categoryId: z.string(),
@@ -182,7 +183,7 @@ export const TransactionForm = ({ account, categories, transaction, onValid, but
                             <FormItem className="col-span-6 sm:col-span-2">
                                 <FormLabel>Value</FormLabel>
                                 <FormControl>
-                                    <Input type="number" min="0" step="0.01" placeholder="Amount" {...field} />
+                                    <CurrencyInput placeholder="0.00" {...field} />
                                 </FormControl>
                                 <FormDescription className="hidden sm:block">
                                     Transaction monetary amount.

@@ -13,6 +13,7 @@ import { useEffect } from 'react';
 import { useAccountForm } from '@/hooks/use-account-form';
 import { Button } from '@/components/ui/button';
 import { UseFormReturn } from 'react-hook-form';
+import { CurrencyInput } from '@/components/ui/currency-input';
 
 const AccountFormSchema = z.object({
     name: z
@@ -133,7 +134,7 @@ export const AccountForm = ({ account, onValid, buttonsRender }: AccountFormProp
                             <FormItem>
                                 <FormLabel>Initial balance</FormLabel>
                                 <FormControl>
-                                    <Input type="number" placeholder="0" step="0.01" {...field} />
+                                    <CurrencyInput placeholder="0.00" {...field} />
                                 </FormControl>
                                 <FormDescription className="hidden sm:block">Initial account balance.</FormDescription>
                                 <FormMessage />

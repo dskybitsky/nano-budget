@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { Input } from '@/components/ui/input';
+import { currencyRound } from '@/lib/utils';
 
 export interface CurrencyInputProps extends React.InputHTMLAttributes<HTMLInputElement> {}
 
@@ -26,10 +27,13 @@ export const CurrencyInput = (props: CurrencyInputProps) => {
         }
 
         try {
-            const evaluated = eval(e.currentTarget.value);
+            const evaluated = eval(e.currentTarget.value.replace(/,/g, '.'));
 
             if (evaluated != e.currentTarget.value) {
-                setInputValue(e.currentTarget, evaluated);
+                const roundEvaluated = currencyRound(parseFloat(evaluated)).toString(10);
+
+                setInputValue(e.currentTarget, roundEvaluated);
+
                 e.preventDefault();
             }
         } catch (e) {}

@@ -28,7 +28,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { DotsHorizontalIcon } from '@radix-ui/react-icons';
 import { DialogTrigger } from '@/components/ui/dialog';
-import { cn, currencyEq } from '@/lib/utils';
+import { cn, currencyRound } from '@/lib/utils';
 import { useCustomFormatter } from '@/hooks/use-custom-formatter';
 import { CategoryImage } from '@/components/categories/category-image';
 
@@ -141,7 +141,7 @@ export const TransactionsTable = ({
                     <TableCell className="hidden sm:table-cell" />
                     <TableCell className="text-right">
                         <p>{format.narrowCurrency(periodTotal.actual, currency)}</p>
-                        {!currencyEq(periodTotal.actual, periodTotal.expected) && (
+                        {currencyRound(periodTotal.actual - periodTotal.expected) !== 0 && (
                             <p className="text-slate-400">{format.narrowCurrency(periodTotal.expected, currency)}</p>
                         )}
                     </TableCell>

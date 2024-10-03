@@ -8,7 +8,7 @@ import { BudgetFormDialog } from '@/components/budget/budget-form-dialog';
 import { Account, Budget, Category, Period } from '@prisma/client';
 import { CategoryImage } from '@/components/categories/category-image';
 import { useCustomFormatter } from '@/hooks/use-custom-formatter';
-import { currencyEq, currencyNeg, currencyPos } from '@/lib/utils';
+import { currencyRound } from '@/lib/utils';
 
 interface BudgetTableProps {
     account: Account;
@@ -52,9 +52,9 @@ export const BudgetTable = ({
 
                     let bgClassName = '';
 
-                    if (currencyNeg(restActual)) {
+                    if (currencyRound(restActual) < 0) {
                         bgClassName = 'bg-red-100';
-                    } else if (currencyPos(restActual)) {
+                    } else if (currencyRound(restActual) > 0) {
                         bgClassName = 'bg-green-100';
                     }
 
@@ -82,12 +82,12 @@ export const BudgetTable = ({
                                     </DialogTrigger>
                                 </BudgetFormDialog>
                             </TableCell>
-                            {currencyEq(expected, actual) && (
+                            {currencyRound(expected - actual) === 0 && (
                                 <TableCell className="text-center hidden sm:table-cell" colSpan={2}>
                                     {format.narrowCurrency(expected, currency)}
                                 </TableCell>
                             )}
-                            {!currencyEq(expected, actual) && (
+                            {currencyRound(expected - actual) !== 0 && (
                                 <>
                                     <TableCell className="text-right hidden sm:table-cell">
                                         {format.narrowCurrency(actual, currency)}
@@ -108,12 +108,12 @@ export const BudgetTable = ({
                 <TableRow>
                     <TableCell>Total</TableCell>
                     <TableCell className="text-right">{format.narrowCurrency(periodTotal.planned, currency)}</TableCell>
-                    {currencyEq(periodTotal.expected, periodTotal.actual) && (
+                    {currencyRound(periodTotal.expected - periodTotal.actual) === 0 && (
                         <TableCell className="text-center hidden sm:table-cell" colSpan={2}>
                             {format.narrowCurrency(periodTotal.expected, currency)}
                         </TableCell>
                     )}
-                    {!currencyEq(periodTotal.expected, periodTotal.actual) && (
+                    {currencyRound(periodTotal.expected - periodTotal.actual) !== 0 && (
                         <>
                             <TableCell className="text-right hidden sm:table-cell">
                                 {format.narrowCurrency(periodTotal.actual, currency)}
