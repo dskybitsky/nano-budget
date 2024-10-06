@@ -98,7 +98,7 @@ export const AccountSwitcher = ({ accounts, accountId, className }: AccountSwitc
                                             key={account.id}
                                             onSelect={() => {
                                                 setSelectedAccount(account);
-                                                setCookie('accountId', account.id);
+                                                setCookie('accountId', account.id, { maxAge: 31536000 });
                                                 router.refresh();
                                                 setOpen(false);
                                             }}

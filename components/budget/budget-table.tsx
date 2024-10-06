@@ -48,13 +48,12 @@ export const BudgetTable = ({
                     const expected = periodTransactionSums.get(category.id)?.expected ?? 0;
                     const actual = periodTransactionSums.get(category.id)?.actual ?? 0;
                     const restExpected = planned - expected;
-                    const restActual = planned - actual;
 
                     let bgClassName = '';
 
-                    if (currencyRound(restActual) < 0) {
+                    if (currencyRound(restExpected) < 0) {
                         bgClassName = 'bg-red-100';
-                    } else if (currencyRound(restActual) > 0) {
+                    } else if (currencyRound(restExpected) > 0) {
                         bgClassName = 'bg-green-100';
                     }
 

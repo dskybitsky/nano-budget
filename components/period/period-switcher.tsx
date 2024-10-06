@@ -47,7 +47,7 @@ export default function PeriodSwitcher({ account, periods, periodId }: PeriodSwi
                                         <CardContent className="h-fit flex items-center justify-center p-2">
                                             <span
                                                 onClick={() => {
-                                                    setCookie(cookieName, period.id);
+                                                    setCookie(cookieName, period.id, { maxAge: 31536000 });
                                                     router.refresh();
                                                 }}
                                             >
