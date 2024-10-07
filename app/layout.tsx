@@ -3,10 +3,9 @@ import { cookies } from 'next/headers';
 import './globals.css';
 import { Header } from '@/components/header';
 import { Toaster } from '@/components/ui/toaster';
-import { NextIntlClientProvider } from 'next-intl';
-import { getLocale, getMessages } from 'next-intl/server';
-import NextThemeProvider from '@/components/next-theme-provider';
+import { getLocale } from 'next-intl/server';
 import { viewLayout } from '@/actions/use-cases/view-layout';
+import { Providers } from '@/app/providers';
 
 export const metadata: Metadata = {
     title: 'Nano Budget',
@@ -21,7 +20,6 @@ const RootLayout = async ({ children }: { children: React.ReactNode }) => {
     const { accounts, accountBalance } = layoutViewDto;
 
     const locale = await getLocale();
-    const messages = await getMessages();
 
     return (
         <html suppressHydrationWarning={true} lang={locale} className="min-w-[380px]">
@@ -36,40 +34,13 @@ const RootLayout = async ({ children }: { children: React.ReactNode }) => {
                 <meta name="theme-color" content="#ffffff" />
             </head>
             <body>
-                <NextIntlClientProvider
-                    messages={messages}
-                    formats={{
-                        dateTime: {
-                            short: {
-                                day: 'numeric',
-                                month: 'short',
-                                year: 'numeric',
-                                hour: '2-digit',
-                                minute: 'numeric',
-                                hourCycle: 'h23',
-                            },
-                        },
-                        number: {
-                            precise: {
-                                maximumFractionDigits: 5,
-                            },
-                        },
-                        list: {
-                            enumeration: {
-                                style: 'long',
-                                type: 'conjunction',
-                            },
-                        },
-                    }}
-                >
-                    <NextThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
-                        <div className="flex-col">
-                            <Header accounts={accounts} accountId={accountId} accountBalance={accountBalance} />
-                            {children}
-                        </div>
-                        <Toaster />
-                    </NextThemeProvider>
-                </NextIntlClientProvider>
+                <Providers>
+                    <div className="flex-col">
+                        <Header accounts={accounts} accountId={accountId} accountBalance={accountBalance} />
+                        {children}
+                    </div>
+                    <Toaster />
+                </Providers>
             </body>
         </html>
     );
