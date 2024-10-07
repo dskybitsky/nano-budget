@@ -1,3 +1,137 @@
 {
-
+    "Account": {
+        "name": "Name",
+        "type": "Type",
+        "currency": "Currency",
+        "value": "Initial balance",
+        "icon": "Icon",
+        "order": "Order"
+    },
+    "Category": {
+        "name": "Name",
+        "type": "Type",
+        "icon": "Icon",
+        "order": "Order"
+    },
+    "Period": {
+        "name": "Name",
+        "started": "Started",
+        "ended": "Ended"
+    },
+    "Transaction": {
+        "created": "Created",
+        "executed": "Executed",
+        "name": "Name",
+        "type": "Type",
+        "value": "Value",
+        "category": "Category"
+    },
+    "Budget": {
+        "value": "Value",
+        "period": "Period",
+        "category": "Category"
+    },
+    "SignIn": {
+        "email": "Email",
+        "password": "Password"
+    },
+    "Enum": {
+        "AccountType":"{value, select, checking {Checking} savings {Savings} credit {Credit} virtual {Virtual} other {Unknown}}",
+        "OperationType":"{value, select, debit {Debit} credit {Credit} other {Unknown}}"
+    },
+    "AccountView": {
+        "title": "{name} Account",
+        "typeLabel": "{type} Account",
+        "valueLabel": "Initial balance: {value} {currency}",
+        "categoriesTabCaption": "Categories",
+        "periodsTabCaption": "Periods"
+    },
+    "SignInView": {
+        "title": "Please Sign in",
+        "credentialsError": "Email or password is incorrect."
+    },
+    "AccountModal": {
+        "editTitle": "Edit Account"
+    },
+    "AccountForm": {
+        "namePlaceholder": "Name",
+        "typePlaceholder": "Type",
+        "currencyPlaceholder": "Currency",
+        "valuePlaceholder": "Initial balance",
+        "iconPlaceholder": "Icon URL or emoji",
+        "orderPlaceholder": "View order"
+    },
+    "CategoriesTable": { },
+    "CategoryModal": {
+        "createTitle": "Create Category",
+        "editTitle": "Edit Category",
+        "deleteTitle": "Delete Category",
+        "deleteMessage": "Removing a category will also remove all its operations. Are you sure you want to delete this category?"
+    },
+    "CategoryForm": {
+        "namePlaceholder": "Name",
+        "typePlaceholder": "Type",
+        "iconPlaceholder": "Icon URL",
+        "orderPlaceholder": "View order"
+    },
+    "PeriodsTable": { },
+    "PeriodModal": {
+        "createTitle": "Create Period",
+        "editTitle": "Edit Period",
+        "deleteTitle": "Delete Period",
+        "deleteMessage": "Removing a period will also remove all its operations. Are you sure you want to delete this period?"
+    },
+    "PeriodForm": {
+        "namePlaceholder": "Name",
+        "startedPlaceholder": "Started",
+        "endedPlaceholder": "Ended"
+    },
+    "TransactionsTable": { },
+    "TransactionsFilterPanel": {
+        "createdLabel": "Created",
+        "createdFromPlaceholder": "After",
+        "createdToPlaceholder": "Before"
+    },
+    "TransactionModal": {
+        "createTitle": "Create Transaction",
+        "editTitle": "Edit Transaction",
+        "deleteTitle": "Delete Transaction",
+        "deleteMessage": "Are you sure you want to delete this transaction?"
+    },
+    "TransactionForm": {
+        "createdPlaceholder": "Created",
+        "executedPlaceholder": "Executed",
+        "categoryPlaceholder": "Category",
+        "namePlaceholder": "Name",
+        "typePlaceholder": "Type",
+        "valuePlaceholder": "Value"
+    },
+    "BudgetsTable": { },
+    "BudgetModal": {
+        "setTitle": "Set Budget"
+    },
+    "BudgetForm": {
+        "valuePlaceholder": "Value"
+    },
+    "SignInForm": {
+        "emailPlaceholder": "Email",
+        "passwordPlaceholder": "Password",
+        "submitButton": "Sign in"
+    },
+    "Common": {
+        "actions": "Actions",
+        "add": "Add",
+        "cancel": "Cancel",
+        "edit": "Edit",
+        "error": "Error: {error}",
+        "delete": "Delete",
+        "ok": "Ok",
+        "submit": "Submit"
+    },
+    "Validation": {
+        "tooShort": "{property} must be at least {min} characters.",
+        "tooLong": "{property} can be maximum {max} characters.",
+        "notEmpty": "{property} cannot be empty.",
+        "negative": "{property} value cannot be less than a zero"
+    }
 }

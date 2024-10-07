@@ -1,0 +1,17 @@
+.root > div {
+    gap: 2rem;
+}
+
+.control {
+    border: none;
+    background-color: transparent;
+
+    &:hover {
+        background-color: transparent;
+    }
+
+    &:where([data-active]) {
+        font-weight: bold;
+        color: inherit;
+    }
+}

@@ -28,6 +28,7 @@ enum AccountType {
   checking
   savings
   credit
+  virtual
 }
 
 model Category {
@@ -53,13 +54,13 @@ model Period {
 }
 
 model Budget {
-  periodId   String
   categoryId String
+  periodId   String
   value      Float
-  category   Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
   period     Period   @relation(fields: [periodId], references: [id], onDelete: Cascade)
+  category   Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
 
-  @@id(name: "periodCategoryId", [periodId, categoryId])
+  @@id(name: "categoryPeriodId", [categoryId, periodId])
 }
 
 model Transaction {
