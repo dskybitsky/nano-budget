@@ -73,11 +73,6 @@ model Transaction {
   category   Category      @relation(fields: [categoryId], references: [id], onDelete: Cascade)
 }
 
-enum TransactionType {
-  debit
-  credit
-}
-
 enum OperationType {
   debit
   credit
