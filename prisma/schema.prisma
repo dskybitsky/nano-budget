@@ -33,18 +33,13 @@ enum AccountType {
 model Category {
   id          String        @id @default(uuid())
   accountId   String
-  type        CategoryType
   name        String
+  type        OperationType
   icon        String
   order       Int           @default(0)
   account     Account       @relation(fields: [accountId], references: [id], onDelete: Cascade)
   Budget      Budget[]
   Transaction Transaction[]
-}
-
-enum CategoryType {
-  debit
-  credit
 }
 
 model Period {
@@ -68,11 +63,22 @@ model Budget {
 }
 
 model Transaction {
-  id         String    @id @default(uuid())
-  created    DateTime  @default(now())
+  id         String        @id @default(uuid())
+  created    DateTime      @default(now())
   executed   DateTime?
   categoryId String
   name       String
+  type       OperationType
   value      Float
-  category   Category  @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  category   Category      @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+}
+
+enum TransactionType {
+  debit
+  credit
+}
+
+enum OperationType {
+  debit
+  credit
 }

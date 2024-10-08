@@ -1,4 +1,4 @@
-import { Account, AccountType, Category, Period, Transaction, CategoryType } from '@prisma/client';
+import { Account, AccountType, Category, Period, Transaction, OperationType } from '@prisma/client';
 import { getAccountCategories } from '@/actions/category';
 import { getAccountTransactions } from '@/actions/transaction';
 import { getAccountPeriods } from '@/actions/period';
@@ -38,7 +38,7 @@ export const indexTransactions = async (accountId: string, periodId?: string): P
 
     const periodTotal = periodTransactions.reduce(
         (acc, transaction) => {
-            const sign = transaction.category.type == CategoryType.credit ? -1 : 1;
+            const sign = transaction.type == OperationType.credit ? -1 : 1;
 
             acc.expected += accountSign * sign * transaction.value;
 

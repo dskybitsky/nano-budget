@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import * as React from 'react';
 import { DialogTrigger } from '@/components/ui/dialog';
 import { BudgetFormDialog } from '@/components/budget/budget-form-dialog';
-import { Account, Budget, Category, Period } from '@prisma/client';
+import { Account, AccountType, Budget, Category, OperationType, Period } from '@prisma/client';
 import { CategoryImage } from '@/components/categories/category-image';
 import { useCustomFormatter } from '@/hooks/use-custom-formatter';
 import { currencyRound } from '@/lib/utils';
@@ -31,6 +31,10 @@ export const BudgetTable = ({
 
     const format = useCustomFormatter();
 
+    const accountSign = account.type == AccountType.credit ? -1 : 1;
+
+    let restTotal = 0;
+
     return (
         <Table>
             <TableHeader>
@@ -47,7 +51,12 @@ export const BudgetTable = ({
                     const planned = periodBudgets.get(category.id)?.value ?? 0;
                     const expected = periodTransactionSums.get(category.id)?.expected ?? 0;
                     const actual = periodTransactionSums.get(category.id)?.actual ?? 0;
-                    const restExpected = planned - expected;
+
+                    const sign = category.type === OperationType.debit ? -1 : 1;
+
+                    const restExpected = (planned - expected) * sign * accountSign;
+
+                    restTotal += restExpected;
 
                     let bgClassName = '';
 
@@ -122,9 +131,7 @@ export const BudgetTable = ({
                             </TableCell>
                         </>
                     )}
-                    <TableCell className="text-right">
-                        {format.narrowCurrency(periodTotal.planned - periodTotal.expected, currency)}
-                    </TableCell>
+                    <TableCell className="text-right">{format.narrowCurrency(restTotal, currency)}</TableCell>
                 </TableRow>
             </TableFooter>
         </Table>

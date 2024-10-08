@@ -5,7 +5,7 @@ import { Input } from '@/components/ui/input';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { Account, AccountType, Category, Transaction } from '@prisma/client';
+import { Account, AccountType, Category, Transaction, OperationType } from '@prisma/client';
 import { toast } from '@/hooks/use-toast';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useTransactionForm } from '@/hooks/use-transaction-form';
@@ -25,6 +25,7 @@ const TransactionFormSchema = z.object({
         .string()
         .min(2, { message: 'Name must be at least 2 characters.' })
         .max(80, { message: 'Name can be maximum 80 characters.' }),
+    type: z.enum([OperationType.debit, OperationType.credit]),
     value: z.coerce.number().gt(0, 'Must be greater than zero'),
 });
 
@@ -41,15 +42,22 @@ export const TransactionForm = ({ account, categories, transaction, onValid, but
 
     const [cookies, setCookie] = useCookies([lastCategoryCookieName]);
 
-    const lastCategoryId = categories.find((c) => c.id === cookies[lastCategoryCookieName])?.id;
+    const categoriesIndex = categories.reduce((acc, category) => {
+        acc.set(category.id, category);
+
+        return acc;
+    }, new Map<string, Category>());
+
+    const lastCategory = categoriesIndex.get(cookies[lastCategoryCookieName]);
 
     const form = useTransactionForm(transaction, {
         resolver: zodResolver(TransactionFormSchema),
         defaultValues: {
-            categoryId: transaction?.categoryId ?? lastCategoryId,
+            categoryId: transaction?.categoryId ?? lastCategory?.id,
             created: transaction?.created ?? new Date(),
             executed: transaction?.executed ?? (account.type === AccountType.credit ? null : new Date()),
             name: transaction?.name ?? '',
+            type: transaction?.type ?? lastCategory?.type ?? OperationType.credit,
             value: transaction?.value ?? 0,
         },
     });
@@ -131,6 +139,12 @@ export const TransactionForm = ({ account, categories, transaction, onValid, but
                                         if (!transaction) {
                                             setCookie(lastCategoryCookieName, value);
                                         }
+
+                                        const category = categoriesIndex.get(value);
+
+                                        if (category) {
+                                            form.setValue('type', category.type);
+                                        }
                                     }}
                                     value={field.value}
                                 >
@@ -164,10 +178,10 @@ export const TransactionForm = ({ account, categories, transaction, onValid, but
                         control={form.control}
                         name="name"
                         render={({ field }) => (
-                            <FormItem className="col-span-6 sm:col-span-4">
+                            <FormItem className="col-span-6">
                                 <FormLabel>Name</FormLabel>
                                 <FormControl>
-                                    <Input placeholder="New transaction" {...field} />
+                                    <Input placeholder="Payee and/or description" {...field} />
                                 </FormControl>
                                 <FormDescription className="hidden sm:block">
                                     Payee and/or description of the transaction.
@@ -178,9 +192,37 @@ export const TransactionForm = ({ account, categories, transaction, onValid, but
                     />
                     <FormField
                         control={form.control}
+                        name="type"
+                        render={({ field }) => (
+                            <FormItem className="col-span-2 sm:col-span-3">
+                                <FormLabel>Type</FormLabel>
+                                <Select onValueChange={field.onChange} value={field.value}>
+                                    <FormControl>
+                                        <SelectTrigger>
+                                            <SelectValue placeholder="Select transaction type" />
+                                        </SelectTrigger>
+                                    </FormControl>
+                                    <SelectContent>
+                                        <SelectItem key={OperationType.debit} value={OperationType.debit}>
+                                            Debit
+                                        </SelectItem>
+                                        <SelectItem key={OperationType.credit} value={OperationType.credit}>
+                                            Credit
+                                        </SelectItem>
+                                    </SelectContent>
+                                </Select>
+                                <FormDescription className="hidden sm:block">
+                                    Transaction type - debit (&quot;income&quot;) or credit (&quot;expense&quot;).
+                                </FormDescription>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+                    <FormField
+                        control={form.control}
                         name="value"
                         render={({ field }) => (
-                            <FormItem className="col-span-6 sm:col-span-2">
+                            <FormItem className="col-span-4 sm:col-span-3">
                                 <FormLabel>Value</FormLabel>
                                 <FormControl>
                                     <CurrencyInput placeholder="0.00" {...field} />

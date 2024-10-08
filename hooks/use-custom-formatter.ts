@@ -9,7 +9,7 @@ export const useCustomFormatter = () => {
             return value ? format.dateTime(value, 'short') : nullValue;
         },
         narrowCurrency(value: number, currency: string): string {
-            const roundValue = value < 0 && value > -0.01 ? Math.abs(value) : value;
+            const roundValue = Math.abs(value) < 0.01 ? Math.abs(value) : value;
             return format.number(roundValue, { style: 'currency', currency, currencyDisplay: 'narrowSymbol' });
         },
     };
