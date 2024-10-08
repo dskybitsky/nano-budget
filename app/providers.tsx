@@ -1,42 +1,23 @@
-// 'use client';
+"use client";
+import * as React from "react";
+import { NextUIProvider } from "@nextui-org/system";
+import { ThemeProvider as NextThemesProvider } from "next-themes";
+import { ThemeProviderProps } from "next-themes/dist/types";
 
-import { NextUIProvider } from '@nextui-org/react';
-import { NextIntlClientProvider } from 'next-intl';
-import { getMessages } from 'next-intl/server';
+export interface ProvidersProps {
+  children: React.ReactNode;
+  themeProps?: ThemeProviderProps;
+}
 
-export const Providers = async ({ children }: { children: React.ReactNode }) => {
-    const messages = await getMessages();
-
-    return (
-        <NextUIProvider>
-            <NextIntlClientProvider
-                messages={messages}
-                formats={{
-                    dateTime: {
-                        short: {
-                            day: 'numeric',
-                            month: 'short',
-                            year: 'numeric',
-                            hour: '2-digit',
-                            minute: 'numeric',
-                            hourCycle: 'h23',
-                        },
-                    },
-                    number: {
-                        precise: {
-                            maximumFractionDigits: 5,
-                        },
-                    },
-                    list: {
-                        enumeration: {
-                            style: 'long',
-                            type: 'conjunction',
-                        },
-                    },
-                }}
-            >
-                {children}
-            </NextIntlClientProvider>
-        </NextUIProvider>
-    );
-};
+export function Providers({ children, themeProps }: ProvidersProps) {
+  return (
+    <NextUIProvider>
+      <NextThemesProvider
+        defaultTheme='system'
+        attribute='class'
+        {...themeProps}>
+        {children}
+      </NextThemesProvider>
+    </NextUIProvider>
+  );
+}
