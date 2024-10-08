@@ -1,4 +1,4 @@
-import { Account, AccountType, Budget, Category, CategoryType, Period } from '@prisma/client';
+import { Account, AccountType, Budget, Category, Period, OperationType } from '@prisma/client';
 import { getAccountCategories } from '@/actions/category';
 import { getAccountTransactions } from '@/actions/transaction';
 import { getPeriodBudget } from '@/actions/budget';
@@ -45,17 +45,19 @@ export const indexBudget = async (accountId: string, periodId?: string): Promise
     }, new Map<string, Budget>());
 
     const transactionsSumsIndex = transactions.reduce((acc, transaction) => {
-        const { categoryId, value } = transaction;
+        const { category, type, value } = transaction;
 
-        let { expected, actual } = acc.get(categoryId) ?? { expected: 0, actual: 0 };
+        const sign = type === category.type ? 1 : -1;
 
-        expected += value;
+        let { expected, actual } = acc.get(category.id) ?? { expected: 0, actual: 0 };
+
+        expected += sign * value;
 
         if (transaction.executed) {
-            actual += value;
+            actual += sign * value;
         }
 
-        acc.set(categoryId, { expected, actual });
+        acc.set(category.id, { expected, actual });
         return acc;
     }, new Map<string, { expected: number; actual: number }>());
 
@@ -80,7 +82,7 @@ export const indexBudget = async (accountId: string, periodId?: string): Promise
 
     const periodTotal = categories.reduce(
         (acc, category) => {
-            const sign = category.type === CategoryType.debit ? 1 : -1;
+            const sign = category.type === OperationType.debit ? 1 : -1;
 
             acc.planned += accountSign * sign * (periodBudgets.get(category.id)?.value ?? 0);
             acc.expected += accountSign * sign * (periodTransactionSums.get(category.id)?.expected ?? 0);

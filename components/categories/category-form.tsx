@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { Category, CategoryType } from '@prisma/client';
+import { Category, OperationType } from '@prisma/client';
 import { useCategoryForm } from '@/hooks/use-category-form';
 import { useEffect } from 'react';
 import { toast } from '@/hooks/use-toast';
@@ -15,11 +15,11 @@ import { Button } from '@/components/ui/button';
 import { UseFormReturn } from 'react-hook-form';
 
 const CategoryFormSchema = z.object({
-    type: z.enum([CategoryType.debit, CategoryType.credit]),
     name: z
         .string()
         .min(2, { message: 'Name must be at least 2 characters.' })
         .max(80, { message: 'Name can be maximum 80 characters.' }),
+    type: z.enum([OperationType.debit, OperationType.credit]),
     icon: z.string().nullable(),
     order: z.coerce.number(),
 });
@@ -35,8 +35,8 @@ export const CategoryForm = ({ accountId, category, onValid, buttonsRender }: Ca
     const form = useCategoryForm(accountId, category, {
         resolver: zodResolver(CategoryFormSchema),
         defaultValues: {
-            type: category?.type ?? CategoryType.credit,
             name: category?.name ?? '',
+            type: category?.type ?? OperationType.credit,
             icon: category?.icon ?? '',
             order: category?.order ?? 0,
         },
@@ -70,6 +70,20 @@ export const CategoryForm = ({ accountId, category, onValid, buttonsRender }: Ca
                 <div className="space-y-4 py-2 pb-4">
                     <FormField
                         control={form.control}
+                        name="name"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Name</FormLabel>
+                                <FormControl>
+                                    <Input placeholder="New category" {...field} />
+                                </FormControl>
+                                <FormDescription className="hidden sm:block">Name of the category.</FormDescription>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+                    <FormField
+                        control={form.control}
                         name="type"
                         render={({ field }) => (
                             <FormItem>
@@ -81,32 +95,18 @@ export const CategoryForm = ({ accountId, category, onValid, buttonsRender }: Ca
                                         </SelectTrigger>
                                     </FormControl>
                                     <SelectContent>
-                                        <SelectItem key={CategoryType.debit} value={CategoryType.debit}>
+                                        <SelectItem key={OperationType.debit} value={OperationType.debit}>
                                             Debit
                                         </SelectItem>
-                                        <SelectItem key={CategoryType.credit} value={CategoryType.credit}>
+                                        <SelectItem key={OperationType.credit} value={OperationType.credit}>
                                             Credit
                                         </SelectItem>
                                     </SelectContent>
                                 </Select>
                                 <FormDescription className="hidden sm:block">
-                                    Choose the transaction type - debit (&quot;income&quot;) or credit
-                                    (&quot;expense&quot;).
+                                    Choose default transaction type for the category - debit (&quot;income&quot;) or
+                                    credit (&quot;expense&quot;).
                                 </FormDescription>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
-                    <FormField
-                        control={form.control}
-                        name="name"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>Name</FormLabel>
-                                <FormControl>
-                                    <Input placeholder="New category" {...field} />
-                                </FormControl>
-                                <FormDescription className="hidden sm:block">Name of the category.</FormDescription>
                                 <FormMessage />
                             </FormItem>
                         )}

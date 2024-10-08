@@ -1,6 +1,6 @@
 'use client';
 
-import { Account, Category, Period, Transaction } from '@prisma/client';
+import { Account, AccountType, Category, OperationType, Period, Transaction } from '@prisma/client';
 import {
     Table,
     TableBody,
@@ -63,6 +63,14 @@ export const TransactionsTable = ({
 
     const format = useCustomFormatter();
 
+    const getValue = (transaction: Transaction) => {
+        const accountSign = account.type == AccountType.credit ? -1 : 1;
+
+        const sign = transaction.type == OperationType.credit ? -1 : 1;
+
+        return accountSign * sign * transaction.value;
+    };
+
     return (
         <Table>
             <TableCaption>
@@ -100,7 +108,7 @@ export const TransactionsTable = ({
                             <div className="hidden sm:inline">{transaction.name}</div>
                         </TableCell>
                         <TableCell className="text-right">
-                            {format.narrowCurrency(transaction.value, currency)}
+                            {format.narrowCurrency(getValue(transaction), currency)}
                         </TableCell>
                         <TableCell className="text-center">
                             <TransactionFormDialog account={account} categories={categories} transaction={transaction}>
@@ -113,9 +121,6 @@ export const TransactionsTable = ({
                                     </DropdownMenuTrigger>
                                     <DropdownMenuContent align="end">
                                         <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                                        <DropdownMenuItem onClick={() => navigator.clipboard.writeText(transaction.id)}>
-                                            Copy transaction ID
-                                        </DropdownMenuItem>
                                         <DropdownMenuSeparator />
                                         <DialogTrigger asChild>
                                             <DropdownMenuItem>

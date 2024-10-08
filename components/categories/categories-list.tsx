@@ -1,6 +1,6 @@
 'use client';
 
-import { Category } from '@prisma/client';
+import { Category, OperationType } from '@prisma/client';
 import * as React from 'react';
 import { Button } from '@/components/ui/button';
 import { Pencil, Trash } from 'lucide-react';
@@ -19,7 +19,6 @@ import { DotsHorizontalIcon } from '@radix-ui/react-icons';
 import { DialogTrigger } from '@/components/ui/dialog';
 import { CategoryFormDialog } from '@/components/categories/category-form-dialog';
 import { CategoryImage } from '@/components/categories/category-image';
-import { CategoryTypeLabel } from '@/components/categories/category-type-label';
 
 interface CategoriesListProps extends React.HTMLAttributes<HTMLElement> {
     accountId: string;
@@ -47,7 +46,8 @@ export const CategoriesList = ({ accountId, categories }: CategoriesListProps) =
                     <div className="ml-4 space-y-1">
                         <p className="text-sm font-medium leading-none">{category.name}</p>
                         <p className="text-sm text-muted-foreground">
-                            #{category.order}: <CategoryTypeLabel type={category.type} /> category.
+                            #{category.order}: {category.type === OperationType.credit && <span>Credit</span>}
+                            {category.type === OperationType.debit && <span>Debit</span>} category.
                         </p>
                     </div>
                     <div className="ml-auto font-medium">

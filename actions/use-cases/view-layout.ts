@@ -1,7 +1,5 @@
-import { Account, AccountType, Category, CategoryType, Period } from '@prisma/client';
-import { getAccount, getAccounts } from '@/actions/account';
-import { getAccountCategories } from '@/actions/category';
-import { getAccountPeriods } from '@/actions/period';
+import { Account, AccountType, OperationType } from '@prisma/client';
+import { getAccounts } from '@/actions/account';
 import { getAccountTransactions } from '@/actions/transaction';
 
 export interface LayoutViewDto {
@@ -30,7 +28,7 @@ export const viewLayout = async (id: string | undefined): Promise<LayoutViewDto>
     const accountSign = account.type == AccountType.credit ? -1 : 1;
 
     transactions.forEach((transaction) => {
-        const sign = transaction.category.type === CategoryType.credit ? -1 : 1;
+        const sign = transaction.type === OperationType.credit ? -1 : 1;
 
         if (transaction.executed) {
             actual += accountSign * sign * transaction.value;
