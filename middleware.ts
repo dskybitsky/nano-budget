@@ -1,18 +1,21 @@
+import NextAuth from 'next-auth';
+import { authConfig } from '@/lib/auth';
+import { DEFAULT_REDIRECT, PUBLIC_ROUTES } from '@/lib/routes';
 import { NextResponse } from 'next/server';
-import type { NextRequest } from 'next/server';
 
-export function middleware(request: NextRequest) {
-    const { pathname } = request.nextUrl;
+const { auth } = NextAuth(authConfig);
 
-    if ((pathname === '/login' || pathname === '/register') && request.cookies.has('userAuth'))
-        return NextResponse.redirect(new URL('/', request.url));
+export default auth((req) => {
+    const { nextUrl } = req;
 
-    if ((pathname === '/' || pathname === '/accounts') && !request.cookies.has('userAuth'))
-        return NextResponse.redirect(new URL('/login', request.url));
+    const isAuthenticated = !!req.auth;
+    const isPublicRoute = PUBLIC_ROUTES.includes(nextUrl.pathname);
 
-    return NextResponse.next();
-}
+    if (isPublicRoute || isAuthenticated) return NextResponse.next();
+
+    return Response.redirect(new URL(DEFAULT_REDIRECT, nextUrl));
+});
 
 export const config = {
-    matcher: ['/', '/accounts', '/login', '/register'],
+    matcher: ['/((?!api|_next/static|_next/image|favicon.ico).*)'],
 };

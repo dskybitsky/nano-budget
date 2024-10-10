@@ -1,8 +1,9 @@
-import React from 'react';
-import { Login } from '@/components/auth/login';
+import { LoginForm } from '@/components/auth/login-form';
 
-const login = () => {
-    return <Login />;
+const Root = async () => {
+    return (
+        <LoginForm />
+    );
 };
 
-export default login;
+export default Root;
