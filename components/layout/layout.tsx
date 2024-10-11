@@ -4,13 +4,17 @@ import React from 'react';
 import { useLockedBody } from '../hooks/useBodyLock';
 import { NavbarWrapper } from '../navbar/navbar';
 import { SidebarWrapper } from '../sidebar/sidebar';
-import { SidebarContext } from './layout-context';
+import { LayoutContext } from './layout-context';
+import { LayoutViewDto } from '@/actions/use-cases/view-layout';
+import { Account } from '@prisma/client';
 
 interface Props {
     children: React.ReactNode;
+    dto: LayoutViewDto;
+    account?: Account;
 }
 
-export const Layout = ({ children }: Props) => {
+export const Layout = ({ children, dto, account }: Props) => {
     const [sidebarOpen, setSidebarOpen] = React.useState(false);
     const [_, setLocked] = useLockedBody(false);
     const handleToggleSidebar = () => {
@@ -19,16 +23,18 @@ export const Layout = ({ children }: Props) => {
     };
 
     return (
-        <SidebarContext.Provider
+        <LayoutContext.Provider
             value={{
                 collapsed: sidebarOpen,
                 setCollapsed: handleToggleSidebar,
+                dto,
+                account,
             }}
         >
             <section className="flex">
                 <SidebarWrapper />
                 <NavbarWrapper>{children}</NavbarWrapper>
             </section>
-        </SidebarContext.Provider>
+        </LayoutContext.Provider>
     );
 };

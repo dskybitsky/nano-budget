@@ -1,17 +1,22 @@
-"use client";
+'use client';
 
-import { createContext, useContext } from "react";
+import { createContext, useContext } from 'react';
+import { LayoutViewDto } from '@/actions/use-cases/view-layout';
+import { Account } from '@prisma/client';
 
-interface SidebarContext {
-  collapsed: boolean;
-  setCollapsed: () => void;
+interface LayoutContext {
+    collapsed: boolean;
+    setCollapsed: () => void;
+    dto: LayoutViewDto;
+    account?: Account;
 }
 
-export const SidebarContext = createContext<SidebarContext>({
-  collapsed: false,
-  setCollapsed: () => {},
+export const LayoutContext = createContext<LayoutContext>({
+    collapsed: false,
+    setCollapsed: () => {},
+    dto: { accounts: [] },
 });
 
-export const useSidebarContext = () => {
-  return useContext(SidebarContext);
+export const useLayoutContext = () => {
+    return useContext(LayoutContext);
 };
