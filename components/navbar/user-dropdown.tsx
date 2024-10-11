@@ -1,4 +1,14 @@
-import { Avatar, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger, Navbar, NavbarItem } from '@nextui-org/react';
+import {
+    Avatar,
+    Dropdown,
+    DropdownItem,
+    DropdownMenu,
+    DropdownSection,
+    DropdownTrigger,
+    Navbar,
+    NavbarItem,
+    User,
+} from '@nextui-org/react';
 import React, { useCallback } from 'react';
 import { DarkModeSwitch } from './darkmodeswitch';
 import { logout } from '@/actions/auth';
@@ -20,20 +30,34 @@ export const UserDropdown = () => {
                         as="button"
                         color="secondary"
                         size="md"
-                        src="https://i.pravatar.cc/150?u=a042581f4e29026704d"
+                        src="https://avatars.githubusercontent.com/u/30373425?v=4"
                     />
                 </DropdownTrigger>
             </NavbarItem>
             <DropdownMenu aria-label="User menu actions" onAction={(actionKey) => console.log({ actionKey })}>
-                <DropdownItem key="profile" className="flex flex-col justify-start w-full items-start">
-                    <p>Signed in as</p>
-                    <p>{user?.email}</p>
-                </DropdownItem>
-                <DropdownItem key="preferences">Preferences</DropdownItem>
-                <DropdownItem key="help_and_feedback">Help & Feedback</DropdownItem>
-                <DropdownItem key="logout" color="danger" className="text-danger" onPress={handleLogout}>
-                    Log Out
-                </DropdownItem>
+                <DropdownSection showDivider>
+                    <DropdownItem isReadOnly key="profile" className="flex flex-col justify-start w-full items-start">
+                        <User
+                            name={user?.name}
+                            description={user?.email}
+                            classNames={{
+                                name: 'text-default-600',
+                                description: 'text-default-500',
+                            }}
+                            avatarProps={{
+                                size: 'sm',
+                                src: 'https://avatars.githubusercontent.com/u/30373425?v=4',
+                            }}
+                        />
+                    </DropdownItem>
+                </DropdownSection>
+                <DropdownSection showDivider>
+                    <DropdownItem key="preferences">Preferences</DropdownItem>
+                    <DropdownItem key="help_and_feedback">Help & Feedback</DropdownItem>
+                    <DropdownItem key="logout" color="danger" className="text-danger" onPress={handleLogout}>
+                        Log Out
+                    </DropdownItem>
+                </DropdownSection>
                 <DropdownItem key="switch">
                     <DarkModeSwitch />
                 </DropdownItem>
