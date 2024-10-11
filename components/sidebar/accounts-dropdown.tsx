@@ -6,6 +6,7 @@ import { BottomIcon } from '../icons/sidebar/bottom-icon';
 import { useLayoutContext } from '@/components/layout/layout-context';
 import { Account } from '@prisma/client';
 import { AccountDropdownImage } from '@/components/sidebar/account-dropdown-image';
+import { useRouter } from 'next/navigation';
 
 export const AccountsDropdown = () => {
     const { dto, account: contextAccount } = useLayoutContext();
@@ -13,6 +14,8 @@ export const AccountsDropdown = () => {
     const [account, setAccount] = useState<Account | undefined>(contextAccount);
 
     const [_, setCookie] = useCookies(['accountId']);
+
+    const router = useRouter();
 
     return (
         <Dropdown
@@ -22,9 +25,9 @@ export const AccountsDropdown = () => {
         >
             <DropdownTrigger className="cursor-pointer">
                 <div className="flex items-center gap-2">
-                    {account && <AccountDropdownImage account={account} />}
-                    <div className="flex flex-col gap-4">
-                        <h3 className="text-xl font-medium m-0 text-default-900 -mb-4 whitespace-nowrap">
+                    <div>{account && <AccountDropdownImage account={account} />}</div>
+                    <div className="flex flex-col gap-4 max-w-[140px]">
+                        <h3 className="text-xl font-medium m-0 text-default-900 -mb-4 whitespace-nowrap overflow-hidden overflow-ellipsis">
                             {account?.name ?? 'Choose account'}
                         </h3>
                         <span className="text-xs font-medium text-default-500">Description here</span>
@@ -36,6 +39,7 @@ export const AccountsDropdown = () => {
                 onAction={(accountId) => {
                     setAccount(dto.accounts.find((a) => a.id === accountId));
                     setCookie('accountId', accountId, { maxAge: 31536000 });
+                    router.refresh();
                 }}
                 aria-label="Avatar Actions"
             >

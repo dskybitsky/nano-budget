@@ -7,14 +7,16 @@ import { SidebarWrapper } from '../sidebar/sidebar';
 import { LayoutContext } from './layout-context';
 import { LayoutViewDto } from '@/actions/use-cases/view-layout';
 import { Account } from '@prisma/client';
+import { User } from 'next-auth';
 
 interface Props {
     children: React.ReactNode;
     dto: LayoutViewDto;
     account?: Account;
+    user?: User;
 }
 
-export const Layout = ({ children, dto, account }: Props) => {
+export const Layout = ({ children, dto, account, user }: Props) => {
     const [sidebarOpen, setSidebarOpen] = React.useState(false);
     const [_, setLocked] = useLockedBody(false);
     const handleToggleSidebar = () => {
@@ -29,6 +31,7 @@ export const Layout = ({ children, dto, account }: Props) => {
                 setCollapsed: handleToggleSidebar,
                 dto,
                 account,
+                user,
             }}
         >
             <section className="flex">

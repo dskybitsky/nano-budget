@@ -19,10 +19,11 @@ import { FilterIcon } from '../icons/sidebar/filter-icon';
 import { useLayoutContext } from '../layout/layout-context';
 import { ChangeLogIcon } from '../icons/sidebar/changelog-icon';
 import { usePathname } from 'next/navigation';
+import { SidebarBalanceCard } from '@/components/sidebar/sidebar-balance-card';
 
 export const SidebarWrapper = () => {
     const pathname = usePathname();
-    const { collapsed, setCollapsed } = useLayoutContext();
+    const { collapsed, setCollapsed, dto, account } = useLayoutContext();
 
     return (
         <aside className="h-screen z-[20] sticky top-0">
@@ -45,24 +46,17 @@ export const SidebarWrapper = () => {
                                 icon={<AccountsIcon />}
                                 href="accounts"
                             />
-                            <SidebarItem isActive={pathname === '/payments'} title="Payments" icon={<PaymentsIcon />} />
-                            <CollapseItems
-                                icon={<BalanceIcon />}
-                                items={['Banks Accounts', 'Credit Cards', 'Loans']}
-                                title="Balances"
-                            />
                             <SidebarItem
-                                isActive={pathname === '/customers'}
-                                title="Customers"
-                                icon={<CustomersIcon />}
+                                isActive={pathname === '/transactions'}
+                                title="Transactions"
+                                icon={<PaymentsIcon />}
                             />
-                            <SidebarItem isActive={pathname === '/products'} title="Products" icon={<ProductsIcon />} />
+                            <SidebarItem isActive={pathname === '/budget'} title="Budget" icon={<BalanceIcon />} />
                             <SidebarItem isActive={pathname === '/reports'} title="Reports" icon={<ReportsIcon />} />
                         </SidebarMenu>
 
-                        <SidebarMenu title="General">
-                            <SidebarItem isActive={pathname === '/developers'} title="Developers" icon={<DevIcon />} />
-                            <SidebarItem isActive={pathname === '/view'} title="View Test Data" icon={<ViewIcon />} />
+                        <SidebarMenu title="Data">
+                            <SidebarItem isActive={pathname === '/import'} title="Import" icon={<ViewIcon />} />
                             <SidebarItem isActive={pathname === '/settings'} title="Settings" icon={<SettingsIcon />} />
                         </SidebarMenu>
 
@@ -75,19 +69,11 @@ export const SidebarWrapper = () => {
                         </SidebarMenu>
                     </div>
                     <div className={Sidebar.Footer()}>
-                        <Tooltip content={'Settings'} color="primary">
-                            <div className="max-w-fit">
-                                <SettingsIcon />
-                            </div>
-                        </Tooltip>
-                        <Tooltip content={'Adjustments'} color="primary">
-                            <div className="max-w-fit">
-                                <FilterIcon />
-                            </div>
-                        </Tooltip>
-                        <Tooltip content={'Profile'} color="primary">
-                            <Avatar src="https://i.pravatar.cc/150?u=a042581f4e29026704d" size="sm" />
-                        </Tooltip>
+                        {account && dto.accountBalance && (
+                            <Tooltip content={'Profile'} color="primary">
+                                <SidebarBalanceCard currency={account.currency} balance={dto.accountBalance} />
+                            </Tooltip>
+                        )}
                     </div>
                 </div>
             </div>

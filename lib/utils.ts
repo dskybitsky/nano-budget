@@ -8,3 +8,7 @@ export function cn(...inputs: ClassValue[]) {
 export function currencyRound(value: number): number {
     return Math.round((value + Number.EPSILON) * 100) / 100;
 }
+
+export function currencyRoundAbs(value: number): number {
+    return Math.abs(currencyRound(value));
+}
