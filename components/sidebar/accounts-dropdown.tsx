@@ -7,15 +7,20 @@ import { useLayoutContext } from '@/components/layout/layout-context';
 import { Account } from '@prisma/client';
 import { AccountDropdownImage } from '@/components/sidebar/account-dropdown-image';
 import { useRouter } from 'next/navigation';
+import { useCustomFormatter } from '@/hooks/use-custom-formatter';
+import { Balance, WithBalance } from '@/types/balance';
+import { currencyRoundAbs } from '@/lib/utils';
 
 export const AccountsDropdown = () => {
     const { dto, account: contextAccount } = useLayoutContext();
 
-    const [account, setAccount] = useState<Account | undefined>(contextAccount);
+    const [account, setAccount] = useState<WithBalance<Account> | undefined>(contextAccount);
 
     const [_, setCookie] = useCookies(['accountId']);
 
     const router = useRouter();
+
+    const format = useCustomFormatter();
 
     return (
         <Dropdown
@@ -30,7 +35,9 @@ export const AccountsDropdown = () => {
                         <h3 className="text-xl font-medium m-0 text-default-900 -mb-4 whitespace-nowrap overflow-hidden overflow-ellipsis">
                             {account?.name ?? 'Choose account'}
                         </h3>
-                        <span className="text-xs font-medium text-default-500">Description here</span>
+                        <span className="text-xs font-medium text-default-500">
+                            {account ? formatAccountBalance(format, account) : '-'}
+                        </span>
                     </div>
                     <BottomIcon />
                 </div>
@@ -48,7 +55,7 @@ export const AccountsDropdown = () => {
                         <DropdownItem
                             key={account.id}
                             startContent={<AccountDropdownImage account={account} />}
-                            description={account.type}
+                            description={formatAccountBalance(format, account)}
                             classNames={{
                                 base: 'py-4',
                                 title: 'text-base font-semibold',
@@ -61,4 +68,17 @@ export const AccountsDropdown = () => {
             </DropdownMenu>
         </Dropdown>
     );
+};
+
+const formatAccountBalance = (
+    format: ReturnType<typeof useCustomFormatter>,
+    account: WithBalance<Account>,
+): string => {
+    let result = `Balance: ${format.narrowCurrency(account.balance.actual, account.currency)}`;
+
+    if (currencyRoundAbs(account.balance.actual - account.balance.expected) > 0) {
+        result = `${result} (→${format.narrowCurrency(account.balance.actual, account.currency)})`;
+    }
+
+    return result;
 };
