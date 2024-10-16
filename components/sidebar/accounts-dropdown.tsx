@@ -17,7 +17,7 @@ export const AccountsDropdown = () => {
     const currentAccount = dto.accounts.find((a) => a.id === accountId);
 
     const [account, setAccount] = useState<WithBalance<Account> | undefined>(currentAccount);
-
+console.log(currentAccount);
     const [_, setCookie] = useCookies(['accountId']);
 
     const router = useRouter();

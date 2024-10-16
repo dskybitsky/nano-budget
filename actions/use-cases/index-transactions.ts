@@ -1,19 +1,42 @@
+'use server';
+
 import { Account, AccountType, Category, Period, Transaction, OperationType } from '@prisma/client';
 import { getAccountCategories } from '@/actions/category';
 import { getAccountTransactions } from '@/actions/transaction';
 import { getAccountPeriods } from '@/actions/period';
 import { getAccount } from '@/actions/account';
+import { cookies } from 'next/headers';
 
-export interface TransactionsIndexDto {
+export type TransactionsIndexDto =
+    | {
+          account: Account;
+          periods: Period[];
+          categories: Category[];
+          period: Period;
+          periodTransactions: (Transaction & { category: Category })[];
+          periodTotal: { expected: number; actual: number };
+      }
+    | TransactionIndexAccountMissingErrorDto
+    | TransactionIndexPeriodMissingErrorDto;
+
+export type TransactionIndexAccountMissingErrorDto = {
+    error: 'account-missing';
+};
+
+export type TransactionIndexPeriodMissingErrorDto = {
+    error: 'period-missing';
     account: Account;
     periods: Period[];
     categories: Category[];
-    period?: Period;
-    periodTransactions?: (Transaction & { category: Category })[];
-    periodTotal?: { expected: number; actual: number };
-}
+};
 
-export const indexTransactions = async (accountId: string, periodId?: string): Promise<TransactionsIndexDto | null> => {
+export const indexTransactions = async (): Promise<TransactionsIndexDto> => {
+    const accountId = cookies().get('accountId')?.value;
+
+    if (!accountId) {
+        return { error: 'account-missing' };
+    }
+
     const [account, periods, categories] = await Promise.all([
         getAccount(accountId),
         getAccountPeriods(accountId),
@@ -21,14 +44,15 @@ export const indexTransactions = async (accountId: string, periodId?: string): P
     ]);
 
     if (!account) {
-        return null;
+        return { error: 'account-missing' };
     }
 
-    let period = periods.find((p) => p.id === periodId);
+    const periodId = cookies().get(`${accountId}_periodId`)?.value;
+
+    const period = periods.find((p) => p.id === periodId);
 
     if (!period) {
-        period = periods[0];
-        //return { account, periods, categories };
+        return { error: 'period-missing', account, periods, categories };
     }
 
     const { started, ended } = period;

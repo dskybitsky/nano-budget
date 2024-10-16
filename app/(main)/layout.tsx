@@ -10,8 +10,6 @@ const RootLayout = async ({ children }: { children: React.ReactNode }) => {
 
     const layoutViewDto = await viewLayout();
 
-    const account = accountId ? layoutViewDto.accounts.find((a) => a.id === accountId) : undefined;
-
     const session = await auth();
 
     const appInfo = {
@@ -20,7 +18,7 @@ const RootLayout = async ({ children }: { children: React.ReactNode }) => {
     };
 
     return (
-        <Layout dto={layoutViewDto} account={account} user={session?.user} appInfo={appInfo}>
+        <Layout dto={layoutViewDto} accountId={accountId} user={session?.user} appInfo={appInfo}>
             {children}
         </Layout>
     );
