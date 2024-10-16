@@ -24,10 +24,11 @@ export const indexTransactions = async (accountId: string, periodId?: string): P
         return null;
     }
 
-    const period = periods.find((p) => p.id === periodId);
+    let period = periods.find((p) => p.id === periodId);
 
     if (!period) {
-        return { account, periods, categories };
+        period = periods[0];
+        //return { account, periods, categories };
     }
 
     const { started, ended } = period;

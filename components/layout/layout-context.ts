@@ -2,16 +2,15 @@
 
 import { createContext, useContext } from 'react';
 import { LayoutViewDto } from '@/actions/use-cases/view-layout';
-import { Account } from '@prisma/client';
 import { User } from 'next-auth';
-import { WithBalance } from '@/types/balance';
 import { AppInfo } from '@/types/app-info';
 
 interface LayoutContext {
     collapsed: boolean;
     setCollapsed: () => void;
     dto: LayoutViewDto;
-    account?: WithBalance<Account>;
+    accountId?: string;
+    periodId?: string;
     user?: User;
     appInfo?: AppInfo;
 }

@@ -8,13 +8,15 @@ import { Account } from '@prisma/client';
 import { AccountDropdownImage } from '@/components/sidebar/account-dropdown-image';
 import { useRouter } from 'next/navigation';
 import { useCustomFormatter } from '@/hooks/use-custom-formatter';
-import { Balance, WithBalance } from '@/types/balance';
+import { WithBalance } from '@/types/balance';
 import { currencyRoundAbs } from '@/lib/utils';
 
 export const AccountsDropdown = () => {
-    const { dto, account: contextAccount } = useLayoutContext();
+    const { dto, accountId } = useLayoutContext();
 
-    const [account, setAccount] = useState<WithBalance<Account> | undefined>(contextAccount);
+    const currentAccount = dto.accounts.find((a) => a.id === accountId);
+
+    const [account, setAccount] = useState<WithBalance<Account> | undefined>(currentAccount);
 
     const [_, setCookie] = useCookies(['accountId']);
 
@@ -70,10 +72,7 @@ export const AccountsDropdown = () => {
     );
 };
 
-const formatAccountBalance = (
-    format: ReturnType<typeof useCustomFormatter>,
-    account: WithBalance<Account>,
-): string => {
+const formatAccountBalance = (format: ReturnType<typeof useCustomFormatter>, account: WithBalance<Account>): string => {
     let result = `Balance: ${format.narrowCurrency(account.balance.actual, account.currency)}`;
 
     if (currencyRoundAbs(account.balance.actual - account.balance.expected) > 0) {
