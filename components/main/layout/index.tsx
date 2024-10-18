@@ -1,13 +1,13 @@
 'use client';
 
 import React from 'react';
-import { useLockedBody } from '../hooks/useBodyLock';
-import { NavbarWrapper } from '../navbar/navbar';
-import { SidebarWrapper } from '../sidebar/sidebar';
-import { LayoutContext } from './layout-context';
+import { NavbarWrapper } from '@/components/main/layout/navbar/navbar';
+import { SidebarWrapper } from '@/components/main/layout/sidebar/sidebar';
+import { MainLayoutContext } from './main-layout-context';
 import { LayoutViewDto } from '@/actions/use-cases/view-layout';
 import { User } from 'next-auth';
 import { AppInfo } from '@/types/app-info';
+import { useLockedBody } from '@/hooks/use-body-lock';
 
 interface Props {
     children: React.ReactNode;
@@ -18,7 +18,7 @@ interface Props {
     appInfo?: AppInfo;
 }
 
-export const Layout = ({ children, dto, accountId, periodId, user, appInfo }: Props) => {
+export const MainLayout = ({ children, dto, accountId, periodId, user, appInfo }: Props) => {
     const [sidebarOpen, setSidebarOpen] = React.useState(false);
     const [_, setLocked] = useLockedBody(false);
     const handleToggleSidebar = () => {
@@ -27,7 +27,7 @@ export const Layout = ({ children, dto, accountId, periodId, user, appInfo }: Pr
     };
 
     return (
-        <LayoutContext.Provider
+        <MainLayoutContext.Provider
             value={{
                 collapsed: sidebarOpen,
                 setCollapsed: handleToggleSidebar,
@@ -42,6 +42,6 @@ export const Layout = ({ children, dto, accountId, periodId, user, appInfo }: Pr
                 <SidebarWrapper />
                 <NavbarWrapper>{children}</NavbarWrapper>
             </section>
-        </LayoutContext.Provider>
+        </MainLayoutContext.Provider>
     );
 };

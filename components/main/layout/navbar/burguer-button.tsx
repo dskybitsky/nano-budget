@@ -1,9 +1,9 @@
 import React from 'react';
-import { useLayoutContext } from '../layout/layout-context';
+import { useMainLayoutContext } from '../main-layout-context';
 import { StyledBurgerButton } from './navbar.styles';
 
 export const BurguerButton = () => {
-    const { collapsed, setCollapsed } = useLayoutContext();
+    const { collapsed, setCollapsed } = useMainLayoutContext();
 
     return (
         <div

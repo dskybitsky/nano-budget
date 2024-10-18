@@ -1,6 +1,6 @@
 "use client";
 import React, { useState } from "react";
-import { ChevronDownIcon } from "../icons/sidebar/chevron-down-icon";
+import { ChevronDownIcon } from "../../../icons/sidebar/chevron-down-icon";
 import { Accordion, AccordionItem } from "@nextui-org/react";
 import clsx from "clsx";
 

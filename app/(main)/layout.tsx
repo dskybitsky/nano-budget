@@ -1,11 +1,11 @@
-import { Layout } from '@/components/layout/layout';
+import { MainLayout } from '@/components/main/layout';
 import '@/styles/globals.css';
 import React from 'react';
 import { cookies } from 'next/headers';
 import { viewLayout } from '@/actions/use-cases/view-layout';
 import { auth } from '@/lib/auth';
 
-const RootLayout = async ({ children }: { children: React.ReactNode }) => {
+const layout = async ({ children }: { children: React.ReactNode }) => {
     const accountId = cookies().get('accountId')?.value;
     const periodId = cookies().get(`${accountId}_periodId`)?.value;
 
@@ -19,10 +19,16 @@ const RootLayout = async ({ children }: { children: React.ReactNode }) => {
     };
 
     return (
-        <Layout dto={layoutViewDto} accountId={accountId} periodId={periodId} user={session?.user} appInfo={appInfo}>
+        <MainLayout
+            dto={layoutViewDto}
+            accountId={accountId}
+            periodId={periodId}
+            user={session?.user}
+            appInfo={appInfo}
+        >
             {children}
-        </Layout>
+        </MainLayout>
     );
 };
 
-export default RootLayout;
+export default layout;

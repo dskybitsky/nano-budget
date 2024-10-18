@@ -1,9 +1,7 @@
 import { LoginForm } from '@/components/auth/login-form';
 
-const Root = async () => {
-    return (
-        <LoginForm />
-    );
+const page = async () => {
+    return <LoginForm />;
 };
 
-export default Root;
+export default page;

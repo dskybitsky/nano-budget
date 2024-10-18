@@ -12,15 +12,14 @@ import {
 import React, { useCallback } from 'react';
 import { DarkModeSwitch } from './darkmodeswitch';
 import { logout } from '@/actions/auth';
-import { useLayoutContext } from '@/components/layout/layout-context';
-import { CollectionElement } from '@react-types/shared';
+import { useMainLayoutContext } from '@/components/main/layout/main-layout-context';
 
 export const UserDropdown = () => {
     const handleLogout = useCallback(async () => {
         await logout();
     }, []);
 
-    const { user } = useLayoutContext();
+    const { user } = useMainLayoutContext();
 
     return (
         <Dropdown>

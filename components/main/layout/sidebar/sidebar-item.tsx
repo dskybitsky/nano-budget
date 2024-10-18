@@ -1,6 +1,6 @@
 import NextLink from 'next/link';
 import React from 'react';
-import { useLayoutContext } from '../layout/layout-context';
+import { useMainLayoutContext } from '../main-layout-context';
 import clsx from 'clsx';
 
 interface Props {
@@ -11,7 +11,7 @@ interface Props {
 }
 
 export const SidebarItem = ({ icon, title, isActive, href = '' }: Props) => {
-    const { collapsed, setCollapsed } = useLayoutContext();
+    const { collapsed, setCollapsed } = useMainLayoutContext();
 
     const handleClick = () => {
         if (window.innerWidth < 768) {

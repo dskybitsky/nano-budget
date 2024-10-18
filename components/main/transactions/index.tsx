@@ -6,19 +6,19 @@ import { ExportIcon } from '@/components/icons/accounts/export-icon';
 import { InfoIcon } from '@/components/icons/accounts/info-icon';
 import { TrashIcon } from '@/components/icons/accounts/trash-icon';
 import { SettingsIcon } from '@/components/icons/sidebar/settings-icon';
-import { TransactionForm } from './transaction-form';
 import { TransactionsIndexDto } from '@/actions/use-cases/index-transactions';
-import { TransactionsTable } from '@/components/transactions/table';
-import { Page } from '@/components/page/page';
-import PeriodSwitcher from '@/components/transactions/period-switcher';
-import { useLayoutContext } from '@/components/layout/layout-context';
+import { TransactionsTable } from '@/components/main/transactions/table';
+import { TransactionForm } from '@/components/main/transactions/form';
+import { Page } from '@/components/main/layout/page';
+import PeriodSwitcher from '@/components/controls/period-switcher';
+import { useMainLayoutContext } from '@/components/main/layout/main-layout-context';
 
 interface TransactionsProps {
     dto: TransactionsIndexDto;
 }
 
 export const Transactions = ({ dto }: TransactionsProps) => {
-    const { periodId } = useLayoutContext();
+    const { periodId } = useMainLayoutContext();
 
     if ('error' in dto) {
         switch (dto.error) {

@@ -2,17 +2,17 @@
 import { Dropdown, DropdownItem, DropdownMenu, DropdownSection, DropdownTrigger } from '@nextui-org/react';
 import React, { useState } from 'react';
 import { useCookies } from 'react-cookie';
-import { BottomIcon } from '../icons/sidebar/bottom-icon';
-import { useLayoutContext } from '@/components/layout/layout-context';
+import { BottomIcon } from '../../../icons/sidebar/bottom-icon';
+import { useMainLayoutContext } from '@/components/main/layout/main-layout-context';
 import { Account } from '@prisma/client';
-import { AccountDropdownImage } from '@/components/sidebar/account-dropdown-image';
+import { AccountDropdownImage } from '@/components/main/layout/sidebar/account-dropdown-image';
 import { useRouter } from 'next/navigation';
 import { useCustomFormatter } from '@/hooks/use-custom-formatter';
 import { WithBalance } from '@/types/balance';
 import { currencyRoundAbs } from '@/lib/utils';
 
 export const AccountsDropdown = () => {
-    const { dto, accountId } = useLayoutContext();
+    const { dto, accountId } = useMainLayoutContext();
 
     const currentAccount = dto.accounts.find((a) => a.id === accountId);
 

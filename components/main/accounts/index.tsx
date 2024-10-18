@@ -9,7 +9,7 @@ import { TrashIcon } from "@/components/icons/accounts/trash-icon";
 import { HouseIcon } from "@/components/icons/breadcrumb/house-icon";
 import { UsersIcon } from "@/components/icons/breadcrumb/users-icon";
 import { SettingsIcon } from "@/components/icons/sidebar/settings-icon";
-import { TableWrapper } from "@/components/table/table";
+import { TableWrapper } from "@/components/main/table/table";
 import { AddUser } from "./add-user";
 
 export const Accounts = () => {
@@ -18,7 +18,7 @@ export const Accounts = () => {
       <ul className="flex">
         <li className="flex gap-2">
           <HouseIcon />
-          <Link href={"/"}>
+          <Link href={"/public"}>
             <span>Home</span>
           </Link>
           <span> / </span>{" "}

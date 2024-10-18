@@ -14,7 +14,7 @@ export const Page = ({ title, children }: Props) => {
             <ul className="flex">
                 <li className="flex gap-2">
                     <HouseIcon />
-                    <Link href={'/'}>
+                    <Link href={'/public'}>
                         <span>Home</span>
                     </Link>
                     <span> / </span>{' '}

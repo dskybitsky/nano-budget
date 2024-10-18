@@ -5,7 +5,7 @@ import { LayoutViewDto } from '@/actions/use-cases/view-layout';
 import { User } from 'next-auth';
 import { AppInfo } from '@/types/app-info';
 
-interface LayoutContext {
+interface MainLayoutContext {
     collapsed: boolean;
     setCollapsed: () => void;
     dto: LayoutViewDto;
@@ -15,12 +15,12 @@ interface LayoutContext {
     appInfo?: AppInfo;
 }
 
-export const LayoutContext = createContext<LayoutContext>({
+export const MainLayoutContext = createContext<MainLayoutContext>({
     collapsed: false,
     setCollapsed: () => {},
     dto: { accounts: [] },
 });
 
-export const useLayoutContext = () => {
-    return useContext(LayoutContext);
+export const useMainLayoutContext = () => {
+    return useContext(MainLayoutContext);
 };
