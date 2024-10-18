@@ -29,14 +29,17 @@ export const LoginForm = () => {
         formState: { errors },
     } = form;
 
-    console.log(errors);
-
     return (
         <>
             <div className="text-center text-[25px] font-bold mb-6">Login</div>
 
             <FormProvider {...form}>
-                <form onSubmit={form.handleSubmit(async () => { console.log('submit')})} className="w-1/2">
+                <form
+                    onSubmit={form.handleSubmit(async () => {
+                        console.log('submit');
+                    })}
+                    className="w-1/2"
+                >
                     <div className="flex flex-col w-full gap-4 mb-4">
                         <Controller
                             name="email"

@@ -8,16 +8,18 @@ import { getAccount } from '@/actions/account';
 import { cookies } from 'next/headers';
 
 export type TransactionsIndexDto =
-    | {
-          account: Account;
-          periods: Period[];
-          categories: Category[];
-          period: Period;
-          periodTransactions: (Transaction & { category: Category })[];
-          periodTotal: { expected: number; actual: number };
-      }
+    | TransactionsIndexSuccessDto
     | TransactionIndexAccountMissingErrorDto
     | TransactionIndexPeriodMissingErrorDto;
+
+export type TransactionsIndexSuccessDto = {
+    account: Account;
+    periods: Period[];
+    categories: Category[];
+    period: Period;
+    periodTransactions: (Transaction & { category: Category })[];
+    periodTotal: { expected: number; actual: number };
+};
 
 export type TransactionIndexAccountMissingErrorDto = {
     error: 'account-missing';

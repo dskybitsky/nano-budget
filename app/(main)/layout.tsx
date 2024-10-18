@@ -7,6 +7,7 @@ import { auth } from '@/lib/auth';
 
 const RootLayout = async ({ children }: { children: React.ReactNode }) => {
     const accountId = cookies().get('accountId')?.value;
+    const periodId = cookies().get(`${accountId}_periodId`)?.value;
 
     const layoutViewDto = await viewLayout();
 
@@ -18,7 +19,7 @@ const RootLayout = async ({ children }: { children: React.ReactNode }) => {
     };
 
     return (
-        <Layout dto={layoutViewDto} accountId={accountId} user={session?.user} appInfo={appInfo}>
+        <Layout dto={layoutViewDto} accountId={accountId} periodId={periodId} user={session?.user} appInfo={appInfo}>
             {children}
         </Layout>
     );

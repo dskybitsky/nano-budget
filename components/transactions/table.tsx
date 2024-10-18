@@ -1,13 +1,13 @@
 import { Table, TableBody, TableCell, TableColumn, TableHeader, TableRow, Tooltip } from '@nextui-org/react';
 import React from 'react';
-import { TransactionsIndexDto } from '@/actions/use-cases/index-transactions';
+import { TransactionsIndexSuccessDto } from '@/actions/use-cases/index-transactions';
 import { useCustomFormatter } from '@/hooks/use-custom-formatter';
 import { EyeIcon } from '@/components/icons/table/eye-icon';
 import { EditIcon } from '@/components/icons/table/edit-icon';
 import { DeleteIcon } from '@/components/icons/table/delete-icon';
 
 interface TransactionsTableProps {
-    dto: TransactionsIndexDto;
+    dto: TransactionsIndexSuccessDto;
 }
 
 export const TransactionsTable = ({ dto }: TransactionsTableProps) => {
@@ -27,8 +27,8 @@ export const TransactionsTable = ({ dto }: TransactionsTableProps) => {
                     </TableColumn>
                 </TableHeader>
                 <TableBody>
-                    {dto.periodTransactions!.map((transaction) => (
-                        <TableRow>
+                    {dto.periodTransactions.map((transaction) => (
+                        <TableRow key={transaction.id}>
                             <TableCell>{format.dateTimeShort(transaction.created)}</TableCell>
                             <TableCell className="hidden sm:table-cell">
                                 {format.dateTimeShort(transaction.executed)}

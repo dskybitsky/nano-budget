@@ -6,16 +6,20 @@ import { ExportIcon } from '@/components/icons/accounts/export-icon';
 import { InfoIcon } from '@/components/icons/accounts/info-icon';
 import { TrashIcon } from '@/components/icons/accounts/trash-icon';
 import { SettingsIcon } from '@/components/icons/sidebar/settings-icon';
-import { AddUser } from './add-user';
+import { TransactionForm } from './transaction-form';
 import { TransactionsIndexDto } from '@/actions/use-cases/index-transactions';
 import { TransactionsTable } from '@/components/transactions/table';
 import { Page } from '@/components/page/page';
+import PeriodSwitcher from '@/components/transactions/period-switcher';
+import { useLayoutContext } from '@/components/layout/layout-context';
 
 interface TransactionsProps {
     dto: TransactionsIndexDto;
 }
 
 export const Transactions = ({ dto }: TransactionsProps) => {
+    const { periodId } = useLayoutContext();
+
     if ('error' in dto) {
         switch (dto.error) {
             case 'account-missing':
@@ -28,6 +32,9 @@ export const Transactions = ({ dto }: TransactionsProps) => {
             case 'period-missing':
                 return (
                     <Page title="Transactions">
+                        <div>
+                            <PeriodSwitcher account={dto.account} periods={dto.periods} periodId={periodId} />
+                        </div>
                         <span>Please choose period</span>
                     </Page>
                 );
@@ -36,6 +43,9 @@ export const Transactions = ({ dto }: TransactionsProps) => {
 
     return (
         <Page title="Transactions">
+            <div className="flex justify-center w-full">
+                <PeriodSwitcher account={dto.account} periods={dto.periods} periodId={periodId} />
+            </div>
             <div className="flex justify-between flex-wrap gap-4 items-center">
                 <div className="flex items-center gap-3 flex-wrap md:flex-nowrap">
                     <Input
@@ -51,7 +61,7 @@ export const Transactions = ({ dto }: TransactionsProps) => {
                     <DotsIcon />
                 </div>
                 <div className="flex flex-row gap-3.5 flex-wrap">
-                    <AddUser />
+                    <TransactionForm account={dto.account} categories={dto.categories} />
                     <Button color="primary" startContent={<ExportIcon />}>
                         Export to CSV
                     </Button>
