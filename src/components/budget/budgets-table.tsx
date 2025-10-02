@@ -42,7 +42,7 @@ export const BudgetsTable = ({
         {budgets.map((budget) => (
           <Table.Tr key={`${budget.periodId}:${budget.categoryId}:row`}>
             <Table.Td>{categoriesIndex.get(budget.categoryId)?.name ?? ''}</Table.Td>
-            <Table.Td>{format.narrowCurrency(budget.value, account.currency)}</Table.Td>
+            <Table.Td>{format.monetary(budget.value, account.currency)}</Table.Td>
             <Table.Td>
               <BudgetsTableActionCell
                 budget={budget}

@@ -63,10 +63,10 @@ export const AccountForm = ({ account, onFormSubmit }: AccountFormProps) => {
         key={form.key('type')}
         mt="md"
         data={[
-          { value: AccountType.checking, label: t('Enum.AccountType', { value: AccountType.checking}) },
-          { value: AccountType.savings, label: t('Enum.AccountType', { value: AccountType.savings}) },
-          { value: AccountType.credit, label: t('Enum.AccountType', { value: AccountType.credit}) },
-          { value: AccountType.virtual, label: t('Enum.AccountType', { value: AccountType.virtual}) },
+          { value: AccountType.checking, label: t('Enum.AccountType', { value: AccountType.checking }) },
+          { value: AccountType.savings, label: t('Enum.AccountType', { value: AccountType.savings }) },
+          { value: AccountType.credit, label: t('Enum.AccountType', { value: AccountType.credit }) },
+          { value: AccountType.virtual, label: t('Enum.AccountType', { value: AccountType.virtual }) },
         ]}
         {...form.getInputProps('type')}
       />

@@ -1,9 +1,12 @@
-.team {
+.account-title {
     font-size: rem(16);
     line-height: 1;
-    letter-spacing: rem(-0.6);
     font-weight: 500;
     color: light-dark(var(--mantine-color-black), var(--mantine-color-white));
+    width: 120px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
 }
 
 .nav-link {

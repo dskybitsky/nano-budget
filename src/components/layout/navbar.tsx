@@ -7,9 +7,9 @@ import {
   Stack,
   Text,
   UnstyledButton,
-  Avatar,
   useCombobox,
-  Combobox, InputBase,
+  Combobox,
+  InputBase,
   Input,
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
@@ -26,7 +26,10 @@ import Link from 'next/link';
 import { LayoutViewDto } from '@/actions/layout-view';
 import { useState } from 'react';
 import { redirect } from 'next/navigation';
-import { Account } from '@prisma/client';
+import { createAccountUrl, createBudgetUrl, createTransactionsUrl } from '@/lib/url';
+import { useCustomFormatter } from '@/hooks/use-custom-formatter';
+import { useTranslations } from 'next-intl';
+import { AccountImage } from '@/components/account/account-image';
 
 export interface NavbarProps {
   dto: LayoutViewDto,
@@ -40,11 +43,13 @@ export const Navbar = ({ dto, accountId }: NavbarProps) => {
     onDropdownClose: () => combobox.resetSelectedOption(),
   });
 
-  const [, setValue] = useState<string | null>(accountId ?? null);
+  const [, setCurrentAccountId] = useState<string | null>(accountId ?? null);
 
   const account = accountId
-    ? dto.accountsById[accountId]
+    ? dto.accountsIndex[accountId]
     : undefined;
+
+  const t = useTranslations();
 
   return (
     <Stack h="100%" gap={20} px="md" py="lg">
@@ -52,10 +57,10 @@ export const Navbar = ({ dto, accountId }: NavbarProps) => {
         <Combobox
           store={combobox}
           withinPortal={false}
-          onOptionSubmit={(val) => {
-            setValue(val);
+          onOptionSubmit={(accountId) => {
+            setCurrentAccountId(accountId);
             combobox.closeDropdown();
-            redirect(`/${val}/transactions`);
+            redirect(createTransactionsUrl(accountId));
           }}
         >
           <Combobox.Target>
@@ -72,7 +77,7 @@ export const Navbar = ({ dto, accountId }: NavbarProps) => {
               {account && (
                 <AccountComboBoxItem account={account} />
               )}
-              {!account && <Input.Placeholder>Choose account</Input.Placeholder>}
+              {!account && <Input.Placeholder>{t('Navbar.accountPlaceholder')}</Input.Placeholder>}
             </InputBase>
           </Combobox.Target>
 
@@ -187,7 +192,7 @@ export const Navbar = ({ dto, accountId }: NavbarProps) => {
                     <Link
                       key="nav-link-transactions-all"
                       className={classes.subNavLink}
-                      href={`/${accountId}/transactions`}
+                      href={createTransactionsUrl(accountId)}
                     >
                       <Text lts={-0.5}>All</Text>
                       <Badge radius={6} className={classes.noti} px={6}>10</Badge>
@@ -195,7 +200,7 @@ export const Navbar = ({ dto, accountId }: NavbarProps) => {
                     <Link
                       key="nav-link-transactions-confirmed"
                       className={classes.subNavLink}
-                      href={`/${accountId}/transactions?status=confirmed`}
+                      href={createTransactionsUrl(accountId)}
                     >
                       <Text lts={-0.5}>Confirmed</Text>
                       <Badge radius={6} className={classes.noti} px={6}>9</Badge>
@@ -203,7 +208,7 @@ export const Navbar = ({ dto, accountId }: NavbarProps) => {
                     <Link
                       key="nav-link-transactions-unconfirmed"
                       className={classes.subNavLink}
-                      href={`/${accountId}/transactions?status=confirmed`}
+                      href={createTransactionsUrl(accountId)}
                     >
                       <Text lts={-0.5}>Unconfirmed</Text>
                       <Badge radius={6} className={classes.noti} px={6}>1</Badge>
@@ -212,11 +217,11 @@ export const Navbar = ({ dto, accountId }: NavbarProps) => {
                 </Collapse>
               </Flex>
               <Flex w="100%" direction="column" align="start" key="nav-link-budget">
-                <NavLink icon={IconCalendarDollar} title="Budget" link={`/${accountId}/budget`} />
+                <NavLink icon={IconCalendarDollar} title="Budget" link={createBudgetUrl(accountId)} />
               </Flex>
               <Divider my={10} w="100%" />
               <Flex w="100%" direction="column" align="start" key="nav-link-account">
-                <NavLink icon={IconBuildingBank} title="Account" link={`/${accountId}`} />
+                <NavLink icon={IconBuildingBank} title="Account" link={createAccountUrl(accountId)} />
               </Flex>
             </>
           )}
@@ -246,15 +251,27 @@ const NavLink = ({ title, icon: Icon, link }: NavLinkProps) => {
   );
 };
 
-const AccountComboBoxItem = ({ account }: { account: Account }) => (
-  <Flex w="100%" justify="start" align="center" gap={20} p={5}>
-    <Avatar size={24} alt="Account" color="black">A</Avatar>
-    <Flex direction="column" align="start" gap={2}>
-      <Text className={classes.team}>{account.name}</Text>
-      <Text fz={10} fw={400} c="gray">
-        Description goes here
-      </Text>
+const AccountComboBoxItem = ({ account }: { account: LayoutViewDto['accounts'][number] }) => {
+  const t = useTranslations();
+  const format = useCustomFormatter();
+
+  return (
+    <Flex w="100%" justify="start" align="center" gap={20} p={5}>
+      <AccountImage size={24} account={account} />
+      <Flex direction="column" align="start" gap={2}>
+        <Text className={classes.accountTitle}>{account.name}</Text>
+        <Text fz={10} fw={400} c="gray">
+          {/*account.description ?? */t('Navbar.accountDescriptionPlaceholder')}
+        </Text>
+        <Text fz={12} fw={400}>
+          {
+            t('Navbar.accountBalanceText', {
+              actual: format.monetary(account.balance.actual, account.currency),
+            })
+          }
+        </Text>
+      </Flex>
     </Flex>
-  </Flex>
-);
+  );
+};
 

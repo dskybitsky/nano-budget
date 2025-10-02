@@ -3,7 +3,7 @@
 import { Box, Flex } from '@mantine/core';
 import React from 'react';
 import { redirect } from 'next/navigation';
-import { createTransactionsPageUrl } from '@/lib/url';
+import { createBudgetUrl } from '@/lib/url';
 import { PeriodPicker } from '@/components/period/period-picker';
 import { Period } from '@prisma/client';
 import { BudgetsIndexDto } from '@/actions/budget/budgets-index';
@@ -22,10 +22,7 @@ export const BudgetsView = ({ dto, periodId }: BudgetsViewProps) => {
   };
 
   const handlePeriodChange = (period: Period) => {
-    redirect(createTransactionsPageUrl(dto.account.id, {
-      createdFrom: period.started,
-      createdTo: period.ended ?? undefined,
-    }));
+    redirect(createBudgetUrl(dto.account.id, period.id));
   };
 
   return (

@@ -13,7 +13,7 @@ export default async function layout({ params, children }: {
   const user = await getSessionUser();
   const dto = await layoutView();
 
-  if (!dto.accountsById[accountId]) {
+  if (!dto.accountsIndex[accountId]) {
     redirect('/');
   }
 

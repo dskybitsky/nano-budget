@@ -60,7 +60,7 @@ export const TransactionsTable = ({
             <Table.Td>{format.dateTimeShort(transaction.executed)}</Table.Td>
             <Table.Td>{categoriesIndex.get(transaction.categoryId)?.name ?? ''}</Table.Td>
             <Table.Td>{transaction.name}</Table.Td>
-            <Table.Td>{format.narrowCurrency(transaction.value, account.currency)}</Table.Td>
+            <Table.Td>{format.monetary(transaction.value, account.currency)}</Table.Td>
             <Table.Td>
               <TransactionsTableActionCell
                 categories={categories}

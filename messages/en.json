@@ -39,6 +39,12 @@
         "AccountType":"{value, select, checking {Checking} savings {Savings} credit {Credit} virtual {Virtual} other {Unknown}}",
         "OperationType":"{value, select, debit {Debit} credit {Credit} other {Unknown}}"
     },
+    "Navbar": {
+        "accountPlaceholder": "Choose account",
+        "accountDescriptionPlaceholder": "No description provided",
+        "accountBalanceText": "Balance: {actual}",
+        "accountBalanceTextLong": "Balance: {actual} ({expected})"
+    },
     "AccountView": {
         "title": "{name} Account",
         "typeLabel": "{type} Account",

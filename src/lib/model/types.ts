@@ -1,10 +1,4 @@
-import { Category } from '@prisma/client';
-
-export type Total = {
-  expected: number;
+export type Balance = {
   actual: number;
+  expected?: number;
 };
-
-export type WithBalance<T> = T & { balance: Total };
-
-export type WithCategory<T extends { categoryId: string }> = T & { category: Category };

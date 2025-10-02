@@ -57,8 +57,8 @@ export const CategoryForm = ({ category, onFormSubmit }: CategoryFormProps) => {
         key={form.key('type')}
         mt="md"
         data={[
-          { value: OperationType.debit, label: t('Enum.OperationType', { value: OperationType.debit}) },
-          { value: OperationType.credit, label: t('Enum.OperationType', { value: OperationType.credit}) },
+          { value: OperationType.debit, label: t('Enum.OperationType', { value: OperationType.debit }) },
+          { value: OperationType.credit, label: t('Enum.OperationType', { value: OperationType.credit }) },
         ]}
         {...form.getInputProps('type')}
       />

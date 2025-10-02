@@ -42,6 +42,7 @@ export default tseslint.config(
       '@stylistic/max-len': ['error', 120],
       '@stylistic/quotes': ['error', 'single'],
       '@stylistic/semi': ['error', 'always'],
+      '@stylistic/object-curly-spacing': ['error', 'always'],
     },
   },
 );

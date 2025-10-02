@@ -66,10 +66,10 @@ export const AccountView = ({ dto }: AccountViewProps) => {
       direction="column"
       align="center"
     >
-      <Card w="100%" padding="lg" radius="md">
+      <Card w="100%" shadow="sm" padding="lg" radius="md" withBorder>
         <Title order={4}>{t('AccountView.title', { name: dto.account.name })}</Title>
         <Text mt="md" c="gray">
-          {t('AccountView.typeLabel', { type: t('Enum.AccountType', { value: dto.account.type })})}
+          {t('AccountView.typeLabel', { type: t('Enum.AccountType', { value: dto.account.type }) })}
         </Text>
         <Text mt="sm" c="gray">
           {t('AccountView.valueLabel', { value: dto.account.value, currency: dto.account.currency })}

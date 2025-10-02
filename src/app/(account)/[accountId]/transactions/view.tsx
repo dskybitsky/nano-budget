@@ -11,7 +11,7 @@ import { TransactionFormValues } from '@/components/transaction/transaction-form
 import { TransactionsFilterPanel } from '@/components/transaction/transactions-filter-panel';
 import { TransactionFilter } from '@/lib/model/transaction';
 import { redirect } from 'next/navigation';
-import { createTransactionsPageUrl } from '@/lib/url';
+import { createTransactionsUrl } from '@/lib/url';
 import { PeriodPicker } from '@/components/period/period-picker';
 import { Period } from '@prisma/client';
 import { useDebouncedCallback } from '@mantine/hooks';
@@ -35,14 +35,14 @@ export const TransactionsView = ({ dto, filter }: TransactionsViewProps) => {
   };
 
   const handlePeriodChange = (period: Period) => {
-    redirect(createTransactionsPageUrl(dto.account.id, {
+    redirect(createTransactionsUrl(dto.account.id, {
       createdFrom: period.started,
       createdTo: period.ended ?? undefined,
     }));
   };
 
   const handleFilterChange = useDebouncedCallback((filter: TransactionFilter) => {
-    redirect(createTransactionsPageUrl(dto.account.id, filter));
+    redirect(createTransactionsUrl(dto.account.id, filter));
   }, 1000);
 
   const periodId = dto.periods.find((period) => (
