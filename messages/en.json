@@ -5,7 +5,7 @@
         "currency": "Currency",
         "value": "Initial balance",
         "icon": "Icon",
-        "order": "Order"
+        "order": "View Order"
     },
     "Category": {
         "name": "Name",
@@ -41,23 +41,38 @@
     },
     "Navbar": {
         "accountPlaceholder": "Choose account",
-        "accountDescriptionPlaceholder": "No description provided",
+        "accountDescriptionPlaceholder": "{accountType} account",
         "accountBalanceText": "Balance: {actual}",
-        "accountBalanceTextLong": "Balance: {actual} ({expected})"
-    },
-    "AccountView": {
-        "title": "{name} Account",
-        "typeLabel": "{type} Account",
-        "valueLabel": "Initial balance: {value} {currency}",
-        "categoriesTabCaption": "Categories",
-        "periodsTabCaption": "Periods"
+        "accountBalanceTextLong": "Balance: {actual} ({expected})",
+        "allAccountsItem": "All accounts"
     },
     "SignInView": {
         "title": "Please Sign in",
         "credentialsError": "Email or password is incorrect."
     },
+    "AccountsIndex": {
+        "title": "Accounts",
+        "createButtonCaption": "Create Account"
+    },
+    "AccountView": {
+        "title": "{name} Account",
+        "editButtonCaption": "Edit Account",
+        "deleteButtonCaption": "Delete Account",
+        "descriptionLabel": "{type} account with initial balance {value} {currency}",
+        "categoriesTabCaption": "Categories",
+        "periodsTabCaption": "Periods",
+        "createCategoryButtonCaption": "Create Category",
+        "createPeriodButtonCaption": "Create Period"
+    },
+    "AccountsTable": {
+        "caption": "List of all accounts",
+        "orderColumnHeader": "#"
+    },
     "AccountModal": {
-        "editTitle": "Edit Account"
+        "createTitle": "Create Account",
+        "editTitle": "Edit Account",
+        "deleteTitle": "Delete Account",
+        "deleteMessage": "Are you sure you want to delete this account?"
     },
     "AccountForm": {
         "namePlaceholder": "Name",
@@ -67,7 +82,9 @@
         "iconPlaceholder": "Icon URL or emoji",
         "orderPlaceholder": "View order"
     },
-    "CategoriesTable": { },
+    "CategoriesTable": {
+        "orderColumnHeader": "#"
+    },
     "CategoryModal": {
         "createTitle": "Create Category",
         "editTitle": "Edit Category",
@@ -92,8 +109,15 @@
         "startedPlaceholder": "Started",
         "endedPlaceholder": "Ended"
     },
-    "TransactionsTable": { },
+    "TransactionsIndex": {
+        "title": "Transactions",
+        "createButtonCaption": "Create Transaction"
+    },
+    "TransactionsTable": {
+        "caption": "Transactions on the account"
+    },
     "TransactionsFilterPanel": {
+        "filterButtonCaption": "Filter",
         "createdLabel": "Created",
         "createdFromPlaceholder": "After",
         "createdToPlaceholder": "Before"
@@ -112,7 +136,18 @@
         "typePlaceholder": "Type",
         "valuePlaceholder": "Value"
     },
-    "BudgetsTable": { },
+    "BudgetsIndex": {
+        "title": "Budgets"
+    },
+    "BudgetsTable": {
+        "caption": "Budgets by category",
+        "plannedColumnHeader": "Planned",
+        "spentColumnHeader": "Spent",
+        "actualColumnHeader": "Actual",
+        "expectedColumnHeader": "Expected",
+        "restColumnHeader": "Rest",
+        "totalText": "Total"
+    },
     "BudgetModal": {
         "setTitle": "Set Budget"
     },
@@ -127,6 +162,7 @@
     "Common": {
         "actions": "Actions",
         "add": "Add",
+        "create": "Create",
         "cancel": "Cancel",
         "edit": "Edit",
         "error": "Error: {error}",

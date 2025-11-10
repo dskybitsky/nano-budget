@@ -1,32 +1,25 @@
 import * as React from 'react';
 
 import { Category } from '@prisma/client';
-import { Button, Flex, Menu, Modal, Table, UnstyledButton, Text } from '@mantine/core';
+import { Flex, Modal, Table, Text, ActionIcon } from '@mantine/core';
 import { useTranslations } from 'next-intl';
-import { IconDotsVertical, IconPencil, IconPlus, IconTrash } from '@tabler/icons-react';
+import { IconPencil, IconTrash } from '@tabler/icons-react';
 import { CategoryForm, CategoryFormValues } from '@/components/category/category-form';
 import { useDisclosure } from '@mantine/hooks';
 import { useModals } from '@mantine/modals';
+import { EntityImageText } from '@/components/entity-image-text';
 
 export interface CategoriesTableProps {
   categories: Category[];
-  onCreateFormSubmit: (data: CategoryFormValues) => Promise<void>;
-  onUpdateFormSubmit: (id: string, data: CategoryFormValues) => Promise<void>;
+  onFormSubmit: (id: string, data: CategoryFormValues) => Promise<void>;
   onDeleteClick: (id: string) => Promise<void>;
 }
 
 export const CategoriesTable = ({
   categories,
-  onCreateFormSubmit,
-  onUpdateFormSubmit,
+  onFormSubmit,
   onDeleteClick,
 }: CategoriesTableProps) => {
-  const [createOpened, { open: openCreate, close: closeCreate }] = useDisclosure(false);
-
-  const handleCreateFormSubmit = async (formValues: CategoryFormValues) => {
-    await onCreateFormSubmit(formValues);
-    closeCreate();
-  };
 
   const t = useTranslations();
 
@@ -34,53 +27,43 @@ export const CategoriesTable = ({
     <Table>
       <Table.Thead>
         <Table.Tr>
-          <Table.Th w="60%">{t('Category.name')}</Table.Th>
-          <Table.Th>{t('Category.type')}</Table.Th>
-          <Table.Th w="100">{t('Category.order')}</Table.Th>
+          <Table.Th w="20">{t('CategoriesTable.orderColumnHeader')}</Table.Th>
+          <Table.Th>{t('Category.name')}</Table.Th>
+          <Table.Th w="100">{t('Category.type')}</Table.Th>
           <Table.Th w="50"></Table.Th>
         </Table.Tr>
       </Table.Thead>
       <Table.Tbody>
         {categories.map((category) => (
           <Table.Tr key={category.id}>
-            <Table.Td>{category.name}</Table.Td>
-            <Table.Td>{t('Enum.OperationType', { value: category.type })}</Table.Td>
             <Table.Td>{category.order}</Table.Td>
+            <Table.Td>
+              <EntityImageText size={18} entity={category} />
+            </Table.Td>
+            <Table.Td>{t('Enum.OperationType', { value: category.type })}</Table.Td>
             <Table.Td>
               <CategoriesTableActionCell
                 category={category}
-                onUpdateFormSubmit={onUpdateFormSubmit}
+                onFormSubmit={onFormSubmit}
                 onDeleteClick={onDeleteClick}
               />
             </Table.Td>
           </Table.Tr>
         ))}
-        <Table.Tr>
-          <Table.Td colSpan={4}>
-            <Modal opened={createOpened} onClose={closeCreate} title={t('CategoryModal.createTitle')}>
-              <CategoryForm onFormSubmit={handleCreateFormSubmit} />
-            </Modal>
-            <Flex justify="end">
-              <Button leftSection={<IconPlus size={14} />} variant="subtle" size="xs" onClick={openCreate} >
-                {t('Common.add')}
-              </Button>
-            </Flex>
-          </Table.Td>
-        </Table.Tr>
       </Table.Tbody>
     </Table>
   );
 };
 
-const CategoriesTableActionCell = ({ category, onUpdateFormSubmit, onDeleteClick }: {
+const CategoriesTableActionCell = ({ category, onFormSubmit, onDeleteClick }: {
   category: Category,
-  onUpdateFormSubmit: CategoriesTableProps['onUpdateFormSubmit'],
+  onFormSubmit: CategoriesTableProps['onFormSubmit'],
   onDeleteClick: CategoriesTableProps['onDeleteClick'],
 }) => {
   const [updateOpened, { open: openUpdate, close: closeUpdate }] = useDisclosure(false);
 
-  const handleUpdateFormSubmit = async (formValues: CategoryFormValues) => {
-    await onUpdateFormSubmit(category.id, formValues);
+  const handleFormSubmit = async (formValues: CategoryFormValues) => {
+    await onFormSubmit(category.id, formValues);
     closeUpdate();
   };
 
@@ -104,26 +87,17 @@ const CategoriesTableActionCell = ({ category, onUpdateFormSubmit, onDeleteClick
       <Modal key={category.id} opened={updateOpened} onClose={closeUpdate} title={t('CategoryModal.editTitle')}>
         <CategoryForm
           category={category}
-          onFormSubmit={handleUpdateFormSubmit}
+          onFormSubmit={handleFormSubmit}
         />
       </Modal>
-      <Menu shadow="md">
-        <Menu.Target>
-          <UnstyledButton w="100%">
-            <IconDotsVertical size={14} />
-          </UnstyledButton>
-        </Menu.Target>
-        <Menu.Dropdown>
-          <Menu.Label>{t('Common.actions')}</Menu.Label>
-          <Menu.Item leftSection={ <IconPencil size={14} /> } onClick={openUpdate}>
-            {t('Common.edit')}
-          </Menu.Item>
-          <Menu.Divider />
-          <Menu.Item leftSection={ <IconTrash size={14} /> } onClick={handleDeleteClick} color="red">
-            {t('Common.delete')}
-          </Menu.Item>
-        </Menu.Dropdown>
-      </Menu>
+      <Flex justify="end">
+        <ActionIcon variant="subtle" onClick={openUpdate}>
+          <IconPencil size={14} />
+        </ActionIcon>
+        <ActionIcon variant="subtle" onClick={handleDeleteClick} color="red">
+          <IconTrash size={14} />
+        </ActionIcon>
+      </Flex>
     </>
   );
 };

@@ -2,7 +2,7 @@
 
 import { Transaction } from '@prisma/client';
 import { getSessionUser } from '@/lib/auth';
-import { updateTransaction } from '@/lib/model/transaction';
+import { updateTransaction } from '@/lib/server/transaction';
 
 export type TransactionUpdateDto = Partial<Omit<Transaction, 'id'>>;
 

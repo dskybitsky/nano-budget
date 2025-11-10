@@ -2,7 +2,7 @@
 
 import { Category } from '@prisma/client';
 import { getSessionUser } from '@/lib/auth';
-import { createCategory } from '@/lib/model/category';
+import { createCategory } from '@/lib/server/category';
 
 export type CategoryCreateDto = Omit<Category, 'id'>;
 

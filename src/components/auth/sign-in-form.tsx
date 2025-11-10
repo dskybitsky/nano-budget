@@ -47,13 +47,12 @@ export const SignInForm = ({ onFormSubmit }: SignInFormProps) => {
   });
 
   return (
-    <form onSubmit={handleFormSubmit} className="space-y-8">
+    <form onSubmit={handleFormSubmit}>
       <Paper withBorder shadow="md" p={30} mt={30} radius="md">
         <TextInput
           label={t('SignIn.email')}
           placeholder={t('SignInForm.emailPlaceholder')}
           key={form.key('email')}
-          mt="md"
           {...form.getInputProps('email')}
         />
         <PasswordInput
@@ -65,7 +64,7 @@ export const SignInForm = ({ onFormSubmit }: SignInFormProps) => {
         />
         { error && <Alert color="red" mt="md" icon={(<IconAlertCircle />)}>{error}</Alert> }
         <Button fullWidth mt="xl" type="submit">
-          placeholder={t('SignInForm.submitButton')}
+          {t('Common.submit')}
         </Button>
       </Paper>
     </form>

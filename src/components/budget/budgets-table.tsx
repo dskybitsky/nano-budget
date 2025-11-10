@@ -1,69 +1,116 @@
 import * as React from 'react';
 
-import { Account, Budget, Category } from '@prisma/client';
-import { Menu, Modal, Table, UnstyledButton } from '@mantine/core';
+import { Account, AccountType, Category, OperationType } from '@prisma/client';
+import { ActionIcon, Box, Modal, Table } from '@mantine/core';
 import { useTranslations } from 'next-intl';
-import { IconDotsVertical, IconPencil } from '@tabler/icons-react';
+import { IconPencil } from '@tabler/icons-react';
 import { useDisclosure } from '@mantine/hooks';
 import { useCustomFormatter } from '@/hooks/use-custom-formatter';
 import { BudgetForm, BudgetFormValues } from '@/components/budget/budget-form';
+import { PlannedTotal } from '@/lib/types';
+import { monetaryEqual } from '@/lib/utils';
+import { EntityImageText } from '@/components/entity-image-text';
+import _ from 'lodash';
 
 export interface BudgetsTableProps {
   account: Account;
   categories: Category[];
-  budgets: Budget[];
-  onSetFormSubmit: (categoryId: string, periodId: string, data: BudgetFormValues) => Promise<void>;
+  budgetsByCategory: { [p: string]: PlannedTotal };
+  total: PlannedTotal;
+  onSetFormSubmit: (categoryId: string, data: BudgetFormValues) => Promise<void>;
 }
 
 export const BudgetsTable = ({
   account,
   categories,
-  budgets,
+  budgetsByCategory,
+  total,
   onSetFormSubmit,
 }: BudgetsTableProps) => {
-  const categoriesIndex = categories.reduce((acc, category) => {
-    acc.set(category.id, category);
-    return acc;
-  }, new Map<string, Category>());
+  const categoryIndex = _.keyBy(categories, 'id');
 
   const t = useTranslations();
   const format = useCustomFormatter();
 
+  const accountSign = account.type == AccountType.credit ? -1 : 1;
+
+  let totalRest = 0;
+
   return (
     <Table>
+      <Table.Caption>{t('BudgetsTable.caption')}</Table.Caption>
       <Table.Thead>
         <Table.Tr>
           <Table.Th>{t('Budget.category')}</Table.Th>
-          <Table.Th w="120">{t('Budget.value')}</Table.Th>
-          <Table.Th w="50"></Table.Th>
+          <Table.Th w="120" ta="right">{t('BudgetsTable.plannedColumnHeader')}</Table.Th>
+          <Table.Th w="120" ta="right">{t('BudgetsTable.spentColumnHeader')}</Table.Th>
+          <Table.Th w="120" ta="right">{t('BudgetsTable.restColumnHeader')}</Table.Th>
+          <Table.Th w="30"></Table.Th>
         </Table.Tr>
       </Table.Thead>
       <Table.Tbody>
-        {budgets.map((budget) => (
-          <Table.Tr key={`${budget.periodId}:${budget.categoryId}:row`}>
-            <Table.Td>{categoriesIndex.get(budget.categoryId)?.name ?? ''}</Table.Td>
-            <Table.Td>{format.monetary(budget.value, account.currency)}</Table.Td>
-            <Table.Td>
-              <BudgetsTableActionCell
-                budget={budget}
-                onSetFormSubmit={onSetFormSubmit}
-              />
-            </Table.Td>
-          </Table.Tr>
-        ))}
+        {Object.entries(budgetsByCategory).map(([categoryId, budget]) => {
+          const category = categoryIndex[categoryId];
+          const categorySign = category.type === OperationType.debit ? -1 : 1;
+
+          const { planned, actual, expected } = budget;
+
+          const rest = (planned - expected) * categorySign * accountSign;
+
+          totalRest += rest;
+
+          const handleSetFormSubmit = async (formValues: BudgetFormValues) => {
+            await onSetFormSubmit(categoryId, formValues);
+          };
+
+          return (
+            <Table.Tr key={`${categoryId}:row`}>
+              <Table.Td>
+                <EntityImageText size={18} entity={category} />
+              </Table.Td>
+              <Table.Td ta="right">{format.monetary(planned, account.currency)}</Table.Td>
+              <Table.Td ta="right">
+                {format.monetary(expected, account.currency)}
+                {!monetaryEqual(actual, expected) && (
+                  <Box>({format.monetary(actual, account.currency)})</Box>
+                )}
+              </Table.Td>
+              <Table.Td ta="right">{format.monetary(rest, account.currency)}</Table.Td>
+              <Table.Td>
+                <BudgetsTableActionCell
+                  budget={{ value: budget.planned }}
+                  onSetFormSubmit={handleSetFormSubmit}
+                />
+              </Table.Td>
+            </Table.Tr>
+          );
+        })}
       </Table.Tbody>
+      <Table.Tfoot>
+        <Table.Tr>
+          <Table.Th>{t('BudgetsTable.totalText')}</Table.Th>
+          <Table.Th ta="right">{format.monetary(total.planned, account.currency)}</Table.Th>
+          <Table.Th ta="right">
+            {format.monetary(total.expected, account.currency)}
+            {!monetaryEqual(total.actual, total.expected) && (
+              <Box>({format.monetary(total.actual, account.currency)})</Box>
+            )}
+          </Table.Th>
+          <Table.Th ta="right">{format.monetary(totalRest, account.currency)}</Table.Th>
+        </Table.Tr>
+      </Table.Tfoot>
     </Table>
   );
 };
 
 const BudgetsTableActionCell = ({ budget, onSetFormSubmit }: {
-  budget: Budget,
-  onSetFormSubmit: BudgetsTableProps['onSetFormSubmit'],
+  budget: BudgetFormValues,
+  onSetFormSubmit: (data: BudgetFormValues) => Promise<void>
 }) => {
   const [setOpened, { open: openSet, close: closeSet }] = useDisclosure(false);
 
   const handleSetFormSubmit = async (formValues: BudgetFormValues) => {
-    await onSetFormSubmit(budget.categoryId, budget.periodId, formValues);
+    await onSetFormSubmit(formValues);
     closeSet();
   };
 
@@ -72,7 +119,6 @@ const BudgetsTableActionCell = ({ budget, onSetFormSubmit }: {
   return (
     <>
       <Modal
-        key={`${budget.categoryId}:${budget.periodId}:modal`}
         opened={setOpened}
         onClose={closeSet}
         title={t('BudgetModal.setTitle')}
@@ -82,19 +128,9 @@ const BudgetsTableActionCell = ({ budget, onSetFormSubmit }: {
           onFormSubmit={handleSetFormSubmit}
         />
       </Modal>
-      <Menu shadow="md">
-        <Menu.Target>
-          <UnstyledButton w="100%">
-            <IconDotsVertical size={14} />
-          </UnstyledButton>
-        </Menu.Target>
-        <Menu.Dropdown>
-          <Menu.Label>{t('Common.actions')}</Menu.Label>
-          <Menu.Item leftSection={ <IconPencil size={14} /> } onClick={openSet}>
-            {t('Common.edit')}
-          </Menu.Item>
-        </Menu.Dropdown>
-      </Menu>
+      <ActionIcon variant="subtle" onClick={openSet}>
+        <IconPencil size={14} />
+      </ActionIcon>
     </>
   );
 };

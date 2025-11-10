@@ -1,16 +1,16 @@
 'use server';
 
 import { Account, Category, Period } from '@prisma/client';
-import { getAccount } from '@/lib/model/account';
-import { getCategories } from '@/lib/model/category';
-import { getPeriods } from '@/lib/model/period';
+import { getAccount } from '@/lib/server/account';
+import { getCategories } from '@/lib/server/category';
+import { getPeriods } from '@/lib/server/period';
 import { getSessionUser } from '@/lib/auth';
 
-export interface AccountViewDto {
+export type AccountViewDto = {
   account: Account;
   periods: Period[];
   categories: Category[];
-}
+};
 
 export const accountView = async (id: string): Promise<AccountViewDto | null> => {
   await getSessionUser();

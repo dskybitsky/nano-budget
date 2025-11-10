@@ -1,28 +1,30 @@
 'use client';
 
-import { Box, Flex } from '@mantine/core';
+import { Flex, Title } from '@mantine/core';
 import React from 'react';
 import { redirect } from 'next/navigation';
-import { createBudgetUrl } from '@/lib/url';
+import { accountBudgetIndexUrl } from '@/lib/url';
 import { PeriodPicker } from '@/components/period/period-picker';
 import { Period } from '@prisma/client';
 import { BudgetsIndexDto } from '@/actions/budget/budgets-index';
 import { BudgetFormValues } from '@/components/budget/budget-form';
 import { budgetSet } from '@/actions/budget/budget-set';
 import { BudgetsTable } from '@/components/budget/budgets-table';
+import { useTranslations } from 'next-intl';
 
 export interface BudgetsViewProps extends React.HTMLAttributes<HTMLElement> {
   dto: BudgetsIndexDto,
-  periodId?: string,
 }
 
-export const BudgetsView = ({ dto, periodId }: BudgetsViewProps) => {
-  const handleSetFormSubmit = async (categoryId: string, periodId: string, formValues: BudgetFormValues) => {
-    await budgetSet(categoryId, periodId, formValues);
+export const BudgetsView = ({ dto }: BudgetsViewProps) => {
+  const t = useTranslations();
+
+  const handleSetFormSubmit = async (categoryId: string, formValues: BudgetFormValues) => {
+    await budgetSet(categoryId, dto.periodId, formValues);
   };
 
   const handlePeriodChange = (period: Period) => {
-    redirect(createBudgetUrl(dto.account.id, period.id));
+    redirect(accountBudgetIndexUrl(dto.account.id, period.id));
   };
 
   return (
@@ -33,17 +35,17 @@ export const BudgetsView = ({ dto, periodId }: BudgetsViewProps) => {
       direction="column"
       align="center"
     >
-      <Flex gap={20} w="100%" justify="space-between" align="center">
-        <PeriodPicker periods={dto.periods} periodId={periodId} onChange={handlePeriodChange} />
+      <Flex justify="space-between" align="center" w="100%" wrap="wrap" gap={10}>
+        <Title order={3}>{t('BudgetsIndex.title')}</Title>
+        <PeriodPicker periods={dto.periods} periodId={dto.periodId} onChange={handlePeriodChange} />
       </Flex>
-      <Box w="100%" mt="md">
-        <BudgetsTable
-          account={dto.account}
-          categories={dto.categories}
-          budgets={dto.budgets}
-          onSetFormSubmit={handleSetFormSubmit}
-        />
-      </Box>
+      <BudgetsTable
+        account={dto.account}
+        categories={dto.categories}
+        budgetsByCategory={dto.periodBudgetsByCategory}
+        total={dto.periodTotal}
+        onSetFormSubmit={handleSetFormSubmit}
+      />
     </Flex>
   );
 };

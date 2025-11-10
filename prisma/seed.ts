@@ -21,7 +21,7 @@ const accountsData: Omit<Account, 'id'>[] = [
   },
   {
     name: 'Savings',
-    type: AccountType.checking,
+    type: AccountType.savings,
     currency: 'CAD',
     value: 0,
     icon: '',

@@ -2,7 +2,7 @@
 
 import { Period } from '@prisma/client';
 import { getSessionUser } from '@/lib/auth';
-import { updatePeriod } from '@/lib/model/period';
+import { updatePeriod } from '@/lib/server/period';
 
 export type PeriodUpdateDto = Partial<Omit<Period, 'id'>>;
 

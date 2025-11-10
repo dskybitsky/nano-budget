@@ -1,7 +1,6 @@
 'use client';
 
-import { DateTimePicker, DateTimePickerProps } from '@mantine/dates';
-import { DateStringValue } from '@mantine/dates/lib/types';
+import { DateTimePicker, DateTimePickerProps, DateStringValue } from '@mantine/dates';
 import { useLocale, useTimeZone } from 'next-intl';
 
 export interface DateTimePickerInputProps extends Omit<DateTimePickerProps, 'onChange'> {

@@ -1,7 +1,7 @@
 'use server';
 
 import { Account } from '@prisma/client';
-import { updateAccount } from '@/lib/model/account';
+import { updateAccount } from '@/lib/server/account';
 import { getSessionUser } from '@/lib/auth';
 
 export type AccountUpdateDto = Partial<Omit<Account, 'id'>>;

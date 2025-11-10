@@ -1,5 +1,5 @@
 import * as React from 'react';
-
+import { useState } from 'react';
 import { Category, OperationType, Transaction } from '@prisma/client';
 import { useForm } from '@mantine/form';
 import { z } from 'zod';
@@ -7,6 +7,7 @@ import { zod4Resolver } from 'mantine-form-zod-resolver';
 import { Button, Group, NumberInput, Select, TextInput } from '@mantine/core';
 import { useTranslations } from 'next-intl';
 import { DateTimePickerInput } from '@/components/date-time-picker-input';
+import { ErrorText } from '@/components/error-text';
 
 export type TransactionFormValues = Pick<
   Transaction,
@@ -15,12 +16,14 @@ export type TransactionFormValues = Pick<
 
 export interface TransactionFormProps extends React.HTMLAttributes<HTMLElement> {
   categories: Category[];
-  transaction?: Transaction;
+  transaction?: TransactionFormValues;
   onFormSubmit: (data: TransactionFormValues) => Promise<void>;
 }
 
 export const TransactionForm = ({ categories, transaction, onFormSubmit }: TransactionFormProps) => {
   const t = useTranslations();
+
+  const [error, setError] = useState<unknown|undefined>(undefined);
 
   const schema = z.object({
     categoryId: z.string(),
@@ -45,7 +48,7 @@ export const TransactionForm = ({ categories, transaction, onFormSubmit }: Trans
     initialValues: {
       created: transaction?.created ?? new Date(),
       executed: transaction?.executed ?? null,
-      categoryId: transaction?.categoryId ?? categories[0].id,
+      categoryId: transaction?.categoryId ?? categories[0]?.id,
       name: transaction?.name ?? '',
       type: transaction?.type ?? OperationType.credit,
       value: transaction?.value ?? 0,
@@ -53,12 +56,19 @@ export const TransactionForm = ({ categories, transaction, onFormSubmit }: Trans
     validate: zod4Resolver(schema),
   });
 
+  const handleFormSubmit = form.onSubmit(async (data: TransactionFormValues) => {
+    try {
+      await onFormSubmit(data);
+    } catch (error) {
+      setError(error);
+    }
+  });
+
   return (
-    <form onSubmit={form.onSubmit(onFormSubmit)} className="space-y-8">
+    <form onSubmit={handleFormSubmit}>
       <DateTimePickerInput
         label={t('Transaction.created')}
         placeholder={t('TransactionForm.createdPlaceholder')}
-        mt="md"
         {...form.getInputProps('created')}
       />
       <DateTimePickerInput
@@ -90,6 +100,9 @@ export const TransactionForm = ({ categories, transaction, onFormSubmit }: Trans
         mt="md"
         {...form.getInputProps('value')}
       />
+      {error !== undefined && (
+        <ErrorText error={error} p="xs" mt="xs" />
+      )}
       <Group justify="flex-end" mt="md">
         <Button type="submit">{t('Common.submit')}</Button>
       </Group>

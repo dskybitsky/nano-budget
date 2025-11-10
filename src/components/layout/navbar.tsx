@@ -18,21 +18,28 @@ import {
   IconCalendarDollar,
   IconChevronDown,
   IconChevronRight,
-  IconHome2,
+  IconList,
   IconReceipt,
+  IconSettings,
 } from '@tabler/icons-react';
 import classes from './navbar.module.css';
 import Link from 'next/link';
-import { LayoutViewDto } from '@/actions/layout-view';
-import { useState } from 'react';
+import { AccountLayoutDto } from '@/actions/account/account-layout';
 import { redirect } from 'next/navigation';
-import { createAccountUrl, createBudgetUrl, createTransactionsUrl } from '@/lib/url';
+import {
+  accountCreateUrl,
+  accountViewUrl,
+  accountBudgetIndexUrl,
+  settingsUrl,
+  accountTransactionsIndexUrl,
+  accountIndexUrl,
+} from '@/lib/url';
 import { useCustomFormatter } from '@/hooks/use-custom-formatter';
 import { useTranslations } from 'next-intl';
-import { AccountImage } from '@/components/account/account-image';
+import { EntityImage } from '@/components/entity-image';
 
 export interface NavbarProps {
-  dto: LayoutViewDto,
+  dto: AccountLayoutDto,
   accountId?: string,
 }
 
@@ -43,11 +50,18 @@ export const Navbar = ({ dto, accountId }: NavbarProps) => {
     onDropdownClose: () => combobox.resetSelectedOption(),
   });
 
-  const [, setCurrentAccountId] = useState<string | null>(accountId ?? null);
+  const handleAccountComboboxOptionSubmit = (value: string) => {
+    combobox.closeDropdown();
 
-  const account = accountId
-    ? dto.accountsIndex[accountId]
-    : undefined;
+    if (value.length === 0) {
+      redirect(accountIndexUrl());
+    }
+
+    redirect(accountTransactionsIndexUrl(value));
+  };
+
+
+  const account = dto.accounts.find((account) => account.id === accountId);
 
   const t = useTranslations();
 
@@ -57,11 +71,7 @@ export const Navbar = ({ dto, accountId }: NavbarProps) => {
         <Combobox
           store={combobox}
           withinPortal={false}
-          onOptionSubmit={(accountId) => {
-            setCurrentAccountId(accountId);
-            combobox.closeDropdown();
-            redirect(createTransactionsUrl(accountId));
-          }}
+          onOptionSubmit={handleAccountComboboxOptionSubmit}
         >
           <Combobox.Target>
             <InputBase
@@ -73,6 +83,7 @@ export const Navbar = ({ dto, accountId }: NavbarProps) => {
               rightSectionPointerEvents="none"
               w="100%"
               styles={{ input: { height: 'auto' } }}
+              disabled={dto.accounts.length === 0}
             >
               {account && (
                 <AccountComboBoxItem account={account} />
@@ -82,94 +93,30 @@ export const Navbar = ({ dto, accountId }: NavbarProps) => {
           </Combobox.Target>
 
           <Combobox.Dropdown>
-            <Combobox.Options>{
-              dto.accounts.map((item) => (
-                <Combobox.Option value={item.id} key={item.id}>
+            <Combobox.Options>
+              {dto.accounts.map((item) => (
+                <Combobox.Option value={item.id} key={`account-option-${item.id}`}>
                   <AccountComboBoxItem account={item} />
                 </Combobox.Option>
-              ))
-            }</Combobox.Options>
+              ))}
+              <Divider w="100%" />
+              <Combobox.Option value={''} key='account-option-index'>
+                <AccountCreateComboBoxItem />
+              </Combobox.Option>
+            </Combobox.Options>
           </Combobox.Dropdown>
         </Combobox>
-
-
-        {/*<Avatar size={50} alt="Account" color="black">A</Avatar>*/}
-        {/*<Menu shadow="md" width={200}>*/}
-        {/*  <Menu.Target>*/}
-        {/*    <UnstyledButton w="100%">*/}
-        {/*      <Flex w="100%" justify="space-between" align="start">*/}
-        {/*        <Flex direction="column" align="start" gap={2}>*/}
-        {/*          <Text className={classes.team}>Untitled UI Team</Text>*/}
-        {/*          <Text fz={10} fw={400} c="gray">*/}
-        {/*            shinthantequi@gmail.com*/}
-        {/*          </Text>*/}
-        {/*        </Flex>*/}
-        {/*        <IconSelector size={18} />*/}
-        {/*      </Flex>*/}
-        {/*    </UnstyledButton>*/}
-        {/*  </Menu.Target>*/}
-
-        {/*  <Menu.Dropdown>*/}
-        {/*    { dto.accounts.map((account) => {*/}
-        {/*      return (*/}
-        {/*        <Menu.Item*/}
-        {/*          component="a"*/}
-        {/*          href="/settings"*/}
-        {/*        >*/}
-        {/*          <Flex w="100%" justify="space-between" align="start">*/}
-        {/*            <Flex direction="column" align="start" gap={2}>*/}
-        {/*              <Text className={classes.team}>{account.name}</Text>*/}
-        {/*              <Text fz={10} fw={400} c="gray">*/}
-        {/*                {account.name}*/}
-        {/*              </Text>*/}
-        {/*            </Flex>*/}
-        {/*            <IconSelector size={18} />*/}
-        {/*          </Flex>*/}
-        {/*        </Menu.Item>*/}
-        {/*      );*/}
-        {/*    })}*/}
-        {/*    <Menu.Label>Application</Menu.Label>*/}
-        {/*    <Menu.Item*/}
-        {/*      leftSection={*/}
-        {/*        <IconSettings style={{ width: rem(14), height: rem(14) }} />*/}
-        {/*      }*/}
-        {/*    >*/}
-        {/*      Settings*/}
-        {/*    </Menu.Item>*/}
-        {/*    <Menu.Item*/}
-        {/*      leftSection={*/}
-        {/*        <IconMessageCircle*/}
-        {/*          style={{ width: rem(14), height: rem(14) }}*/}
-        {/*        />*/}
-        {/*      }*/}
-        {/*    >*/}
-        {/*      Messages*/}
-        {/*    </Menu.Item>*/}
-
-        {/*    <Menu.Divider />*/}
-
-        {/*    <Menu.Label>Danger zone</Menu.Label>*/}
-
-        {/*    <Menu.Item*/}
-        {/*      color="red"*/}
-        {/*      leftSection={*/}
-        {/*        <IconTrash style={{ width: rem(14), height: rem(14) }} />*/}
-        {/*      }*/}
-        {/*    >*/}
-        {/*      Delete my account*/}
-        {/*    </Menu.Item>*/}
-        {/*  </Menu.Dropdown>*/}
-        {/*</Menu>*/}
       </Flex>
-
       <ScrollArea h="100%">
         <Flex h="100%" gap={4} direction="column" align="start">
-          <Flex w="100%" direction="column" align="start" key="nav-link-home">
-            <NavLink icon={IconHome2} title="Home" link="/" />
-          </Flex>
-          <Divider my={10} w="100%" />
           {accountId && (
             <>
+              <NavLink
+                icon={IconBuildingBank}
+                title="Account"
+                link={accountId ? accountViewUrl(accountId) : accountCreateUrl()}
+              />
+              <Divider my={10} w="100%" />
               <Flex direction="column" align="start" w="100%">
                 <UnstyledButton
                   h={36.15}
@@ -192,7 +139,7 @@ export const Navbar = ({ dto, accountId }: NavbarProps) => {
                     <Link
                       key="nav-link-transactions-all"
                       className={classes.subNavLink}
-                      href={createTransactionsUrl(accountId)}
+                      href={accountTransactionsIndexUrl(accountId)}
                     >
                       <Text lts={-0.5}>All</Text>
                       <Badge radius={6} className={classes.noti} px={6}>10</Badge>
@@ -200,7 +147,7 @@ export const Navbar = ({ dto, accountId }: NavbarProps) => {
                     <Link
                       key="nav-link-transactions-confirmed"
                       className={classes.subNavLink}
-                      href={createTransactionsUrl(accountId)}
+                      href={accountTransactionsIndexUrl(accountId)}
                     >
                       <Text lts={-0.5}>Confirmed</Text>
                       <Badge radius={6} className={classes.noti} px={6}>9</Badge>
@@ -208,7 +155,7 @@ export const Navbar = ({ dto, accountId }: NavbarProps) => {
                     <Link
                       key="nav-link-transactions-unconfirmed"
                       className={classes.subNavLink}
-                      href={createTransactionsUrl(accountId)}
+                      href={accountTransactionsIndexUrl(accountId)}
                     >
                       <Text lts={-0.5}>Unconfirmed</Text>
                       <Badge radius={6} className={classes.noti} px={6}>1</Badge>
@@ -217,14 +164,14 @@ export const Navbar = ({ dto, accountId }: NavbarProps) => {
                 </Collapse>
               </Flex>
               <Flex w="100%" direction="column" align="start" key="nav-link-budget">
-                <NavLink icon={IconCalendarDollar} title="Budget" link={createBudgetUrl(accountId)} />
+                <NavLink icon={IconCalendarDollar} title="Budget" link={accountBudgetIndexUrl(accountId)} />
               </Flex>
               <Divider my={10} w="100%" />
-              <Flex w="100%" direction="column" align="start" key="nav-link-account">
-                <NavLink icon={IconBuildingBank} title="Account" link={createAccountUrl(accountId)} />
-              </Flex>
             </>
           )}
+          <Flex w="100%" direction="column" align="start" key="nav-link-settings">
+            <NavLink icon={IconSettings} title="Settings" link={settingsUrl()} />
+          </Flex>
         </Flex>
       </ScrollArea>
       <Flex w="100%" direction="column" align="center" gap={6}>
@@ -251,17 +198,19 @@ const NavLink = ({ title, icon: Icon, link }: NavLinkProps) => {
   );
 };
 
-const AccountComboBoxItem = ({ account }: { account: LayoutViewDto['accounts'][number] }) => {
+const AccountComboBoxItem = ({ account }: { account: AccountLayoutDto['accounts'][number] }) => {
   const t = useTranslations();
   const format = useCustomFormatter();
 
   return (
     <Flex w="100%" justify="start" align="center" gap={20} p={5}>
-      <AccountImage size={24} account={account} />
+      <EntityImage size={36} entity={account} />
       <Flex direction="column" align="start" gap={2}>
         <Text className={classes.accountTitle}>{account.name}</Text>
-        <Text fz={10} fw={400} c="gray">
-          {/*account.description ?? */t('Navbar.accountDescriptionPlaceholder')}
+        <Text fz={12} fw={400} c="gray">
+          {t('Navbar.accountDescriptionPlaceholder', {
+            accountType: t('Enum.AccountType', { value: account.type }) })
+          }
         </Text>
         <Text fz={12} fw={400}>
           {
@@ -270,6 +219,21 @@ const AccountComboBoxItem = ({ account }: { account: LayoutViewDto['accounts'][n
             })
           }
         </Text>
+      </Flex>
+    </Flex>
+  );
+};
+
+const AccountCreateComboBoxItem = () => {
+  const t = useTranslations();
+
+  return (
+    <Flex w="100%" justify="start" align="center" gap={20}>
+      <Flex align="center" justify="center" h={36} w={36}>
+        <IconList size={20} />
+      </Flex>
+      <Flex direction="column" align="start" gap={2}>
+        <Text>{t('Navbar.allAccountsItem')}</Text>
       </Flex>
     </Flex>
   );

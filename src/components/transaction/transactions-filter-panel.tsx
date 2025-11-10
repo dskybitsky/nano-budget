@@ -1,13 +1,14 @@
 import * as React from 'react';
-
 import { useForm } from '@mantine/form';
-import { Group, Text } from '@mantine/core';
+import { Button, Collapse, Flex, Group, Text } from '@mantine/core';
 import { useTranslations } from 'next-intl';
 import { DateTimePickerInput } from '@/components/date-time-picker-input';
+import { TransactionFilter } from '@/lib/transaction';
+import { useEffect } from 'react';
+import { IconFilter } from '@tabler/icons-react';
+import { useDisclosure } from '@mantine/hooks';
 
 import '@mantine/dates/styles.css';
-import { TransactionFilter } from '@/lib/model/transaction';
-import { useEffect } from 'react';
 
 export interface TransactionsFilterPanelProps extends React.HTMLAttributes<HTMLElement> {
   filter?: TransactionFilter;
@@ -34,6 +35,8 @@ export const TransactionsFilterPanel = ({ filter, onFilterChange }: Transactions
     }
   }, [filter]);
 
+  const [opened, { toggle }] = useDisclosure(false);
+
   const handleCreatedFromChange = (value: Date | null) => onFilterChange(
     { ...form.getValues(), createdFrom: value ?? undefined },
   );
@@ -43,24 +46,31 @@ export const TransactionsFilterPanel = ({ filter, onFilterChange }: Transactions
   );
 
   return (
-    <form className="space-y-8">
-      <Group justify="flex-end">
-        <Text fw={500}>{t('TransactionsFilterPanel.createdLabel')}</Text>
-        <DateTimePickerInput
-          clearable
-          placeholder={t('TransactionsFilterPanel.createdFromPlaceholder')}
-          {...form.getInputProps('createdFrom')}
-          onChange={handleCreatedFromChange}
-          key={form.key('createdFrom')}
-        />
-        <DateTimePickerInput
-          clearable
-          placeholder={t('TransactionsFilterPanel.createdToPlaceholder')}
-          {...form.getInputProps('createdTo')}
-          onChange={handleCreatedToChange}
-          key={form.key('createdTo')}
-        />
-      </Group>
+    <form>
+      <Flex gap={10}>
+        <Button leftSection={<IconFilter size={14} />} variant={opened ? 'light' : 'subtle'} onClick={toggle}>
+          {t('TransactionsFilterPanel.filterButtonCaption')}
+        </Button>
+        <Collapse in={opened}>
+          <Group justify="flex-end">
+            <Text fw={500}>{t('TransactionsFilterPanel.createdLabel')}</Text>
+            <DateTimePickerInput
+              clearable
+              placeholder={t('TransactionsFilterPanel.createdFromPlaceholder')}
+              {...form.getInputProps('createdFrom')}
+              onChange={handleCreatedFromChange}
+              key={form.key('createdFrom')}
+            />
+            <DateTimePickerInput
+              clearable
+              placeholder={t('TransactionsFilterPanel.createdToPlaceholder')}
+              {...form.getInputProps('createdTo')}
+              onChange={handleCreatedToChange}
+              key={form.key('createdTo')}
+            />
+          </Group>
+        </Collapse>
+      </Flex>
     </form>
   );
 };

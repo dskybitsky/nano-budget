@@ -2,7 +2,7 @@
 
 import { Transaction } from '@prisma/client';
 import { getSessionUser } from '@/lib/auth';
-import { createTransaction } from '@/lib/model/transaction';
+import { createTransaction } from '@/lib/server/transaction';
 
 export type TransactionCreateDto = Omit<Transaction, 'id'>;
 

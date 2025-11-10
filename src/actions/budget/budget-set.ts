@@ -2,7 +2,7 @@
 
 import { Budget } from '@prisma/client';
 import { getSessionUser } from '@/lib/auth';
-import { setBudget } from '@/lib/model/budget';
+import { setBudget } from '@/lib/server/budget';
 
 export type BudgetSetDto = Omit<Budget, 'categoryId' | 'periodId' >;
 

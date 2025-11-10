@@ -2,10 +2,11 @@
 
 import { Account, Category, Period, Transaction } from '@prisma/client';
 import { getSessionUser } from '@/lib/auth';
-import { getAccount } from '@/lib/model/account';
-import { getPeriods } from '@/lib/model/period';
-import { getCategories } from '@/lib/model/category';
-import { getTransactions, TransactionFilter } from '@/lib/model/transaction';
+import { getAccount } from '@/lib/server/account';
+import { getPeriods } from '@/lib/server/period';
+import { getCategories } from '@/lib/server/category';
+import { getAccountTransactions } from '@/lib/server/transaction';
+import { TransactionFilter } from '@/lib/transaction';
 
 export type TransactionsIndexDto = {
   account: Account;
@@ -13,6 +14,7 @@ export type TransactionsIndexDto = {
   periods: Period[];
   transactions: Transaction[];
 };
+
 
 export const transactionsIndex = async (
   accountId: string,
@@ -31,10 +33,7 @@ export const transactionsIndex = async (
     getPeriods(accountId),
   ]);
 
-  const transactions = await getTransactions(
-    categories.map((c) => c.id),
-    filter,
-  );
+  const transactions = await getAccountTransactions(accountId, filter);
 
   return { account, categories, periods, transactions };
 };

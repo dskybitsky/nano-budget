@@ -8,10 +8,10 @@ import { Header } from '@/components/layout/header';
 import { Navbar } from '@/components/layout/navbar';
 import classes from './scaffold.module.css';
 import { User } from 'next-auth';
-import { LayoutViewDto } from '@/actions/layout-view';
+import { AccountLayoutDto } from '@/actions/account/account-layout';
 
 export interface ScaffoldProps extends React.HTMLAttributes<HTMLElement> {
-  dto: LayoutViewDto,
+  dto: AccountLayoutDto,
   user: User,
   accountId?: string,
 }

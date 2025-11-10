@@ -2,7 +2,7 @@
 
 import { Period } from '@prisma/client';
 import { getSessionUser } from '@/lib/auth';
-import { createPeriod } from '@/lib/model/period';
+import { createPeriod } from '@/lib/server/period';
 
 export type PeriodCreateDto = Omit<Period, 'id'>;
 

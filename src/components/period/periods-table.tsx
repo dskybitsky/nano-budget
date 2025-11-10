@@ -1,36 +1,27 @@
 import * as React from 'react';
 
 import { Period } from '@prisma/client';
-import { Button, Flex, Menu, Modal, Table, Text, UnstyledButton } from '@mantine/core';
+import { ActionIcon, Flex, Modal, Table, Text } from '@mantine/core';
 import { useTranslations } from 'next-intl';
 import { useCustomFormatter } from '@/hooks/use-custom-formatter';
 import { PeriodForm, PeriodFormValues } from '@/components/period/period-form';
 import { useDisclosure } from '@mantine/hooks';
 import { useModals } from '@mantine/modals';
-import { IconDotsVertical, IconPencil, IconPlus, IconTrash } from '@tabler/icons-react';
+import { IconPencil, IconTrash } from '@tabler/icons-react';
 
 export interface PeriodsTableProps {
   periods: Period[];
-  onCreateFormSubmit: (data: PeriodFormValues) => Promise<void>;
-  onUpdateFormSubmit: (id: string, data: PeriodFormValues) => Promise<void>;
+  onFormSubmit: (id: string, data: PeriodFormValues) => Promise<void>;
   onDeleteClick: (id: string) => Promise<void>;
 }
 
 export const PeriodsTable = ({
   periods,
-  onCreateFormSubmit,
-  onUpdateFormSubmit,
+  onFormSubmit,
   onDeleteClick,
 }: PeriodsTableProps) => {
   const t = useTranslations();
   const format = useCustomFormatter();
-
-  const [createOpened, { open: openCreate, close: closeCreate }] = useDisclosure(false);
-
-  const handleCreateFormSubmit = async (formValues: PeriodFormValues) => {
-    await onCreateFormSubmit(formValues);
-    closeCreate();
-  };
 
   return (
     <Table>
@@ -51,38 +42,26 @@ export const PeriodsTable = ({
             <Table.Td>
               <PeriodsTableActionCell
                 period={period}
-                onUpdateFormSubmit={onUpdateFormSubmit}
+                onFormSubmit={onFormSubmit}
                 onDeleteClick={onDeleteClick}
               />
             </Table.Td>
           </Table.Tr>
         ))}
-        <Table.Tr>
-          <Table.Td colSpan={4}>
-            <Modal opened={createOpened} onClose={closeCreate} title={t('PeriodModal.createTitle')}>
-              <PeriodForm onFormSubmit={handleCreateFormSubmit} />
-            </Modal>
-            <Flex justify="end">
-              <Button leftSection={<IconPlus size={14} />} variant="subtle" size="xs" onClick={openCreate} >
-                {t('Common.add')}
-              </Button>
-            </Flex>
-          </Table.Td>
-        </Table.Tr>
       </Table.Tbody>
     </Table>
   );
 };
 
-const PeriodsTableActionCell = ({ period, onUpdateFormSubmit, onDeleteClick }: {
+const PeriodsTableActionCell = ({ period, onFormSubmit, onDeleteClick }: {
   period: Period,
-  onUpdateFormSubmit: PeriodsTableProps['onUpdateFormSubmit'],
+  onFormSubmit: PeriodsTableProps['onFormSubmit'],
   onDeleteClick: PeriodsTableProps['onDeleteClick'],
 }) => {
   const [updateOpened, { open: openUpdate, close: closeUpdate }] = useDisclosure(false);
 
-  const handleUpdateFormSubmit = async (formValues: PeriodFormValues) => {
-    await onUpdateFormSubmit(period.id, formValues);
+  const handleFormSubmit = async (formValues: PeriodFormValues) => {
+    await onFormSubmit(period.id, formValues);
     closeUpdate();
   };
 
@@ -106,26 +85,17 @@ const PeriodsTableActionCell = ({ period, onUpdateFormSubmit, onDeleteClick }: {
       <Modal key={period.id} opened={updateOpened} onClose={closeUpdate} title={t('PeriodModal.editTitle')}>
         <PeriodForm
           period={period}
-          onFormSubmit={handleUpdateFormSubmit}
+          onFormSubmit={handleFormSubmit}
         />
       </Modal>
-      <Menu shadow="md">
-        <Menu.Target>
-          <UnstyledButton w="100%">
-            <IconDotsVertical size={14} />
-          </UnstyledButton>
-        </Menu.Target>
-        <Menu.Dropdown>
-          <Menu.Label>{t('Common.actions')}</Menu.Label>
-          <Menu.Item leftSection={ <IconPencil size={14} /> } onClick={openUpdate}>
-            {t('Common.edit')}
-          </Menu.Item>
-          <Menu.Divider />
-          <Menu.Item leftSection={ <IconTrash size={14} /> } onClick={handleDeleteClick} color="red">
-            {t('Common.delete')}
-          </Menu.Item>
-        </Menu.Dropdown>
-      </Menu>
+      <Flex justify="end">
+        <ActionIcon variant="subtle" onClick={openUpdate}>
+          <IconPencil size={14} />
+        </ActionIcon>
+        <ActionIcon variant="subtle" onClick={handleDeleteClick} color="red">
+          <IconTrash size={14} />
+        </ActionIcon>
+      </Flex>
     </>
   );
 };

@@ -18,5 +18,5 @@ export default async function Page({
     redirect('/');
   }
 
-  return (<BudgetsView dto={dto} periodId={periodId} />);
+  return (<BudgetsView dto={dto} />);
 }

@@ -1,19 +1,14 @@
 'use server';
 
 import prisma from '@/lib/prismadb';
-import { OperationType, Transaction } from '@prisma/client';
+import { Transaction } from '@prisma/client';
 import { revalidateTag } from 'next/cache';
 import { cache } from '@/lib/cache';
-import { getCategories } from '@/lib/model/category';
-import { Balance } from '@/lib/model/types';
+import { getCategories } from '@/lib/server/category';
+import { TransactionFilter } from '@/lib/transaction';
 
 const TRANSACTION_CACHE_TAG = 'transaction';
 const TRANSACTION_CACHE_RETENTION = 3600;
-
-export type TransactionFilter = {
-  createdFrom?: Date;
-  createdTo?: Date
-};
 
 export const getAccountTransactions = async (
   accountId: string,
@@ -53,21 +48,4 @@ export const updateTransaction = async(id: string, data: Partial<Omit<Transactio
 
 export const deleteTransaction = async(id: string) => {
   return prisma.transaction.delete({ where: { id } }).then(() => revalidateTag(TRANSACTION_CACHE_TAG));
-};
-
-export const getTransactionsTotal = async(transactions: Transaction[]): Promise<Balance> => {
-  let actual = 0;
-  let expected = 0;
-
-  transactions.forEach((transaction) => {
-    const sign = transaction.type === OperationType.credit ? -1 : 1;
-
-    if (transaction.executed) {
-      actual += sign * transaction.value;
-    }
-
-    expected += sign * transaction.value;
-  });
-
-  return { actual, expected };
 };

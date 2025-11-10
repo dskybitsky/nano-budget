@@ -1,5 +1,5 @@
 import * as React from 'react';
-
+import { useState } from 'react';
 import { Period } from '@prisma/client';
 import { useForm } from '@mantine/form';
 import { z } from 'zod';
@@ -7,18 +7,21 @@ import { zod4Resolver } from 'mantine-form-zod-resolver';
 import { Button, Group, TextInput } from '@mantine/core';
 import { useTranslations } from 'next-intl';
 import { DateTimePickerInput } from '@/components/date-time-picker-input';
+import { ErrorText } from '@/components/error-text';
 
 import '@mantine/dates/styles.css';
 
 export type PeriodFormValues = Pick<Period, 'name' | 'started' | 'ended'>;
 
 export interface PeriodFormProps extends React.HTMLAttributes<HTMLElement> {
-  period?: Period;
+  period?: PeriodFormValues;
   onFormSubmit: (data: PeriodFormValues) => Promise<void>;
 }
 
 export const PeriodForm = ({ period, onFormSubmit }: PeriodFormProps) => {
   const t = useTranslations();
+
+  const [error, setError] = useState<unknown|undefined>(undefined);
 
   const schema = z.object({
     name: z
@@ -43,13 +46,20 @@ export const PeriodForm = ({ period, onFormSubmit }: PeriodFormProps) => {
     validate: zod4Resolver(schema),
   });
 
+  const handleFormSubmit = form.onSubmit(async (data: PeriodFormValues) => {
+    try {
+      await onFormSubmit(data);
+    } catch (error) {
+      setError(error);
+    }
+  });
+
   return (
-    <form onSubmit={form.onSubmit(onFormSubmit)} className="space-y-8">
+    <form onSubmit={handleFormSubmit}>
       <TextInput
         label={t('Period.name')}
         placeholder={t('PeriodForm.namePlaceholder')}
         key={form.key('name')}
-        mt="md"
         {...form.getInputProps('name')}
       />
       <DateTimePickerInput
@@ -65,6 +75,9 @@ export const PeriodForm = ({ period, onFormSubmit }: PeriodFormProps) => {
         mt="md"
         {...form.getInputProps('ended')}
       />
+      {error !== undefined && (
+        <ErrorText error={error} p="xs" mt="xs" />
+      )}
       <Group justify="flex-end" mt="md">
         <Button type="submit">{t('Common.submit')}</Button>
       </Group>

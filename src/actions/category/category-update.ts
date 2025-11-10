@@ -2,7 +2,7 @@
 
 import { Category } from '@prisma/client';
 import { getSessionUser } from '@/lib/auth';
-import { updateCategory } from '@/lib/model/category';
+import { updateCategory } from '@/lib/server/category';
 
 export type CategoryUpdateDto = Partial<Omit<Category, 'id'>>;
 

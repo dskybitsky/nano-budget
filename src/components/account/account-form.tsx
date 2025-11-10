@@ -1,11 +1,12 @@
 import * as React from 'react';
-
+import { useState } from 'react';
 import { Account, AccountType } from '@prisma/client';
 import { useForm } from '@mantine/form';
 import { z } from 'zod';
 import { zod4Resolver } from 'mantine-form-zod-resolver';
 import { Button, Group, NumberInput, Select, TextInput } from '@mantine/core';
 import { useTranslations } from 'next-intl';
+import { ErrorText } from '@/components/error-text';
 
 export type AccountFormValues = Pick<Account, 'name' | 'type' | 'currency' | 'value' | 'icon' | 'order'>;
 
@@ -16,6 +17,8 @@ export interface AccountFormProps extends React.HTMLAttributes<HTMLElement> {
 
 export const AccountForm = ({ account, onFormSubmit }: AccountFormProps) => {
   const t = useTranslations();
+
+  const [error, setError] = useState<unknown|undefined>(undefined);
 
   const schema = z.object({
     name: z
@@ -48,13 +51,20 @@ export const AccountForm = ({ account, onFormSubmit }: AccountFormProps) => {
     validate: zod4Resolver(schema),
   });
 
+  const handleFormSubmit = form.onSubmit(async (data: AccountFormValues) => {
+    try {
+      await onFormSubmit(data);
+    } catch (error) {
+      setError(error);
+    }
+  });
+
   return (
-    <form onSubmit={form.onSubmit(onFormSubmit)} className="space-y-8">
+    <form onSubmit={handleFormSubmit}>
       <TextInput
         label={t('Account.name')}
         placeholder={t('AccountForm.namePlaceholder')}
         key={form.key('name')}
-        mt="md"
         {...form.getInputProps('name')}
       />
       <Select
@@ -98,6 +108,9 @@ export const AccountForm = ({ account, onFormSubmit }: AccountFormProps) => {
         mt="md"
         {...form.getInputProps('order')}
       />
+      {error !== undefined && (
+        <ErrorText error={error} p="xs" mt="xs" />
+      )}
       <Group justify="flex-end" mt="md">
         <Button type="submit">{t('Common.submit')}</Button>
       </Group>
