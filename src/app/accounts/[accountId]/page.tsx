@@ -1,6 +1,6 @@
 import React from 'react';
 import { Metadata } from 'next';
-import { AccountView } from '@/app/(account)/[accountId]/view';
+import { AccountView } from '@/app/accounts/[accountId]/view';
 import { accountView } from '@/actions/account/account-view';
 import { redirect } from 'next/navigation';
 import { homeUrl } from '@/lib/url';

@@ -1,7 +1,7 @@
 import React from 'react';
 import { redirect } from 'next/navigation';
 import { budgetsIndex } from '@/actions/budget/budgets-index';
-import { BudgetsView } from '@/app/(account)/[accountId]/budget/view';
+import { BudgetsView } from '@/app/accounts/[accountId]/budget/view';
 
 export default async function Page({
   params,

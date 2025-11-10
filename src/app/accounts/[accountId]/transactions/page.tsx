@@ -1,7 +1,7 @@
 import React from 'react';
 import { transactionsIndex } from '@/actions/transaction/transactions-index';
 import { redirect } from 'next/navigation';
-import { TransactionsView } from '@/app/(account)/[accountId]/transactions/view';
+import { TransactionsView } from '@/app/accounts/[accountId]/transactions/view';
 
 export default async function Page({
   params,

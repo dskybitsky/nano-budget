@@ -4,26 +4,26 @@ export const homeUrl = () => (
   '/'
 );
 
-export const accountCreateUrl = () => (
-  '/create'
-);
-
 export const accountIndexUrl = () => (
   '/accounts'
 );
 
+export const accountCreateUrl = () => (
+  '/accounts/create'
+);
+
 export const accountViewUrl = (accountId: string) => (
-  `/${accountId}`
+  `/accounts/${accountId}`
 );
 
 export const accountTransactionsIndexUrl = (accountId: string, filter?: TransactionFilter) => (
-  `/${accountId}/transactions?`
+  `/accounts/${accountId}/transactions?`
   + `createdFrom=${filter?.createdFrom?.toJSON() ?? ''}&`
   + `createdTo=${filter?.createdTo?.toJSON() ?? ''}`
 );
 
 export const accountBudgetIndexUrl = (accountId: string, periodId?: string) => (
-  `/${accountId}/budget?periodId=${periodId ?? ''}`
+  `/accounts/${accountId}/budget?periodId=${periodId ?? ''}`
 );
 
 export const settingsUrl = () => (
