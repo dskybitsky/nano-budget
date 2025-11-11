@@ -8,13 +8,13 @@ export default async function Page({
   searchParams,
 }: {
   params: Promise<{ accountId: string }>,
-  searchParams: Promise<{ [_: string]: string | string[] | undefined }>,
+  searchParams: Promise<{ [_: string]: string | undefined }>,
 }) {
-  const [{ accountId }, { createdFrom, createdTo }] = await Promise.all([params, searchParams]);
+  const [{ accountId }, { periodId, executedFrom, executedTo }] = await Promise.all([params, searchParams]);
 
-  const filter = createFilter(createdFrom, createdTo);
+  const filter = createFilter(executedFrom, executedTo);
 
-  const dto = await transactionsIndex(accountId, filter);
+  const dto = await transactionsIndex(accountId, periodId, filter);
 
   if (!dto) {
     redirect('/');
@@ -23,10 +23,10 @@ export default async function Page({
   return (<TransactionsView dto={dto} filter={filter} />);
 }
 
-const createFilter = (createdFrom: unknown, createdTo: unknown) => {
+const createFilter = (executedFrom: unknown, executedTo: unknown) => {
   return {
-    createdFrom: parseFilterDate(createdFrom),
-    createdTo: parseFilterDate(createdTo),
+    executedFrom: parseFilterDate(executedFrom),
+    executedTo: parseFilterDate(executedTo),
   };
 };
 

@@ -3,7 +3,7 @@
 import { Box, Button, Flex, Modal, Title } from '@mantine/core';
 import React from 'react';
 import { TransactionsTable } from '@/components/transaction/transactions-table';
-import { TransactionsIndexDto } from '@/actions/transaction/transactions-index';
+import { TransactionFilterDto, TransactionsIndexDto } from '@/actions/transaction/transactions-index';
 import { transactionCreate } from '@/actions/transaction/transaction-create';
 import { transactionUpdate } from '@/actions/transaction/transaction-update';
 import { transactionDelete } from '@/actions/transaction/transaction-delete';
@@ -11,7 +11,6 @@ import { TransactionForm, TransactionFormValues } from '@/components/transaction
 import { TransactionsFilterPanel } from '@/components/transaction/transactions-filter-panel';
 import { redirect } from 'next/navigation';
 import { accountTransactionsIndexUrl } from '@/lib/url';
-import { TransactionFilter } from '@/lib/transaction';
 import { PeriodPicker } from '@/components/period/period-picker';
 import { Period } from '@prisma/client';
 import { useDebouncedCallback, useDisclosure } from '@mantine/hooks';
@@ -20,7 +19,7 @@ import { useTranslations } from 'next-intl';
 
 export interface TransactionsViewProps extends React.HTMLAttributes<HTMLElement> {
   dto: TransactionsIndexDto,
-  filter?: TransactionFilter,
+  filter?: TransactionFilterDto,
 }
 
 export const TransactionsView = ({ dto, filter }: TransactionsViewProps) => {
@@ -42,20 +41,12 @@ export const TransactionsView = ({ dto, filter }: TransactionsViewProps) => {
   };
 
   const handlePeriodChange = (period: Period) => {
-    redirect(accountTransactionsIndexUrl(dto.account.id, {
-      createdFrom: period.started,
-      createdTo: period.ended ?? undefined,
-    }));
+    redirect(accountTransactionsIndexUrl(dto.account.id, period.id, filter));
   };
 
-  const handleFilterChange = useDebouncedCallback((filter: TransactionFilter) => {
-    redirect(accountTransactionsIndexUrl(dto.account.id, filter));
+  const handleFilterChange = useDebouncedCallback((filter: TransactionFilterDto) => {
+    redirect(accountTransactionsIndexUrl(dto.account.id, dto.periodId, filter));
   }, 1000);
-
-  const periodId = dto.periods.find((period) => (
-    period.started.getTime() === filter?.createdFrom?.getTime()
-    && period.ended?.getTime() === filter?.createdTo?.getTime()
-  ))?.id;
 
   return (
     <Flex
@@ -65,9 +56,9 @@ export const TransactionsView = ({ dto, filter }: TransactionsViewProps) => {
       direction="column"
       align="center"
     >
-      <Flex justify="space-between" align="flex-start" w="100%">
+      <Flex justify="space-between" align="flex-start" w="100%" gap={20}>
         <Title order={3}>{t('TransactionsIndex.title')}</Title>
-        <PeriodPicker periods={dto.periods} periodId={periodId} onChange={handlePeriodChange} />
+        <PeriodPicker periods={dto.periods} periodId={dto.periodId} onChange={handlePeriodChange} />
       </Flex>
       <Flex justify="space-between" align="flex-start" w="100%">
         <TransactionsFilterPanel filter={filter} onFilterChange={handleFilterChange} />

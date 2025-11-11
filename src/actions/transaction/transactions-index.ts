@@ -3,22 +3,27 @@
 import { Account, Category, Period, Transaction } from '@prisma/client';
 import { getSessionUser } from '@/lib/auth';
 import { getAccount } from '@/lib/server/account';
-import { getPeriods } from '@/lib/server/period';
+import { getLastPeriod, getPeriod, getPeriods } from '@/lib/server/period';
 import { getCategories } from '@/lib/server/category';
-import { getAccountTransactions } from '@/lib/server/transaction';
-import { TransactionFilter } from '@/lib/transaction';
+import { getTransactions } from '@/lib/server/transaction';
+
+export type TransactionFilterDto = {
+  executedFrom?: Date;
+  executedTo?: Date;
+};
 
 export type TransactionsIndexDto = {
   account: Account;
   categories: Category[];
   periods: Period[];
+  periodId: string,
   transactions: Transaction[];
 };
 
-
 export const transactionsIndex = async (
   accountId: string,
-  filter?: TransactionFilter,
+  periodId?: string,
+  filter?: TransactionFilterDto,
 ): Promise<TransactionsIndexDto | null> => {
   await getSessionUser();
 
@@ -28,12 +33,30 @@ export const transactionsIndex = async (
     return null;
   }
 
+  const period = await (periodId ? getPeriod(periodId) : getLastPeriod(accountId));
+
+  if (!period || period.accountId !== accountId) {
+    return null;
+  }
+
   const [categories, periods] = await Promise.all([
     getCategories(accountId),
     getPeriods(accountId),
   ]);
 
-  const transactions = await getAccountTransactions(accountId, filter);
+  const transactions = await getTransactions({
+    categoryIdList: categories.map(c => c.id),
+    createdFrom: period.started,
+    createdTo: period.ended ?? undefined,
+    executedFrom: filter?.executedFrom,
+    executedTo: filter?.executedTo,
+  });
 
-  return { account, categories, periods, transactions };
+  return {
+    account,
+    categories,
+    periods,
+    periodId: period.id,
+    transactions,
+  };
 };

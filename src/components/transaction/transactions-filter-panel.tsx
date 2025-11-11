@@ -3,34 +3,33 @@ import { useForm } from '@mantine/form';
 import { Button, Collapse, Flex, Group, Text } from '@mantine/core';
 import { useTranslations } from 'next-intl';
 import { DateTimePickerInput } from '@/components/date-time-picker-input';
-import { TransactionFilter } from '@/lib/transaction';
 import { useEffect } from 'react';
 import { IconFilter } from '@tabler/icons-react';
 import { useDisclosure } from '@mantine/hooks';
-
+import { TransactionFilterDto } from '@/actions/transaction/transactions-index';
 import '@mantine/dates/styles.css';
 
 export interface TransactionsFilterPanelProps extends React.HTMLAttributes<HTMLElement> {
-  filter?: TransactionFilter;
-  onFilterChange: (filter: TransactionFilter) => void;
+  filter?: TransactionFilterDto;
+  onFilterChange: (filter: TransactionFilterDto) => void;
 }
 
 export const TransactionsFilterPanel = ({ filter, onFilterChange }: TransactionsFilterPanelProps) => {
   const t = useTranslations();
 
-  const form = useForm<TransactionFilter>({
+  const form = useForm<TransactionFilterDto>({
     mode: 'uncontrolled',
     initialValues: {
-      createdFrom: filter?.createdFrom,
-      createdTo: filter?.createdTo,
+      executedFrom: filter?.executedFrom,
+      executedTo: filter?.executedTo,
     },
   });
 
   useEffect(() => {
     if (filter) {
       form.setValues({
-        createdFrom: filter.createdFrom,
-        createdTo: filter.createdTo,
+        executedFrom: filter.executedFrom,
+        executedTo: filter.executedTo,
       });
     }
   }, [filter]);
@@ -38,11 +37,11 @@ export const TransactionsFilterPanel = ({ filter, onFilterChange }: Transactions
   const [opened, { toggle }] = useDisclosure(false);
 
   const handleCreatedFromChange = (value: Date | null) => onFilterChange(
-    { ...form.getValues(), createdFrom: value ?? undefined },
+    { ...form.getValues(), executedFrom: value ?? undefined },
   );
 
   const handleCreatedToChange = (value: Date | null) => onFilterChange(
-    { ...form.getValues(), createdTo: value ?? undefined },
+    { ...form.getValues(), executedTo: value ?? undefined },
   );
 
   return (
@@ -53,20 +52,20 @@ export const TransactionsFilterPanel = ({ filter, onFilterChange }: Transactions
         </Button>
         <Collapse in={opened}>
           <Group justify="flex-end">
-            <Text fw={500}>{t('TransactionsFilterPanel.createdLabel')}</Text>
+            <Text fw={500}>{t('TransactionsFilterPanel.executedLabel')}</Text>
             <DateTimePickerInput
               clearable
-              placeholder={t('TransactionsFilterPanel.createdFromPlaceholder')}
-              {...form.getInputProps('createdFrom')}
+              placeholder={t('TransactionsFilterPanel.executedFromPlaceholder')}
+              {...form.getInputProps('executedFrom')}
               onChange={handleCreatedFromChange}
-              key={form.key('createdFrom')}
+              key={form.key('executedFrom')}
             />
             <DateTimePickerInput
               clearable
-              placeholder={t('TransactionsFilterPanel.createdToPlaceholder')}
-              {...form.getInputProps('createdTo')}
+              placeholder={t('TransactionsFilterPanel.executedToPlaceholder')}
+              {...form.getInputProps('executedTo')}
               onChange={handleCreatedToChange}
-              key={form.key('createdTo')}
+              key={form.key('executedTo')}
             />
           </Group>
         </Collapse>

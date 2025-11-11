@@ -1,14 +1,13 @@
 'use server';
 
-import { Account, AccountType, Category, OperationType, Period } from '@prisma/client';
+import { Account, AccountType, Category, OperationType, Period, Transaction } from '@prisma/client';
 import { getSessionUser } from '@/lib/auth';
 import { getAccount } from '@/lib/server/account';
 import { getLastPeriod, getPeriod, getPeriods } from '@/lib/server/period';
 import { getCategories } from '@/lib/server/category';
 import { getBudgets } from '@/lib/server/budget';
-import { getTransactions } from '@/lib/server/transaction';
-import { PlannedTotal } from '@/lib/types';
-import { getTransactionsTotal } from '@/lib/transaction';
+import { getTransactionsWithCategory } from '@/lib/server/transaction';
+import { PlannedTotal, Total } from '@/lib/types';
 import _ from 'lodash';
 
 export type BudgetsIndexDto = {
@@ -46,37 +45,41 @@ export const budgetsIndex = async (
 
   const budgetsIndex = _.keyBy(budgets, 'categoryId');
 
-  const categoriesIdList = categories.map((category) => category.id);
+  const categoryIdList = categories.map((category) => category.id);
 
-  const transactions = await getTransactions(categoriesIdList, {
+  const transactions = await getTransactionsWithCategory({
+    categoryIdList,
     createdFrom: period.started,
     createdTo: period.ended ?? undefined,
   });
 
+  const accountSign = account.type == AccountType.credit ? -1 : 1;
+
   const transactionsIndex = _.groupBy(transactions, 'categoryId');
 
   const budgetsByCategory = categories.reduce((acc, category) => {
+    const transactionsTotal = calculateTotal(transactionsIndex[category.id] ?? []);
+
     acc[category.id] = {
-      planned: budgetsIndex[category.id]?.value ?? 0,
-      ...getTransactionsTotal(transactionsIndex[category.id] ?? []),
+      planned: accountSign * (budgetsIndex[category.id]?.value ?? 0),
+      actual: accountSign * transactionsTotal.actual,
+      expected: accountSign * transactionsTotal.expected,
     };
 
     return acc;
   }, {} as { [p: Category['id']] : PlannedTotal });
 
-  const total = getTransactionsTotal(transactions);
-
-  const accountSign = account.type == AccountType.credit ? -1 : 1;
-
-  const planned = categories.reduce(
+  const total = categories.reduce(
     (acc, category) => {
       const sign = category.type === OperationType.credit ? -1 : 1;
 
-      acc += accountSign * sign * (budgetsByCategory[category.id]?.planned ?? 0);
+      acc.planned += accountSign * sign * (budgetsByCategory[category.id]?.planned ?? 0);
+      acc.actual += accountSign * sign * (budgetsByCategory[category.id]?.actual ?? 0);
+      acc.expected += accountSign * sign * (budgetsByCategory[category.id]?.expected ?? 0);
 
       return acc;
     },
-    0,
+    { planned: 0, actual: 0, expected: 0 },
   );
 
   return {
@@ -85,6 +88,23 @@ export const budgetsIndex = async (
     periods,
     periodId: period.id,
     periodBudgetsByCategory: budgetsByCategory,
-    periodTotal: { ...total, planned },
+    periodTotal: total,
   };
+};
+
+const calculateTotal = (transactions: (Transaction & { category: Category })[]): Total => {
+  let actual = 0;
+  let expected = 0;
+
+  transactions.forEach((transaction) => {
+    const sign = transaction.type === transaction.category.type ? 1 : -1;
+
+    if (transaction.executed) {
+      actual += sign * transaction.value;
+    }
+
+    expected += sign * transaction.value;
+  });
+
+  return { actual, expected };
 };

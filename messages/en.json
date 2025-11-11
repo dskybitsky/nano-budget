@@ -118,9 +118,9 @@
     },
     "TransactionsFilterPanel": {
         "filterButtonCaption": "Filter",
-        "createdLabel": "Created",
-        "createdFromPlaceholder": "After",
-        "createdToPlaceholder": "Before"
+        "executedLabel": "Executed",
+        "executedFromPlaceholder": "After",
+        "executedToPlaceholder": "Before"
     },
     "TransactionModal": {
         "createTitle": "Create Transaction",

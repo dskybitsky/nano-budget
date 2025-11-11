@@ -23,6 +23,8 @@ export const PeriodPicker = ({ periods, periodId, onChange }: PeriodPickerProps)
       withControls={false}
       onChange={handleChange}
       getItemProps={(page) => ({ component: 'a', children: periods[page - 1].name })}
+      siblings={1}
+      boundaries={1}
       classNames={{
         root: classes.root,
         control: classes.control,

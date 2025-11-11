@@ -1,4 +1,4 @@
-import { TransactionFilter } from '@/lib/transaction';
+import { TransactionFilterDto } from '@/actions/transaction/transactions-index';
 
 export const homeUrl = () => (
   '/'
@@ -16,10 +16,15 @@ export const accountViewUrl = (accountId: string) => (
   `/accounts/${accountId}`
 );
 
-export const accountTransactionsIndexUrl = (accountId: string, filter?: TransactionFilter) => (
+export const accountTransactionsIndexUrl = (
+  accountId: string,
+  periodId?: string,
+  filter?: TransactionFilterDto,
+) => (
   `/accounts/${accountId}/transactions?`
-  + `createdFrom=${filter?.createdFrom?.toJSON() ?? ''}&`
-  + `createdTo=${filter?.createdTo?.toJSON() ?? ''}`
+  + `periodId=${periodId ?? ''}&`
+  + `executedFrom=${filter?.executedFrom?.toJSON() ?? ''}&`
+  + `executedTo=${filter?.executedTo?.toJSON() ?? ''}`
 );
 
 export const accountBudgetIndexUrl = (accountId: string, periodId?: string) => (

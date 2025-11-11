@@ -17,7 +17,11 @@ export const EntityImage = ({ entity, ...props }: EntityImageProps) => {
 };
 
 const parseAsUrl = (icon: string) => (
-  icon.length > 4 && icon.startsWith('http')
+  icon.length > 4 && (
+    icon.startsWith('http')
+      || icon.startsWith('data')
+      || icon.startsWith('//')
+  )
     ? icon
     : null
 );

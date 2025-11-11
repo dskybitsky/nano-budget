@@ -35,7 +35,7 @@ export const BudgetsView = ({ dto }: BudgetsViewProps) => {
       direction="column"
       align="center"
     >
-      <Flex justify="space-between" align="center" w="100%" wrap="wrap" gap={10}>
+      <Flex justify="space-between" align="center" w="100%" wrap="wrap" gap={20}>
         <Title order={3}>{t('BudgetsIndex.title')}</Title>
         <PeriodPicker periods={dto.periods} periodId={dto.periodId} onChange={handlePeriodChange} />
       </Flex>
