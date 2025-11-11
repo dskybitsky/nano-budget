@@ -4,10 +4,11 @@ import { Category, OperationType, Transaction } from '@prisma/client';
 import { useForm } from '@mantine/form';
 import { z } from 'zod';
 import { zod4Resolver } from 'mantine-form-zod-resolver';
-import { Button, Group, NumberInput, Select, TextInput } from '@mantine/core';
+import { Button, Group, NumberInput, TextInput } from '@mantine/core';
 import { useTranslations } from 'next-intl';
 import { DateTimePickerInput } from '@/components/date-time-picker-input';
 import { ErrorText } from '@/components/error-text';
+import { CategoriesSelect } from '@/components/category/categories-select';
 
 export type TransactionFormValues = Pick<
   Transaction,
@@ -78,12 +79,12 @@ export const TransactionForm = ({ categories, transaction, onFormSubmit }: Trans
         mt="md"
         {...form.getInputProps('executed')}
       />
-      <Select
+      <CategoriesSelect
         label={t('Transaction.category')}
         placeholder={t('TransactionForm.categoryPlaceholder')}
         key={form.key('categoryId')}
         mt="md"
-        data={categories.map((category) => ({ value: category.id, label: category.name }))}
+        categories={categories}
         {...form.getInputProps('categoryId')}
       />
       <TextInput
