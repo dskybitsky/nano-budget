@@ -23,6 +23,7 @@ export const accountTransactionsIndexUrl = (
 ) => (
   `/accounts/${accountId}/transactions?`
   + `periodId=${periodId ?? ''}&`
+  + `executed=${filter?.executed ?? ''}&`
   + `executedFrom=${filter?.executedFrom?.toJSON() ?? ''}&`
   + `executedTo=${filter?.executedTo?.toJSON() ?? ''}`
 );

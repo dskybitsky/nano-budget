@@ -25,7 +25,7 @@ import {
 import classes from './navbar.module.css';
 import Link from 'next/link';
 import { AccountLayoutDto } from '@/actions/account/account-layout';
-import { redirect } from 'next/navigation';
+import { redirect, useSearchParams } from 'next/navigation';
 import {
   accountCreateUrl,
   accountViewUrl,
@@ -44,6 +44,9 @@ export interface NavbarProps {
 }
 
 export const Navbar = ({ dto, accountId }: NavbarProps) => {
+  const t = useTranslations();
+  const searchParams = useSearchParams();
+
   const [transactionsOpened, { toggle: transactionsToggle }] = useDisclosure(true);
 
   const combobox = useCombobox({
@@ -60,10 +63,19 @@ export const Navbar = ({ dto, accountId }: NavbarProps) => {
     redirect(accountTransactionsIndexUrl(value));
   };
 
-
   const account = dto.accounts.find((account) => account.id === accountId);
 
-  const t = useTranslations();
+  const periodId = searchParams.get('periodId');
+
+  const periodSummary = (
+    periodId
+      ? account?.summary[periodId]
+      : account?.summary.last
+  ) ?? {
+    count: 0,
+    executedCount: 0,
+    nonExecutedCount: 0,
+  };
 
   return (
     <Stack h="100%" gap={20} px="md" py="lg">
@@ -101,7 +113,7 @@ export const Navbar = ({ dto, accountId }: NavbarProps) => {
               ))}
               <Divider w="100%" />
               <Combobox.Option value={''} key='account-option-index'>
-                <AccountCreateComboBoxItem />
+                <AccountsIndexComboBoxItem />
               </Combobox.Option>
             </Combobox.Options>
           </Combobox.Dropdown>
@@ -129,7 +141,7 @@ export const Navbar = ({ dto, accountId }: NavbarProps) => {
                 >
                   <Flex align="center" gap={10}>
                     <IconReceipt size={20} />
-                    <Text className={classes.title} lts={-0.5}>Transactions</Text>
+                    <Text className={classes.title} lts={-0.5}>{t('Navbar.transactionsItem')}</Text>
                   </Flex>
                   {transactionsOpened && <IconChevronDown />}
                   {!transactionsOpened && <IconChevronRight />}
@@ -141,24 +153,33 @@ export const Navbar = ({ dto, accountId }: NavbarProps) => {
                       className={classes.subNavLink}
                       href={accountTransactionsIndexUrl(accountId)}
                     >
-                      <Text lts={-0.5}>All</Text>
-                      <Badge radius={6} className={classes.noti} px={6}>10</Badge>
+                      <Text lts={-0.5}>{t('Navbar.allTransactionsItem')}</Text>
+                      <Badge radius={6} className={classes.noti} px={6}>{periodSummary.count}</Badge>
                     </Link>
                     <Link
                       key="nav-link-transactions-confirmed"
                       className={classes.subNavLink}
-                      href={accountTransactionsIndexUrl(accountId)}
+                      href={accountTransactionsIndexUrl(accountId, undefined, { executed: true })}
                     >
-                      <Text lts={-0.5}>Confirmed</Text>
-                      <Badge radius={6} className={classes.noti} px={6}>9</Badge>
+                      <Text lts={-0.5}>{t('Navbar.executedTransactionsItem')}</Text>
+                      <Badge radius={6} className={classes.noti} px={6}>
+                        {periodSummary.executedCount}
+                      </Badge>
                     </Link>
                     <Link
                       key="nav-link-transactions-unconfirmed"
                       className={classes.subNavLink}
-                      href={accountTransactionsIndexUrl(accountId)}
+                      href={accountTransactionsIndexUrl(accountId, undefined, { executed: false })}
                     >
-                      <Text lts={-0.5}>Unconfirmed</Text>
-                      <Badge radius={6} className={classes.noti} px={6}>1</Badge>
+                      <Text lts={-0.5}>{t('Navbar.nonExecutedTransactionsItem')}</Text>
+                      <Badge
+                        radius={6}
+                        className={classes.noti}
+                        px={6}
+                        bg={ periodSummary.nonExecutedCount > 0 ? 'red.3' : ''}
+                      >
+                        {periodSummary.nonExecutedCount}
+                      </Badge>
                     </Link>
                   </Flex>
                 </Collapse>
@@ -224,17 +245,13 @@ const AccountComboBoxItem = ({ account }: { account: AccountLayoutDto['accounts'
   );
 };
 
-const AccountCreateComboBoxItem = () => {
+const AccountsIndexComboBoxItem = () => {
   const t = useTranslations();
 
   return (
-    <Flex w="100%" justify="start" align="center" gap={20}>
-      <Flex align="center" justify="center" h={36} w={36}>
-        <IconList size={20} />
-      </Flex>
-      <Flex direction="column" align="start" gap={2}>
-        <Text>{t('Navbar.allAccountsItem')}</Text>
-      </Flex>
+    <Flex w="100%" justify="center" align="center" gap={10} p={5}>
+      <IconList size={20} />
+      <Text fz={14}>{t('Navbar.allAccountsItem')}</Text>
     </Flex>
   );
 };

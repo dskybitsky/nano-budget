@@ -44,7 +44,11 @@
         "accountDescriptionPlaceholder": "{accountType} account",
         "accountBalanceText": "Balance: {actual}",
         "accountBalanceTextLong": "Balance: {actual} ({expected})",
-        "allAccountsItem": "All accounts"
+        "allAccountsItem": "All Accounts",
+        "transactionsItem": "Transactions",
+        "allTransactionsItem": "All",
+        "executedTransactionsItem": "Executed",
+        "nonExecutedTransactionsItem": "Not Executed"
     },
     "SignInView": {
         "title": "Please Sign in",

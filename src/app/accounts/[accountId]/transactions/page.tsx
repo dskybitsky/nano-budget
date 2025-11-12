@@ -10,9 +10,14 @@ export default async function Page({
   params: Promise<{ accountId: string }>,
   searchParams: Promise<{ [_: string]: string | undefined }>,
 }) {
-  const [{ accountId }, { periodId, executedFrom, executedTo }] = await Promise.all([params, searchParams]);
+  const [{ accountId }, {
+    periodId,
+    executed,
+    executedFrom,
+    executedTo,
+  }] = await Promise.all([params, searchParams]);
 
-  const filter = createFilter(executedFrom, executedTo);
+  const filter = createFilter(executed, executedFrom, executedTo);
 
   const dto = await transactionsIndex(accountId, periodId, filter);
 
@@ -23,8 +28,13 @@ export default async function Page({
   return (<TransactionsView dto={dto} filter={filter} />);
 }
 
-const createFilter = (executedFrom: unknown, executedTo: unknown) => {
+const createFilter = (executed: unknown, executedFrom: unknown, executedTo: unknown) => {
   return {
+    executed: (
+      executed === 'true'
+        ? true
+        : (executed === 'false' ? false : undefined)
+    ),
     executedFrom: parseFilterDate(executedFrom),
     executedTo: parseFilterDate(executedTo),
   };

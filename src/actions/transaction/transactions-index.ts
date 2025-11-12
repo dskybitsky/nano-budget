@@ -8,6 +8,7 @@ import { getCategories } from '@/lib/server/category';
 import { getTransactions } from '@/lib/server/transaction';
 
 export type TransactionFilterDto = {
+  executed?: boolean;
   executedFrom?: Date;
   executedTo?: Date;
 };
@@ -48,8 +49,7 @@ export const transactionsIndex = async (
     categoryIdList: categories.map(c => c.id),
     createdFrom: period.started,
     createdTo: period.ended ?? undefined,
-    executedFrom: filter?.executedFrom,
-    executedTo: filter?.executedTo,
+    ...filter,
   });
 
   return {
