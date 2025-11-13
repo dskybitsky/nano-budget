@@ -57,8 +57,8 @@ const calculateBalance = (
   transactions: Transaction[],
   account: Account,
 ): AccountDto['balance'] => {
-  let actual = 0;
-  let expected = 0;
+  let actual = account.value;
+  let expected = account.value;
 
   const accountSign = account.type == AccountType.credit ? -1 : 1;
 
