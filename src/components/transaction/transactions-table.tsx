@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import { Account, Category, Transaction } from '@prisma/client';
+import { Account, AccountType, Category, OperationType, Transaction } from '@prisma/client';
 import { Flex, Modal, Table, Text, ActionIcon } from '@mantine/core';
 import { useTranslations } from 'next-intl';
 import { IconPencil, IconTrash } from '@tabler/icons-react';
@@ -33,6 +33,13 @@ export const TransactionsTable = ({
   const t = useTranslations();
   const format = useCustomFormatter();
 
+  const getValue = (transaction: Transaction) => {
+    const accountSign = account.type == AccountType.credit ? -1 : 1;
+    const sign = transaction.type == OperationType.credit ? -1 : 1;
+
+    return accountSign * sign * transaction.value;
+  };
+
   return (
     <Table>
       <Table.Caption>{t('TransactionsTable.caption')}</Table.Caption>
@@ -55,7 +62,9 @@ export const TransactionsTable = ({
               <EntityImageText size={18} entity={categoriesIndex.get(transaction.categoryId)!} />
             </Table.Td>
             <Table.Td>{transaction.name}</Table.Td>
-            <Table.Td ta="right">{format.monetary(transaction.value, account.currency)}</Table.Td>
+            <Table.Td ta="right">
+              {format.monetary(getValue(transaction), account.currency)}
+            </Table.Td>
             <Table.Td>
               <TransactionsTableActionCell
                 categories={categories}

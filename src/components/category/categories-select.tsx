@@ -16,12 +16,14 @@ import { InputBaseProps } from '@mantine/core';
 export interface CategoriesSelectProps extends InputBaseProps {
   categories: Category[];
   defaultValue?: string|null;
+  onChange?: (value: string | null) => void;
   placeholder?: string;
 }
 
 export const CategoriesSelect = ({
   categories,
   defaultValue,
+  onChange,
   placeholder,
   ...props
 }: CategoriesSelectProps) => {
@@ -43,6 +45,11 @@ export const CategoriesSelect = ({
       store={combobox}
       onOptionSubmit={(val) => {
         setValue(val);
+
+        if (onChange) {
+          onChange(val);
+        }
+
         combobox.closeDropdown();
       }}
     >
