@@ -5,6 +5,9 @@ export const useCustomFormatter = () => {
 
   return {
     ...format,
+    dateShort: (value: Date | null | undefined, nullValue = ''): string => {
+      return value ? format.dateTime(value, { dateStyle: 'medium' }) : nullValue;
+    },
     dateTimeShort: (value: Date | null | undefined, nullValue = ''): string => {
       return value ? format.dateTime(value, 'short') : nullValue;
     },

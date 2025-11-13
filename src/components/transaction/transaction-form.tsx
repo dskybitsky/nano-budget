@@ -48,7 +48,7 @@ export const TransactionForm = ({ categories, transaction, onFormSubmit }: Trans
     mode: 'uncontrolled',
     initialValues: {
       created: transaction?.created ?? new Date(),
-      executed: transaction?.executed ?? null,
+      executed: transaction?.executed ?? new Date(),
       categoryId: transaction?.categoryId ?? categories[0]?.id,
       name: transaction?.name ?? '',
       type: transaction?.type ?? OperationType.credit,

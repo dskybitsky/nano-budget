@@ -1,23 +1,21 @@
 'use client';
 
-import { DateTimePicker, DateTimePickerProps, DateStringValue } from '@mantine/dates';
-import { useLocale, useTimeZone } from 'next-intl';
+import { DateTimePicker, DateTimePickerProps, DateStringValue, DateValue } from '@mantine/dates';
+import { useCustomFormatter } from '@/hooks/use-custom-formatter';
 
 export interface DateTimePickerInputProps extends Omit<DateTimePickerProps, 'onChange'> {
   onChange?: (date: Date | null) => void;
 }
 
 export const DateTimePickerInput = ({ onChange, value, defaultValue, ...props }: DateTimePickerInputProps) => {
-  const timeZone = useTimeZone();
-  const locale = useLocale();
+  const format = useCustomFormatter();
 
-  const localValue = value
-    ? new Date(value).toLocaleString(locale, { timeZone })
-    : undefined;
+  const getLocalValue = (value: DateValue | undefined) => (
+    !value || typeof value === 'string' ? value : format.dateTimeShort(value)
+  );
 
-  const localDefaultValue = defaultValue
-    ? new Date(defaultValue).toLocaleString(locale, { timeZone })
-    : undefined;
+  const localValue = getLocalValue(value);
+  const localDefaultValue = getLocalValue(defaultValue);
 
   const handleChange = (date: DateStringValue | null) => {
     onChange?.(date ? new Date(date) : null);
@@ -28,6 +26,7 @@ export const DateTimePickerInput = ({ onChange, value, defaultValue, ...props }:
       onChange={handleChange}
       value={localValue}
       defaultValue={localDefaultValue}
+      highlightToday={true}
       {...props}
     />
   );

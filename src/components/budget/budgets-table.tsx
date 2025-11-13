@@ -8,7 +8,7 @@ import { useDisclosure } from '@mantine/hooks';
 import { useCustomFormatter } from '@/hooks/use-custom-formatter';
 import { BudgetForm, BudgetFormValues } from '@/components/budget/budget-form';
 import { PlannedTotal } from '@/lib/types';
-import { monetaryEqual } from '@/lib/utils';
+import { monetaryEqual, monetaryRound } from '@/lib/utils';
 import { EntityImageText } from '@/components/entity-image-text';
 import _ from 'lodash';
 
@@ -63,8 +63,19 @@ export const BudgetsTable = ({
             await onSetFormSubmit(categoryId, formValues);
           };
 
+          const rowColor = monetaryRound(rest) == 0
+            ? undefined
+            : (
+              (
+                (rest < 0 && category.type === OperationType.credit)
+                || (rest > 0 && category.type === OperationType.debit)
+              )
+                ? 'red.1'
+                : 'green.1'
+            );
+
           return (
-            <Table.Tr key={`${categoryId}:row`}>
+            <Table.Tr key={`${categoryId}:row`} bg={rowColor}>
               <Table.Td>
                 <EntityImageText size={18} entity={category} />
               </Table.Td>
