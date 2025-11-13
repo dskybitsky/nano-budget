@@ -65,14 +65,7 @@ export const BudgetsTable = ({
 
           const rowColor = monetaryRound(rest) == 0
             ? undefined
-            : (
-              (
-                (rest < 0 && category.type === OperationType.credit)
-                || (rest > 0 && category.type === OperationType.debit)
-              )
-                ? 'red.1'
-                : 'green.1'
-            );
+            : (rest > 0 ? 'green.1' : 'red.1');
 
           return (
             <Table.Tr key={`${categoryId}:row`} bg={rowColor}>
