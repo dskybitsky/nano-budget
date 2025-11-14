@@ -4,9 +4,10 @@ import { Budget } from '@prisma/client';
 import { useForm } from '@mantine/form';
 import { z } from 'zod';
 import { zod4Resolver } from 'mantine-form-zod-resolver';
-import { Button, Group, NumberInput } from '@mantine/core';
+import { Button, Group } from '@mantine/core';
 import { useTranslations } from 'next-intl';
 import { ErrorText } from '@/components/error-text';
+import { CurrencyInput } from '@/components/currency-input';
 
 export type BudgetFormValues = Pick<Budget, 'value'>;
 
@@ -44,7 +45,7 @@ export const BudgetForm = ({ budget, onFormSubmit }: BudgetFormProps) => {
 
   return (
     <form onSubmit={handleFormSubmit}>
-      <NumberInput
+      <CurrencyInput
         label={t('Budget.value')}
         placeholder={t('BudgetForm.valuePlaceholder')}
         key={form.key('value')}

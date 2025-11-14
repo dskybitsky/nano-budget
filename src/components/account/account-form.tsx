@@ -4,9 +4,10 @@ import { Account, AccountType } from '@prisma/client';
 import { useForm } from '@mantine/form';
 import { z } from 'zod';
 import { zod4Resolver } from 'mantine-form-zod-resolver';
-import { Button, Group, NumberInput, Select, TextInput } from '@mantine/core';
+import { Button, Group, Select, TextInput } from '@mantine/core';
 import { useTranslations } from 'next-intl';
 import { ErrorText } from '@/components/error-text';
+import { CurrencyInput } from '@/components/currency-input';
 
 export type AccountFormValues = Pick<Account, 'name' | 'type' | 'currency' | 'value' | 'icon' | 'order'>;
 
@@ -87,7 +88,7 @@ export const AccountForm = ({ account, onFormSubmit }: AccountFormProps) => {
         mt="md"
         {...form.getInputProps('currency')}
       />
-      <NumberInput
+      <CurrencyInput
         label={t('Account.value')}
         placeholder={t('AccountForm.valuePlaceholder')}
         key={form.key('value')}
@@ -101,7 +102,7 @@ export const AccountForm = ({ account, onFormSubmit }: AccountFormProps) => {
         mt="md"
         {...form.getInputProps('icon')}
       />
-      <NumberInput
+      <CurrencyInput
         label={t('Account.order')}
         placeholder={t('AccountForm.orderPlaceholder')}
         key={form.key('order')}
