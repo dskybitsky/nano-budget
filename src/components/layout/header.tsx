@@ -2,7 +2,6 @@ import {
   Avatar,
   Box,
   Burger,
-  Divider,
   Flex,
   Group, Menu, rem,
   Text,
@@ -10,7 +9,6 @@ import {
 } from '@mantine/core';
 import { IconLogout, IconSearch, IconSettings } from '@tabler/icons-react';
 import { signOut } from 'next-auth/react';
-import classes from './header.module.css';
 import { User } from 'next-auth';
 
 export interface HeaderProps {
@@ -27,6 +25,7 @@ export const Header = ({ user, opened, toggle }: HeaderProps) => {
       w="100%"
       direction={{ base: 'row', md: 'column' }}
       align="center"
+      px={20}
     >
       <Burger
         mr={10}
@@ -35,20 +34,22 @@ export const Header = ({ user, opened, toggle }: HeaderProps) => {
         hiddenFrom="sm"
         size="sm"
       />
-      <Group className={classes.wrapper}>
-        <Text visibleFrom="md" className={classes.title} fz={24} fw={800}>
+      <Group
+        w="100%"
+        align="center"
+        justify="space-between"
+        py={10}
+      >
+        <Text fz={24} fw={800}>
           Nano Budget
         </Text>
         <Flex align="center" gap={24}>
           <TextInput
-            visibleFrom="md"
+            visibleFrom="sm"
             radius="md"
             w={260}
             leftSection={<IconSearch size={14} />}
             placeholder="Search"
-            classNames={{
-              input: classes.searchInput,
-            }}
           />
           <Flex align="center" gap={8}>
             <Flex pos="relative">
@@ -100,7 +101,6 @@ export const Header = ({ user, opened, toggle }: HeaderProps) => {
           </Flex>
         </Flex>
       </Group>
-      <Divider visibleFrom="md" w="100%" />
     </Flex>
   );
 };

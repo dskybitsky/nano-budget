@@ -22,7 +22,7 @@ export const BudgetForm = ({ budget, onFormSubmit }: BudgetFormProps) => {
   const [error, setError] = useState<unknown|undefined>(undefined);
 
   const schema = z.object({
-    value: z.coerce.number().gt(0, {
+    value: z.coerce.number().min(0, {
       message: t('Validation.negative', { property: t('Transaction.value') }),
     }),
   });

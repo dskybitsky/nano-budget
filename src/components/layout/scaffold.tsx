@@ -6,7 +6,6 @@ import { AppShell } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { Header } from '@/components/layout/header';
 import { Navbar } from '@/components/layout/navbar';
-import classes from './scaffold.module.css';
 import { User } from 'next-auth';
 import { AccountLayoutDto } from '@/actions/account/account-layout';
 
@@ -21,21 +20,21 @@ export const Scaffold = ({ dto, user, accountId, children }: ScaffoldProps) => {
 
   return (
     <AppShell
-      classNames={{
-        root: classes.root,
-        navbar: classes.navbar,
-        header: classes.header,
-        main: classes.main,
-      }}
-      navbar={{ width: 280, breakpoint: 'sm', collapsed: { mobile: !opened } }}
+      header={{ height: 60 }}
+      navbar={{ width: 300, breakpoint: 'sm', collapsed: { mobile: !opened } }}
+      padding="md"
+      withBorder={false}
+      bg="gray.0"
     >
-      <AppShell.Header>
+      <AppShell.Header bg="gray.0" withBorder={true}>
         <Header user={user} opened={opened} toggle={toggle} />
       </AppShell.Header>
-      <AppShell.Navbar>
+      <AppShell.Navbar bg="gray.0" p={10}>
         <Navbar dto={dto} accountId={accountId} />
       </AppShell.Navbar>
-      <AppShell.Main>{children}</AppShell.Main>
+      <AppShell.Main>
+        {children}
+      </AppShell.Main>
     </AppShell>
   );
 };

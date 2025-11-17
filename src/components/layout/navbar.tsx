@@ -78,7 +78,7 @@ export const Navbar = ({ dto, accountId }: NavbarProps) => {
   };
 
   return (
-    <Stack h="100%" gap={20} px="md" py="lg">
+    <Stack h="100%" gap={20} px="md" py="lg" bg="white" bd="1px solid gray.2" bdrs={10}>
       <Flex gap={8} w="100%" align="center">
         <Combobox
           store={combobox}

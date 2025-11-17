@@ -19,12 +19,12 @@ export const PeriodPicker = ({ periods, periodId, onChange }: PeriodPickerProps)
     <Pagination
       total={totalPages}
       value={currentPage}
-      withEdges={false}
+      withEdges={true}
       withControls={false}
       onChange={handleChange}
       getItemProps={(page) => ({ component: 'a', children: periods[page - 1].name })}
       siblings={1}
-      boundaries={1}
+      boundaries={0}
       classNames={{
         root: classes.root,
         control: classes.control,

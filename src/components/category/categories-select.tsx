@@ -12,11 +12,13 @@ import {
 import { IconCheck } from '@tabler/icons-react';
 import { EntityImageText } from '@/components/entity-image-text';
 import { InputBaseProps } from '@mantine/core';
+import _ from 'lodash';
 
 export interface CategoriesSelectProps extends InputBaseProps {
   categories: Category[];
   defaultValue?: string|null;
   onChange?: (value: string | null) => void;
+  onCategoryChange?: (category: Category | null) => void;
   placeholder?: string;
 }
 
@@ -24,15 +26,18 @@ export const CategoriesSelect = ({
   categories,
   defaultValue,
   onChange,
+  onCategoryChange,
   placeholder,
   ...props
 }: CategoriesSelectProps) => {
+  const categoriesIndex = _.keyBy(categories, 'id');
+
   const combobox = useCombobox({
     onDropdownClose: () => combobox.resetSelectedOption(),
   });
 
   const [value, setValue] = useState<string | null>(defaultValue ?? null);
-  const selectedOption = categories.find((c) => c.id === value);
+  const selectedOption = value ? categoriesIndex[value] : null;
 
   const options = categories.map((category) => (
     <Combobox.Option value={category.id} key={category.id}>
@@ -48,6 +53,10 @@ export const CategoriesSelect = ({
 
         if (onChange) {
           onChange(val);
+        }
+
+        if (onCategoryChange) {
+          onCategoryChange(categoriesIndex[val]);
         }
 
         combobox.closeDropdown();

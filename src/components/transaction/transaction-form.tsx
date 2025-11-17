@@ -10,6 +10,7 @@ import { DateTimePickerInput } from '@/components/date-time-picker-input';
 import { ErrorText } from '@/components/error-text';
 import { CategoriesSelect } from '@/components/category/categories-select';
 import { CurrencyInput } from '@/components/currency-input';
+import moment from 'moment';
 
 export type TransactionFormValues = Pick<
   Transaction,
@@ -49,10 +50,10 @@ export const TransactionForm = ({ categories, transaction, onFormSubmit }: Trans
     mode: 'uncontrolled',
     initialValues: {
       created: transaction?.created ?? new Date(),
-      executed: transaction?.executed ?? new Date(),
+      executed: transaction?.executed ?? moment().startOf('day').toDate(),
       categoryId: transaction?.categoryId ?? categories[0]?.id,
       name: transaction?.name ?? '',
-      type: transaction?.type ?? OperationType.credit,
+      type: transaction?.type ?? categories[0]?.type ?? OperationType.credit,
       value: transaction?.value ?? 0,
     },
     validate: zod4Resolver(schema),
@@ -87,6 +88,11 @@ export const TransactionForm = ({ categories, transaction, onFormSubmit }: Trans
         mt="md"
         categories={categories}
         {...form.getInputProps('categoryId')}
+        onCategoryChange={(category) => {
+          if (category && !transaction) {
+            form.setFieldValue('type', category.type);
+          }
+        }}
       />
       <Select
         label={t('Transaction.type')}
