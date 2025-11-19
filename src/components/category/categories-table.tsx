@@ -41,7 +41,7 @@ export const CategoriesTable = ({
               <EntityImageText size={18} entity={category} />
             </Table.Td>
             <Table.Td>{t('Enum.OperationType', { value: category.type })}</Table.Td>
-            <Table.Td>
+            <Table.Td ta="right">
               <CategoriesTableActionCell
                 category={category}
                 onFormSubmit={onFormSubmit}

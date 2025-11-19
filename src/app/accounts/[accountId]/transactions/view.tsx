@@ -1,6 +1,6 @@
 'use client';
 
-import { Box, Button, Flex, Modal, Title } from '@mantine/core';
+import { Box, Button, Flex, Modal } from '@mantine/core';
 import React from 'react';
 import { TransactionsTable } from '@/components/transaction/transactions-table';
 import { TransactionFilterDto, TransactionsIndexDto } from '@/actions/transaction/transactions-index';
@@ -16,6 +16,7 @@ import { Period } from '@prisma/client';
 import { useDebouncedCallback, useDisclosure } from '@mantine/hooks';
 import { IconPlus } from '@tabler/icons-react';
 import { useTranslations } from 'next-intl';
+import { PageHeader } from '@/components/page-header';
 
 export interface TransactionsViewProps extends React.HTMLAttributes<HTMLElement> {
   dto: TransactionsIndexDto,
@@ -56,19 +57,23 @@ export const TransactionsView = ({ dto, filter }: TransactionsViewProps) => {
       direction="column"
       align="center"
     >
-      <Flex justify="space-between" align="flex-start" w="100%" gap={20}>
-        <Title order={3}>{t('TransactionsIndex.title')}</Title>
-        <PeriodPicker periods={dto.periods} periodId={dto.periodId} onChange={handlePeriodChange} />
-      </Flex>
-      <Flex justify="space-between" align="flex-start" w="100%">
-        <TransactionsFilterPanel filter={filter} onFilterChange={handleFilterChange} />
-        <Modal opened={opened} onClose={close} title={t('TransactionModal.createTitle')}>
-          <TransactionForm categories={dto.categories} onFormSubmit={handleCreateFormSubmit} />
-        </Modal>
-        <Button leftSection={<IconPlus size={14} />} variant="subtle" onClick={open} >
-          {t('TransactionsIndex.createButtonCaption')}
-        </Button>
-      </Flex>
+      <PageHeader
+        title={t('TransactionsIndex.title')}
+        rightSection={
+          <PeriodPicker periods={dto.periods} periodId={dto.periodId} onChange={handlePeriodChange} />
+        }
+        bottomSection={
+          <>
+            <TransactionsFilterPanel filter={filter} onFilterChange={handleFilterChange} />
+            <Modal opened={opened} onClose={close} title={t('TransactionModal.createTitle')}>
+              <TransactionForm categories={dto.categories} onFormSubmit={handleCreateFormSubmit} />
+            </Modal>
+            <Button leftSection={<IconPlus size={14} />} variant="subtle" onClick={open} >
+              {t('TransactionsIndex.createButtonCaption')}
+            </Button>
+          </>
+        }
+      />
       <Box w="100%">
         <TransactionsTable
           account={dto.account}

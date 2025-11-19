@@ -46,8 +46,8 @@ export const TransactionsTable = ({
       <Table.Thead>
         <Table.Tr>
           <Table.Th w="180">{t('Transaction.created')}</Table.Th>
-          <Table.Th w="120">{t('Transaction.executed')}</Table.Th>
-          <Table.Th>{t('Transaction.category')}</Table.Th>
+          <Table.Th w="120" visibleFrom="md">{t('Transaction.executed')}</Table.Th>
+          <Table.Th visibleFrom="md">{t('Transaction.category')}</Table.Th>
           <Table.Th>{t('Transaction.name')}</Table.Th>
           <Table.Th w="120" ta="right">{t('Transaction.value')}</Table.Th>
           <Table.Th w="50"></Table.Th>
@@ -57,15 +57,15 @@ export const TransactionsTable = ({
         {transactions.map((transaction) => (
           <Table.Tr key={transaction.id}>
             <Table.Td>{format.dateTimeShort(transaction.created)}</Table.Td>
-            <Table.Td>{format.dateShort(transaction.executed)}</Table.Td>
-            <Table.Td>
+            <Table.Td visibleFrom="md">{format.dateShort(transaction.executed)}</Table.Td>
+            <Table.Td visibleFrom="md">
               <EntityImageText size={18} entity={categoriesIndex.get(transaction.categoryId)!} />
             </Table.Td>
             <Table.Td>{transaction.name}</Table.Td>
             <Table.Td ta="right">
               {format.monetary(getValue(transaction), account.currency)}
             </Table.Td>
-            <Table.Td>
+            <Table.Td ta="right">
               <TransactionsTableActionCell
                 categories={categories}
                 transaction={transaction}

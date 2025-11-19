@@ -41,9 +41,10 @@ import { EntityImage } from '@/components/entity-image';
 export interface NavbarProps {
   dto: AccountLayoutDto,
   accountId?: string,
+  onNavigate?: () => void,
 }
 
-export const Navbar = ({ dto, accountId }: NavbarProps) => {
+export const Navbar = ({ dto, accountId, onNavigate }: NavbarProps) => {
   const t = useTranslations();
   const searchParams = useSearchParams();
 
@@ -127,6 +128,7 @@ export const Navbar = ({ dto, accountId }: NavbarProps) => {
                 icon={IconBuildingBank}
                 title="Account"
                 link={accountId ? accountViewUrl(accountId) : accountCreateUrl()}
+                onNavigate={onNavigate}
               />
               <Divider my={10} w="100%" />
               <Flex direction="column" align="start" w="100%">
@@ -152,6 +154,7 @@ export const Navbar = ({ dto, accountId }: NavbarProps) => {
                       key="nav-link-transactions-all"
                       className={classes.subNavLink}
                       href={accountTransactionsIndexUrl(accountId)}
+                      onNavigate={onNavigate}
                     >
                       <Text lts={-0.5}>{t('Navbar.allTransactionsItem')}</Text>
                       <Badge radius={6} className={classes.noti} px={6}>{periodSummary.count}</Badge>
@@ -160,6 +163,7 @@ export const Navbar = ({ dto, accountId }: NavbarProps) => {
                       key="nav-link-transactions-confirmed"
                       className={classes.subNavLink}
                       href={accountTransactionsIndexUrl(accountId, undefined, { executed: true })}
+                      onNavigate={onNavigate}
                     >
                       <Text lts={-0.5}>{t('Navbar.executedTransactionsItem')}</Text>
                       <Badge radius={6} className={classes.noti} px={6}>
@@ -170,6 +174,7 @@ export const Navbar = ({ dto, accountId }: NavbarProps) => {
                       key="nav-link-transactions-unconfirmed"
                       className={classes.subNavLink}
                       href={accountTransactionsIndexUrl(accountId, undefined, { executed: false })}
+                      onNavigate={onNavigate}
                     >
                       <Text lts={-0.5}>{t('Navbar.nonExecutedTransactionsItem')}</Text>
                       <Badge
@@ -185,13 +190,18 @@ export const Navbar = ({ dto, accountId }: NavbarProps) => {
                 </Collapse>
               </Flex>
               <Flex w="100%" direction="column" align="start" key="nav-link-budget">
-                <NavLink icon={IconCalendarDollar} title="Budget" link={accountBudgetIndexUrl(accountId)} />
+                <NavLink
+                  icon={IconCalendarDollar}
+                  title="Budget"
+                  link={accountBudgetIndexUrl(accountId)}
+                  onNavigate={onNavigate}
+                />
               </Flex>
               <Divider my={10} w="100%" />
             </>
           )}
           <Flex w="100%" direction="column" align="start" key="nav-link-settings">
-            <NavLink icon={IconSettings} title="Settings" link={settingsUrl()} />
+            <NavLink icon={IconSettings} title="Settings" link={settingsUrl()} onNavigate={onNavigate} />
           </Flex>
         </Flex>
       </ScrollArea>
@@ -203,14 +213,15 @@ export const Navbar = ({ dto, accountId }: NavbarProps) => {
 };
 
 interface NavLinkProps {
-  icon: React.ElementType;
-  title: string;
-  link: string;
+  icon: React.ElementType,
+  title: string,
+  link: string,
+  onNavigate?: () => void,
 }
 
-const NavLink = ({ title, icon: Icon, link }: NavLinkProps) => {
+const NavLink = ({ title, icon: Icon, link, onNavigate }: NavLinkProps) => {
   return (
-    <Link className={classes.navLink} href={link}>
+    <Link className={classes.navLink} href={link} onNavigate={onNavigate}>
       <Icon size={20} />
       <Text className={classes.title} lts={-0.5}>
         {title}

@@ -43,7 +43,7 @@ export const BudgetsTable = ({
         <Table.Tr>
           <Table.Th>{t('Budget.category')}</Table.Th>
           <Table.Th w="120" ta="right">{t('BudgetsTable.plannedColumnHeader')}</Table.Th>
-          <Table.Th w="120" ta="right">{t('BudgetsTable.spentColumnHeader')}</Table.Th>
+          <Table.Th w="120" ta="right" visibleFrom="md">{t('BudgetsTable.spentColumnHeader')}</Table.Th>
           <Table.Th w="120" ta="right">{t('BudgetsTable.restColumnHeader')}</Table.Th>
           <Table.Th w="30"></Table.Th>
         </Table.Tr>
@@ -73,14 +73,14 @@ export const BudgetsTable = ({
                 <EntityImageText size={18} entity={category} />
               </Table.Td>
               <Table.Td ta="right">{format.monetary(planned, account.currency)}</Table.Td>
-              <Table.Td ta="right">
+              <Table.Td ta="right" visibleFrom="md">
                 {format.monetary(expected, account.currency)}
                 {!monetaryEqual(actual, expected) && (
                   <Box>({format.monetary(actual, account.currency)})</Box>
                 )}
               </Table.Td>
               <Table.Td ta="right">{format.monetary(rest, account.currency)}</Table.Td>
-              <Table.Td>
+              <Table.Td ta="right">
                 <BudgetsTableActionCell
                   budget={{ value: budget.planned }}
                   onSetFormSubmit={handleSetFormSubmit}

@@ -1,6 +1,6 @@
 'use client';
 
-import {  Button, Flex, Modal, Tabs, Text, Title } from '@mantine/core';
+import {  Button, Flex, Modal, Tabs, Text } from '@mantine/core';
 import React from 'react';
 import { AccountViewDto } from '@/actions/account/account-view';
 import { IconPencil, IconPlus, IconTrash } from '@tabler/icons-react';
@@ -21,6 +21,7 @@ import { periodDelete } from '@/actions/period/period-delete';
 import { CategoryForm, CategoryFormValues } from '@/components/category/category-form';
 import { PeriodForm, PeriodFormValues } from '@/components/period/period-form';
 import { EntityImage } from '@/components/entity-image';
+import { PageHeader } from '@/components/page-header';
 
 export interface AccountViewProps extends React.HTMLAttributes<HTMLElement> {
   dto: AccountViewDto,
@@ -76,25 +77,30 @@ export const AccountView = ({ dto }: AccountViewProps) => {
       w="100%"
       direction="column"
     >
-      <Flex justify="space-between" align="center" w="100%">
-        <Flex w="100%" justify="start" align="center" gap={10} p={5}>
+      <PageHeader
+        title={t('AccountView.title', { name: dto.account.name })}
+        leftSection={
           <EntityImage size={36} entity={dto.account} />
-          <Title order={3}>
-            {t('AccountView.title', { name: dto.account.name })}
-          </Title>
-        </Flex>
-        <Flex>
-          <Button leftSection={<IconPencil size={14} />} variant="subtle" onClick={open}>
-            {t('AccountView.editButtonCaption')}
-          </Button>
-          <Button leftSection={<IconTrash size={14} />} variant="subtle" onClick={handleAccountDeleteClick} color="red">
-            {t('AccountView.deleteButtonCaption')}
-          </Button>
-        </Flex>
-        <Modal opened={opened} onClose={close} title={t('AccountModal.editTitle')}>
-          <AccountForm account={dto.account} onFormSubmit={handleFormSubmit} />
-        </Modal>
-      </Flex>
+        }
+        rightSection={
+          <>
+            <Button leftSection={<IconPencil size={14} />} variant="subtle" onClick={open}>
+              {t('AccountView.editButtonCaption')}
+            </Button>
+            <Button
+              leftSection={<IconTrash size={14} />}
+              variant="subtle"
+              onClick={handleAccountDeleteClick}
+              color="red"
+            >
+              {t('AccountView.deleteButtonCaption')}
+            </Button>
+            <Modal opened={opened} onClose={close} title={t('AccountModal.editTitle')}>
+              <AccountForm account={dto.account} onFormSubmit={handleFormSubmit} />
+            </Modal>
+          </>
+        }
+      />
       <Text c="gray">
         {t('AccountView.descriptionLabel', {
           type: t('Enum.AccountType', { value: dto.account.type }),

@@ -39,7 +39,7 @@ export const PeriodsTable = ({
             <Table.Td>{period.name}</Table.Td>
             <Table.Td>{format.dateTimeShort(period.started)}</Table.Td>
             <Table.Td>{format.dateTimeShort(period.ended, '')}</Table.Td>
-            <Table.Td>
+            <Table.Td ta="right">
               <PeriodsTableActionCell
                 period={period}
                 onFormSubmit={onFormSubmit}
