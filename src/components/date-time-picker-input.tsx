@@ -14,9 +14,6 @@ export const DateTimePickerInput = ({ onChange, value, defaultValue, ...props }:
     !value || typeof value === 'string' ? value : format.dateTimeShort(value)
   );
 
-  const localValue = getLocalValue(value);
-  const localDefaultValue = getLocalValue(defaultValue);
-
   const handleChange = (date: DateStringValue | null) => {
     onChange?.(date ? new Date(date) : null);
   };
@@ -24,8 +21,8 @@ export const DateTimePickerInput = ({ onChange, value, defaultValue, ...props }:
   return (
     <DateTimePicker
       onChange={handleChange}
-      value={localValue}
-      defaultValue={localDefaultValue}
+      value={getLocalValue(value)}
+      defaultValue={getLocalValue(defaultValue)}
       highlightToday={true}
       {...props}
     />

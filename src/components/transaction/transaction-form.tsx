@@ -10,7 +10,8 @@ import { DateTimePickerInput } from '@/components/date-time-picker-input';
 import { ErrorText } from '@/components/error-text';
 import { CategoriesSelect } from '@/components/category/categories-select';
 import { CurrencyInput } from '@/components/currency-input';
-import moment from 'moment';
+import { dateRound } from '@/lib/utils';
+import _ from 'lodash';
 
 export type TransactionFormValues = Pick<
   Transaction,
@@ -50,7 +51,7 @@ export const TransactionForm = ({ categories, transaction, onFormSubmit }: Trans
     mode: 'uncontrolled',
     initialValues: {
       created: transaction?.created ?? new Date(),
-      executed: transaction?.executed ?? moment().startOf('day').toDate(),
+      executed: transaction?.executed ?? dateRound(new Date()),
       categoryId: transaction?.categoryId ?? categories[0]?.id,
       name: transaction?.name ?? '',
       type: transaction?.type ?? categories[0]?.type ?? OperationType.credit,
@@ -67,14 +68,27 @@ export const TransactionForm = ({ categories, transaction, onFormSubmit }: Trans
     }
   });
 
+  const categoriesIndex = _.keyBy(categories, 'id');
+
+  const { onChange: createdOnChange, ...createdInputProps } = form.getInputProps('created');
+  const { onChange: categoryIdOnChange, ...categoryIdInputProps } = form.getInputProps('categoryId');
+
   return (
     <form onSubmit={handleFormSubmit}>
       <DateTimePickerInput
+        key={form.key('created')}
         label={t('Transaction.created')}
         placeholder={t('TransactionForm.createdPlaceholder')}
-        {...form.getInputProps('created')}
+        {...createdInputProps}
+        onChange={(value) => {
+          if (value) {
+            form.setFieldValue('executed', dateRound(value));
+          }
+          createdOnChange(value);
+        }}
       />
       <DateTimePickerInput
+        key={form.key('executed')}
         clearable
         label={t('Transaction.executed')}
         placeholder={t('TransactionForm.executedPlaceholder')}
@@ -82,22 +96,24 @@ export const TransactionForm = ({ categories, transaction, onFormSubmit }: Trans
         {...form.getInputProps('executed')}
       />
       <CategoriesSelect
+        key={form.key('categoryId')}
         label={t('Transaction.category')}
         placeholder={t('TransactionForm.categoryPlaceholder')}
-        key={form.key('categoryId')}
         mt="md"
         categories={categories}
-        {...form.getInputProps('categoryId')}
-        onCategoryChange={(category) => {
-          if (category && !transaction) {
-            form.setFieldValue('type', category.type);
+        {...categoryIdInputProps}
+        onChange={(categoryId) => {
+          if (categoryId && !transaction && categoriesIndex[categoryId]) {
+            form.setFieldValue('type', categoriesIndex[categoryId].type);
           }
+
+          categoryIdOnChange(categoryId);
         }}
       />
       <Select
+        key={form.key('type')}
         label={t('Transaction.type')}
         placeholder={t('TransactionForm.typePlaceholder')}
-        key={form.key('type')}
         mt="md"
         data={[
           { value: OperationType.debit, label: t('Enum.OperationType', { value: OperationType.debit }) },
@@ -106,16 +122,16 @@ export const TransactionForm = ({ categories, transaction, onFormSubmit }: Trans
         {...form.getInputProps('type')}
       />
       <TextInput
+        key={form.key('name')}
         label={t('Transaction.name')}
         placeholder={t('TransactionForm.namePlaceholder')}
-        key={form.key('name')}
         mt="md"
         {...form.getInputProps('name')}
       />
       <CurrencyInput
+        key={form.key('value')}
         label={t('Transaction.value')}
         placeholder={t('TransactionForm.valuePlaceholder')}
-        key={form.key('value')}
         mt="md"
         {...form.getInputProps('value')}
       />
