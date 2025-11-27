@@ -1,9 +1,9 @@
 'use server';
 
-import prisma from '@/lib/prismadb';
 import { Category, Prisma, Transaction } from '@prisma/client';
 import { revalidateTag } from 'next/cache';
-import { cache } from '@/lib/cache';
+import { cache } from '@/lib/server/cache';
+import prisma from '@/lib/server/prismadb';
 
 const TRANSACTION_CACHE_TAG = 'transaction';
 const TRANSACTION_CACHE_RETENTION = 3600;

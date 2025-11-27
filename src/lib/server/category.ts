@@ -1,9 +1,9 @@
 'use server';
 
-import prisma from '@/lib/prismadb';
 import { Category } from '@prisma/client';
 import { revalidateTag } from 'next/cache';
-import { cache } from '@/lib/cache';
+import { cache } from '@/lib/server/cache';
+import prisma from '@/lib/server/prismadb';
 
 const CATEGORY_CACHE_TAG = 'category';
 const CATEGORY_CACHE_RETENTION = 3600;

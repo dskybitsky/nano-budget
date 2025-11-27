@@ -1,14 +1,15 @@
 'use server';
 
-import { Account, AccountType, Category, OperationType, Period, Transaction } from '@prisma/client';
+import { Account, AccountType, Category, OperationType, Period } from '@prisma/client';
 import { getSessionUser } from '@/lib/auth';
 import { getAccount } from '@/lib/server/account';
 import { getLastPeriod, getPeriod, getPeriods } from '@/lib/server/period';
 import { getCategories } from '@/lib/server/category';
 import { getBudgets } from '@/lib/server/budget';
 import { getTransactionsWithCategory } from '@/lib/server/transaction';
-import { PlannedTotal, Total } from '@/lib/types';
+import { PlannedTotal } from '@/lib/types';
 import _ from 'lodash';
+import { calculateTransactionsTotal } from '@/lib/transaction';
 
 export type BudgetsIndexDto = {
   account: Account,
@@ -58,7 +59,7 @@ export const budgetsIndex = async (
   const transactionsIndex = _.groupBy(transactions, 'categoryId');
 
   const budgetsByCategory = categories.reduce((acc, category) => {
-    const transactionsTotal = calculateTotal(transactionsIndex[category.id] ?? []);
+    const transactionsTotal = calculateTransactionsTotal(transactionsIndex[category.id] ?? []);
 
     acc[category.id] = {
       planned: accountSign * (budgetsIndex[category.id]?.value ?? 0),
@@ -92,19 +93,3 @@ export const budgetsIndex = async (
   };
 };
 
-const calculateTotal = (transactions: (Transaction & { category: Category })[]): Total => {
-  let actual = 0;
-  let expected = 0;
-
-  transactions.forEach((transaction) => {
-    const sign = transaction.type === transaction.category.type ? 1 : -1;
-
-    if (transaction.executed) {
-      actual += sign * transaction.value;
-    }
-
-    expected += sign * transaction.value;
-  });
-
-  return { actual, expected };
-};

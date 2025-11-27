@@ -1,9 +1,9 @@
 'use server';
 
-import prisma from '@/lib/prismadb';
 import { Budget } from '@prisma/client';
 import { revalidateTag } from 'next/cache';
-import { cache } from '@/lib/cache';
+import { cache } from '@/lib/server/cache';
+import prisma from '@/lib/server/prismadb';
 
 const BUDGET_CACHE_TAG = 'budget';
 const BUDGET_CACHE_RETENTION = 3600;

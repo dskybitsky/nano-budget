@@ -1,9 +1,9 @@
 'use server';
 
 import { Account } from '@prisma/client';
-import prisma from '@/lib/prismadb';
 import { revalidateTag } from 'next/cache';
-import { cache } from '@/lib/cache';
+import { cache } from '@/lib/server/cache';
+import prisma from '@/lib/server/prismadb';
 
 const ACCOUNT_CACHE_TAG = 'account';
 const ACCOUNT_CACHE_RETENTION = 3600;

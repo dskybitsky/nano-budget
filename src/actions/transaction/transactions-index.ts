@@ -7,6 +7,7 @@ import { getLastPeriod, getPeriod, getPeriods } from '@/lib/server/period';
 import { getCategories } from '@/lib/server/category';
 import { getTransactionsWithCategory } from '@/lib/server/transaction';
 import { Total } from '@/lib/types';
+import { calculateTransactionsTotal } from '@/lib/transaction';
 
 export type TransactionFilterDto = {
   executed?: boolean;
@@ -60,23 +61,6 @@ export const transactionsIndex = async (
     periods,
     periodId: period.id,
     transactions,
-    periodTotal: calculateTotal(transactions),
+    periodTotal: calculateTransactionsTotal(transactions),
   };
-};
-
-const calculateTotal = (transactions: (Transaction & { category: Category })[]): Total => {
-  let actual = 0;
-  let expected = 0;
-
-  transactions.forEach((transaction) => {
-    const sign = transaction.type === transaction.category.type ? 1 : -1;
-
-    if (transaction.executed) {
-      actual += sign * transaction.value;
-    }
-
-    expected += sign * transaction.value;
-  });
-
-  return { actual, expected };
 };
