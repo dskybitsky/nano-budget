@@ -1,7 +1,7 @@
 import * as React from 'react';
 
 import { Account, AccountType, Category, OperationType, Transaction } from '@prisma/client';
-import { Flex, Modal, Table, Text, ActionIcon } from '@mantine/core';
+import { Flex, Modal, Table, Text, ActionIcon, Box } from '@mantine/core';
 import { useTranslations } from 'next-intl';
 import { IconPencil, IconTrash } from '@tabler/icons-react';
 import { useDisclosure } from '@mantine/hooks';
@@ -9,11 +9,14 @@ import { useModals } from '@mantine/modals';
 import { useCustomFormatter } from '@/hooks/use-custom-formatter';
 import { TransactionForm, TransactionFormValues } from '@/components/transaction/transaction-form';
 import { EntityImageText } from '@/components/entity-image-text';
+import { monetaryEqual } from '@/lib/utils';
+import { Total } from '@/lib/types';
 
 export interface TransactionsTableProps {
   account: Account;
   categories: Category[];
   transactions: Transaction[];
+  total: Total;
   onFormSubmit: (id: string, data: TransactionFormValues) => Promise<void>;
   onDeleteClick: (id: string) => Promise<void>;
 }
@@ -22,6 +25,7 @@ export const TransactionsTable = ({
   account,
   categories,
   transactions,
+  total,
   onFormSubmit,
   onDeleteClick,
 }: TransactionsTableProps) => {
@@ -76,6 +80,18 @@ export const TransactionsTable = ({
           </Table.Tr>
         ))}
       </Table.Tbody>
+      <Table.Tfoot>
+        <Table.Tr>
+          <Table.Th colSpan={4}>{t('TransactionsTable.totalText')}</Table.Th>
+          <Table.Th ta="right">
+            {format.monetary(total.expected, account.currency)}
+            {!monetaryEqual(total.actual, total.expected) && (
+              <Box>({format.monetary(total.actual, account.currency)})</Box>
+            )}
+          </Table.Th>
+          <Table.Th/>
+        </Table.Tr>
+      </Table.Tfoot>
     </Table>
   );
 };

@@ -79,6 +79,7 @@ export const TransactionsView = ({ dto, filter }: TransactionsViewProps) => {
           account={dto.account}
           categories={dto.categories}
           transactions={dto.transactions}
+          total={dto.periodTotal}
           onFormSubmit={handleUpdateFormSubmit}
           onDeleteClick={handleDeleteClick}
         />

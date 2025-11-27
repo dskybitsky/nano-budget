@@ -118,7 +118,8 @@
         "createButtonCaption": "Create Transaction"
     },
     "TransactionsTable": {
-        "caption": "Transactions on the account"
+        "caption": "Transactions on the account",
+        "totalText": "Total"
     },
     "TransactionsFilterPanel": {
         "filterButtonCaption": "Filter",

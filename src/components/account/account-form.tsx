@@ -113,7 +113,7 @@ export const AccountForm = ({ account, onFormSubmit }: AccountFormProps) => {
         <ErrorText error={error} p="xs" mt="xs" />
       )}
       <Group justify="flex-end" mt="md">
-        <Button type="submit">{t('Common.submit')}</Button>
+        <Button type="submit" disabled={form.submitting}>{t('Common.submit')}</Button>
       </Group>
     </form>
   );

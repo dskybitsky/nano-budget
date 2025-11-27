@@ -63,7 +63,7 @@ export const SignInForm = ({ onFormSubmit }: SignInFormProps) => {
           mt="md"
         />
         { error && <Alert color="red" mt="md" icon={(<IconAlertCircle />)}>{error}</Alert> }
-        <Button fullWidth mt="xl" type="submit">
+        <Button fullWidth mt="xl" type="submit" disabled={form.submitting}>
           {t('Common.submit')}
         </Button>
       </Paper>
