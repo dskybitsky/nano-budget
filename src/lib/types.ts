@@ -1,6 +1,7 @@
-export type Total = {
+export type ActualExpected = {
   actual: number,
   expected: number,
 };
 
-export type PlannedTotal = { planned: number } & Total;
+export type ActualExpectedPlanned = ActualExpected & { planned: number };
+

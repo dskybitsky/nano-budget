@@ -1,12 +1,16 @@
 'use server';
 
-import { Category, Prisma, Transaction } from '@prisma/client';
+import { Prisma, Transaction } from '@prisma/client';
 import { revalidateTag } from 'next/cache';
 import { cache } from '@/lib/server/cache';
-import prisma from '@/lib/server/prismadb';
+import { prisma } from '@/lib/server/prisma';
 
 const TRANSACTION_CACHE_TAG = 'transaction';
 const TRANSACTION_CACHE_RETENTION = 3600;
+
+export type TransactionWithCategory = Prisma.TransactionGetPayload<{
+  include: { category: true }
+}>;
 
 export type TransactionFilter = {
   categoryIdList?: string[];
@@ -29,7 +33,7 @@ export const getTransactions = cache(
 );
 
 export const getTransactionsWithCategory = cache(
-  async (filter?: TransactionFilter): Promise<(Transaction & { category: Category })[]> => {
+  async (filter?: TransactionFilter): Promise<TransactionWithCategory[]> => {
     return prisma.transaction.findMany({
       where: getWhere(filter),
       orderBy: { created: 'desc' },
@@ -50,7 +54,6 @@ export const getTransactionsCount = cache(
   ['get-transactions-count'],
   { revalidate: TRANSACTION_CACHE_RETENTION, tags: [TRANSACTION_CACHE_TAG] },
 );
-
 
 export const createTransaction = async(data: Omit<Transaction, 'id'>) => {
   return prisma.transaction.create({ data }).then(() => revalidateTag(TRANSACTION_CACHE_TAG));

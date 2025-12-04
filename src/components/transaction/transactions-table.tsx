@@ -10,13 +10,13 @@ import { useCustomFormatter } from '@/hooks/use-custom-formatter';
 import { TransactionForm, TransactionFormValues } from '@/components/transaction/transaction-form';
 import { EntityImageText } from '@/components/entity-image-text';
 import { monetaryEqual } from '@/lib/utils';
-import { Total } from '@/lib/types';
+import { calculateTransactionsTotal } from '@/lib/transaction';
+import { TransactionWithCategory } from '@/lib/server/transaction';
 
 export interface TransactionsTableProps {
   account: Account;
   categories: Category[];
-  transactions: Transaction[];
-  total: Total;
+  transactions: TransactionWithCategory[];
   onFormSubmit: (id: string, data: TransactionFormValues) => Promise<void>;
   onDeleteClick: (id: string) => Promise<void>;
 }
@@ -25,7 +25,6 @@ export const TransactionsTable = ({
   account,
   categories,
   transactions,
-  total,
   onFormSubmit,
   onDeleteClick,
 }: TransactionsTableProps) => {
@@ -44,6 +43,8 @@ export const TransactionsTable = ({
     return accountSign * sign * transaction.value;
   };
 
+  const total = calculateTransactionsTotal(transactions);
+
   return (
     <Table>
       <Table.Caption>{t('TransactionsTable.caption')}</Table.Caption>
@@ -58,31 +59,41 @@ export const TransactionsTable = ({
         </Table.Tr>
       </Table.Thead>
       <Table.Tbody>
-        {transactions.map((transaction) => (
-          <Table.Tr key={transaction.id}>
-            <Table.Td>{format.dateTimeShort(transaction.created)}</Table.Td>
-            <Table.Td visibleFrom="md">{format.dateShort(transaction.executed)}</Table.Td>
-            <Table.Td visibleFrom="md">
-              <EntityImageText size={18} entity={categoriesIndex.get(transaction.categoryId)!} />
-            </Table.Td>
-            <Table.Td>{transaction.name}</Table.Td>
-            <Table.Td ta="right">
-              {format.monetary(getValue(transaction), account.currency)}
-            </Table.Td>
-            <Table.Td ta="right">
-              <TransactionsTableActionCell
-                categories={categories}
-                transaction={transaction}
-                onFormSubmit={onFormSubmit}
-                onDeleteClick={onDeleteClick}
-              />
-            </Table.Td>
-          </Table.Tr>
-        ))}
+        {transactions.map((transaction) => {
+          const category = categoriesIndex.get(transaction.categoryId)!;
+
+          return (
+            <Table.Tr key={transaction.id}>
+              <Table.Td>{format.dateTimeShort(transaction.created)}</Table.Td>
+              <Table.Td visibleFrom="md">{format.dateShort(transaction.executed)}</Table.Td>
+              <Table.Td visibleFrom="md">
+                <EntityImageText size={18} entity={category} />
+              </Table.Td>
+              <Table.Td hiddenFrom="md">
+                <EntityImageText size={18} entity={{ icon: category.icon, name: transaction.name }} />
+              </Table.Td>
+              <Table.Td visibleFrom="md">
+                {transaction.name}
+              </Table.Td>
+              <Table.Td ta="right">
+                {format.monetary(getValue(transaction), account.currency)}
+              </Table.Td>
+              <Table.Td ta="right">
+                <TransactionsTableActionCell
+                  categories={categories}
+                  transaction={transaction}
+                  onFormSubmit={onFormSubmit}
+                  onDeleteClick={onDeleteClick}
+                />
+              </Table.Td>
+            </Table.Tr>
+          );
+        })}
       </Table.Tbody>
       <Table.Tfoot>
         <Table.Tr>
-          <Table.Th colSpan={4}>{t('TransactionsTable.totalText')}</Table.Th>
+          <Table.Th colSpan={5} visibleFrom="md">{t('TransactionsTable.totalText')}</Table.Th>
+          <Table.Th colSpan={3} hiddenFrom="md">{t('TransactionsTable.totalText')}</Table.Th>
           <Table.Th ta="right">
             {format.monetary(total.expected, account.currency)}
             {!monetaryEqual(total.actual, total.expected) && (

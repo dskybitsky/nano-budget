@@ -21,4 +21,4 @@ const prisma =
     log: isDevelopment ? ['query', 'info', 'warn', 'error'] : ['warn', 'error'],
   });
 
-export default prisma;
+export { prisma };

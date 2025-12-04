@@ -7,10 +7,10 @@ import { useDisclosure } from '@mantine/hooks';
 import { Header } from '@/components/layout/header';
 import { Navbar } from '@/components/layout/navbar';
 import { User } from 'next-auth';
-import { AccountLayoutDto } from '@/actions/account/account-layout';
+import { LayoutAccountsDto } from '@/actions/layout/layout-accounts';
 
 export interface ScaffoldProps extends React.HTMLAttributes<HTMLElement> {
-  dto: AccountLayoutDto,
+  dto: LayoutAccountsDto,
   user: User,
   accountId?: string,
 }

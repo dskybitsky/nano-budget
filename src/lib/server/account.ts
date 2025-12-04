@@ -3,7 +3,7 @@
 import { Account } from '@prisma/client';
 import { revalidateTag } from 'next/cache';
 import { cache } from '@/lib/server/cache';
-import prisma from '@/lib/server/prismadb';
+import { prisma } from '@/lib/server/prisma';
 
 const ACCOUNT_CACHE_TAG = 'account';
 const ACCOUNT_CACHE_RETENTION = 3600;

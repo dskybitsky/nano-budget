@@ -49,3 +49,6 @@ next-env.d.ts
 !.env.dist.*
 docker-compose.*
 !docker-compose.dist.*
+
+# Generated Code
+generated

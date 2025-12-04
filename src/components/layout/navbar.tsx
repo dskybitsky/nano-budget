@@ -24,7 +24,6 @@ import {
 } from '@tabler/icons-react';
 import classes from './navbar.module.css';
 import Link from 'next/link';
-import { AccountLayoutDto } from '@/actions/account/account-layout';
 import { redirect, useSearchParams } from 'next/navigation';
 import {
   accountCreateUrl,
@@ -37,9 +36,10 @@ import {
 import { useCustomFormatter } from '@/hooks/use-custom-formatter';
 import { useTranslations } from 'next-intl';
 import { EntityImage } from '@/components/entity-image';
+import { LayoutAccountsDto } from '@/actions/layout/layout-accounts';
 
 export interface NavbarProps {
-  dto: AccountLayoutDto,
+  dto: LayoutAccountsDto,
   accountId?: string,
   onNavigate?: () => void,
 }
@@ -70,12 +70,11 @@ export const Navbar = ({ dto, accountId, onNavigate }: NavbarProps) => {
 
   const periodSummary = (
     periodId
-      ? account?.summary[periodId]
-      : account?.summary.last
+      ? account!.summary.get(periodId)
+      : Array.from(account!.summary.values()).pop()
   ) ?? {
-    count: 0,
-    executedCount: 0,
-    nonExecutedCount: 0,
+    actual: 0,
+    expected: 0,
   };
 
   return (
@@ -157,7 +156,7 @@ export const Navbar = ({ dto, accountId, onNavigate }: NavbarProps) => {
                       onNavigate={onNavigate}
                     >
                       <Text lts={-0.5}>{t('Navbar.allTransactionsItem')}</Text>
-                      <Badge radius={6} className={classes.noti} px={6}>{periodSummary.count}</Badge>
+                      <Badge radius={6} className={classes.noti} px={6}>{periodSummary.expected}</Badge>
                     </Link>
                     <Link
                       key="nav-link-transactions-confirmed"
@@ -167,7 +166,7 @@ export const Navbar = ({ dto, accountId, onNavigate }: NavbarProps) => {
                     >
                       <Text lts={-0.5}>{t('Navbar.executedTransactionsItem')}</Text>
                       <Badge radius={6} className={classes.noti} px={6}>
-                        {periodSummary.executedCount}
+                        {periodSummary.actual}
                       </Badge>
                     </Link>
                     <Link
@@ -181,9 +180,9 @@ export const Navbar = ({ dto, accountId, onNavigate }: NavbarProps) => {
                         radius={6}
                         className={classes.noti}
                         px={6}
-                        bg={ periodSummary.nonExecutedCount > 0 ? 'red.3' : ''}
+                        bg={ periodSummary.expected > periodSummary.actual ? 'red.3' : ''}
                       >
-                        {periodSummary.nonExecutedCount}
+                        {periodSummary.expected - periodSummary.actual}
                       </Badge>
                     </Link>
                   </Flex>
@@ -230,7 +229,7 @@ const NavLink = ({ title, icon: Icon, link, onNavigate }: NavLinkProps) => {
   );
 };
 
-const AccountComboBoxItem = ({ account }: { account: AccountLayoutDto['accounts'][number] }) => {
+const AccountComboBoxItem = ({ account }: { account: LayoutAccountsDto['accounts'][number] }) => {
   const t = useTranslations();
   const format = useCustomFormatter();
 

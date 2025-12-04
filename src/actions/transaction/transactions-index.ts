@@ -1,13 +1,11 @@
 'use server';
 
-import { Account, Category, Period, Transaction } from '@prisma/client';
+import { Account, Category, Period } from '@prisma/client';
 import { getSessionUser } from '@/lib/auth';
 import { getAccount } from '@/lib/server/account';
 import { getLastPeriod, getPeriod, getPeriods } from '@/lib/server/period';
 import { getCategories } from '@/lib/server/category';
-import { getTransactionsWithCategory } from '@/lib/server/transaction';
-import { Total } from '@/lib/types';
-import { calculateTransactionsTotal } from '@/lib/transaction';
+import { getTransactionsWithCategory, TransactionWithCategory } from '@/lib/server/transaction';
 
 export type TransactionFilterDto = {
   executed?: boolean;
@@ -20,8 +18,7 @@ export type TransactionsIndexDto = {
   categories: Category[];
   periods: Period[];
   periodId: string,
-  transactions: Transaction[];
-  periodTotal: Total,
+  transactions: TransactionWithCategory[];
 };
 
 export const transactionsIndex = async (
@@ -61,6 +58,5 @@ export const transactionsIndex = async (
     periods,
     periodId: period.id,
     transactions,
-    periodTotal: calculateTransactionsTotal(transactions),
   };
 };

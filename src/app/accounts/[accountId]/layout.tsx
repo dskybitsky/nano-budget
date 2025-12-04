@@ -2,7 +2,7 @@ import React from 'react';
 
 import { Scaffold } from '@/components/layout/scaffold';
 import { getSessionUser } from '@/lib/auth';
-import { accountLayout } from '@/actions/account/account-layout';
+import { layoutAccounts } from '@/actions/layout/layout-accounts';
 
 export default async function layout({ params, children }: {
   params: Promise<{ accountId: string }>,
@@ -11,7 +11,7 @@ export default async function layout({ params, children }: {
   const { accountId } = await params;
 
   const user = await getSessionUser();
-  const dto = await accountLayout();
+  const dto = await layoutAccounts();
 
   return (
     <Scaffold dto={dto} user={user} accountId={accountId}>

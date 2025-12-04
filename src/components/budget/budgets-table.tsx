@@ -7,7 +7,7 @@ import { IconPencil } from '@tabler/icons-react';
 import { useDisclosure } from '@mantine/hooks';
 import { useCustomFormatter } from '@/hooks/use-custom-formatter';
 import { BudgetForm, BudgetFormValues } from '@/components/budget/budget-form';
-import { PlannedTotal } from '@/lib/types';
+import { ActualExpectedPlanned } from '@/lib/types';
 import { monetaryEqual, monetaryRound } from '@/lib/utils';
 import { EntityImageText } from '@/components/entity-image-text';
 import _ from 'lodash';
@@ -15,8 +15,8 @@ import _ from 'lodash';
 export interface BudgetsTableProps {
   account: Account;
   categories: Category[];
-  budgetsByCategory: { [p: string]: PlannedTotal };
-  total: PlannedTotal;
+  budgetsByCategory: { [p: string]: ActualExpectedPlanned };
+  total: ActualExpectedPlanned;
   onSetFormSubmit: (categoryId: string, data: BudgetFormValues) => Promise<void>;
 }
 

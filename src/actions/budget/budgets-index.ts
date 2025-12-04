@@ -7,7 +7,7 @@ import { getLastPeriod, getPeriod, getPeriods } from '@/lib/server/period';
 import { getCategories } from '@/lib/server/category';
 import { getBudgets } from '@/lib/server/budget';
 import { getTransactionsWithCategory } from '@/lib/server/transaction';
-import { PlannedTotal } from '@/lib/types';
+import { ActualExpectedPlanned } from '@/lib/types';
 import _ from 'lodash';
 import { calculateTransactionsTotal } from '@/lib/transaction';
 
@@ -16,8 +16,8 @@ export type BudgetsIndexDto = {
   categories: Category[],
   periods: Period[],
   periodId: string,
-  periodBudgetsByCategory: { [p: Category['id']] : PlannedTotal },
-  periodTotal: PlannedTotal,
+  periodBudgetsByCategory: { [p: Category['id']] : ActualExpectedPlanned },
+  periodTotal: ActualExpectedPlanned,
 };
 
 export const budgetsIndex = async (
@@ -68,7 +68,7 @@ export const budgetsIndex = async (
     };
 
     return acc;
-  }, {} as { [p: Category['id']] : PlannedTotal });
+  }, {} as { [p: Category['id']] : ActualExpectedPlanned });
 
   const total = categories.reduce(
     (acc, category) => {

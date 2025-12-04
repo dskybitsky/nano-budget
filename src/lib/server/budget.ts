@@ -3,7 +3,7 @@
 import { Budget } from '@prisma/client';
 import { revalidateTag } from 'next/cache';
 import { cache } from '@/lib/server/cache';
-import prisma from '@/lib/server/prismadb';
+import { prisma } from '@/lib/server/prisma';
 
 const BUDGET_CACHE_TAG = 'budget';
 const BUDGET_CACHE_RETENTION = 3600;
