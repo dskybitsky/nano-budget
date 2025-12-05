@@ -39,14 +39,23 @@
         "AccountType":"{value, select, checking {Checking} savings {Savings} credit {Credit} virtual {Virtual} other {Unknown}}",
         "OperationType":"{value, select, debit {Debit} credit {Credit} other {Unknown}}"
     },
+    "Header": {
+        "titleText": "Nano Budget",
+        "titleTextShort": "{accountName} Account",
+        "titleTextLong": "Nano Budget: {accountName} Account",
+        "balanceTextShort": "{actual}",
+        "balanceTextLong": "Balance: {actual}",
+        "balanceFullTextShort": "{actual} ({expected})",
+        "balanceFullTextLong": "Balance: {actual} ({expected})"
+    },
     "Navbar": {
         "accountPlaceholder": "Choose account",
         "accountDescriptionPlaceholder": "{accountType} account",
-        "accountBalanceText": "Balance: {actual}",
-        "accountBalanceTextLong": "Balance: {actual} ({expected})",
         "allAccountsItem": "All Accounts",
         "transactionsItem": "Transactions",
-        "allTransactionsItem": "All",
+        "transactionsPeriodicItem": "Periodic",
+        "transactionsPendingItem": "Pending",
+        "transactionsAllItem": "All",
         "executedTransactionsItem": "Executed",
         "nonExecutedTransactionsItem": "Not Executed"
     },
@@ -115,6 +124,9 @@
     },
     "TransactionsIndex": {
         "title": "Transactions",
+        "titleAll": "All Transactions",
+        "titlePeriodic": "Periodic Transactions",
+        "titlePending": "Pending Transactions",
         "createButtonCaption": "Create Transaction"
     },
     "TransactionsTable": {

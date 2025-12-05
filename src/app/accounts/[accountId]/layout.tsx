@@ -11,10 +11,10 @@ export default async function layout({ params, children }: {
   const { accountId } = await params;
 
   const user = await getSessionUser();
-  const dto = await layoutAccounts();
+  const dto = await layoutAccounts(accountId);
 
   return (
-    <Scaffold dto={dto} user={user} accountId={accountId}>
+    <Scaffold dto={dto} user={user}>
       {children}
     </Scaffold>
   );

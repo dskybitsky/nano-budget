@@ -12,10 +12,9 @@ import { LayoutAccountsDto } from '@/actions/layout/layout-accounts';
 export interface ScaffoldProps extends React.HTMLAttributes<HTMLElement> {
   dto: LayoutAccountsDto,
   user: User,
-  accountId?: string,
 }
 
-export const Scaffold = ({ dto, user, accountId, children }: ScaffoldProps) => {
+export const Scaffold = ({ dto, user, children }: ScaffoldProps) => {
   const [opened, { toggle }] = useDisclosure();
 
   return (
@@ -27,10 +26,10 @@ export const Scaffold = ({ dto, user, accountId, children }: ScaffoldProps) => {
       bg="gray.0"
     >
       <AppShell.Header bg="gray.0" withBorder={true}>
-        <Header user={user} opened={opened} toggle={toggle} />
+        <Header dto={dto} user={user} opened={opened} toggle={toggle} />
       </AppShell.Header>
       <AppShell.Navbar bg="gray.0" p={10}>
-        <Navbar dto={dto} accountId={accountId} onNavigate={toggle} />
+        <Navbar dto={dto} onNavigate={toggle} />
       </AppShell.Navbar>
       <AppShell.Main>
         {children}

@@ -24,29 +24,28 @@ import {
 } from '@tabler/icons-react';
 import classes from './navbar.module.css';
 import Link from 'next/link';
-import { redirect, useSearchParams } from 'next/navigation';
+import { redirect } from 'next/navigation';
 import {
   accountCreateUrl,
   accountViewUrl,
   accountBudgetIndexUrl,
   settingsUrl,
-  accountTransactionsIndexUrl,
+  accountTransactionsPeriodicIndexUrl,
+  accountTransactionsPendingIndexUrl,
+  accountTransactionsAllIndexUrl,
   accountIndexUrl,
 } from '@/lib/url';
-import { useCustomFormatter } from '@/hooks/use-custom-formatter';
 import { useTranslations } from 'next-intl';
 import { EntityImage } from '@/components/entity-image';
 import { LayoutAccountsDto } from '@/actions/layout/layout-accounts';
 
 export interface NavbarProps {
   dto: LayoutAccountsDto,
-  accountId?: string,
   onNavigate?: () => void,
 }
 
-export const Navbar = ({ dto, accountId, onNavigate }: NavbarProps) => {
+export const Navbar = ({ dto, onNavigate }: NavbarProps) => {
   const t = useTranslations();
-  const searchParams = useSearchParams();
 
   const [transactionsOpened, { toggle: transactionsToggle }] = useDisclosure(true);
 
@@ -61,21 +60,12 @@ export const Navbar = ({ dto, accountId, onNavigate }: NavbarProps) => {
       redirect(accountIndexUrl());
     }
 
-    redirect(accountTransactionsIndexUrl(value));
+    redirect(accountTransactionsPeriodicIndexUrl(value));
   };
 
-  const account = dto.accounts.find((account) => account.id === accountId);
+  const { currentAccount } = dto;
 
-  const periodId = searchParams.get('periodId');
-
-  const periodSummary = (
-    periodId
-      ? account!.summary.get(periodId)
-      : Array.from(account!.summary.values()).pop()
-  ) ?? {
-    actual: 0,
-    expected: 0,
-  };
+  const transactionsCount = currentAccount?.transactionsCount;
 
   return (
     <Stack h="100%" gap={20} px="md" py="lg" bg="white" bd="1px solid gray.2" bdrs={10}>
@@ -97,10 +87,10 @@ export const Navbar = ({ dto, accountId, onNavigate }: NavbarProps) => {
               styles={{ input: { height: 'auto' } }}
               disabled={dto.accounts.length === 0}
             >
-              {account && (
-                <AccountComboBoxItem account={account} />
+              {currentAccount && (
+                <AccountComboBoxItem account={currentAccount} />
               )}
-              {!account && <Input.Placeholder>{t('Navbar.accountPlaceholder')}</Input.Placeholder>}
+              {!currentAccount && <Input.Placeholder>{t('Navbar.accountPlaceholder')}</Input.Placeholder>}
             </InputBase>
           </Combobox.Target>
 
@@ -121,12 +111,12 @@ export const Navbar = ({ dto, accountId, onNavigate }: NavbarProps) => {
       </Flex>
       <ScrollArea h="100%">
         <Flex h="100%" gap={4} direction="column" align="start">
-          {accountId && (
+          {currentAccount && (
             <>
               <NavLink
                 icon={IconBuildingBank}
                 title="Account"
-                link={accountId ? accountViewUrl(accountId) : accountCreateUrl()}
+                link={currentAccount ? accountViewUrl(currentAccount.id) : accountCreateUrl()}
                 onNavigate={onNavigate}
               />
               <Divider my={10} w="100%" />
@@ -152,38 +142,40 @@ export const Navbar = ({ dto, accountId, onNavigate }: NavbarProps) => {
                     <Link
                       key="nav-link-transactions-all"
                       className={classes.subNavLink}
-                      href={accountTransactionsIndexUrl(accountId)}
+                      href={accountTransactionsPeriodicIndexUrl(currentAccount.id)}
                       onNavigate={onNavigate}
                     >
-                      <Text lts={-0.5}>{t('Navbar.allTransactionsItem')}</Text>
-                      <Badge radius={6} className={classes.noti} px={6}>{periodSummary.expected}</Badge>
+                      <Text lts={-0.5}>{t('Navbar.transactionsPeriodicItem')}</Text>
+                      {transactionsCount?.periodic !== undefined && (
+                        <Badge radius={6} className={classes.noti} px={6}>{transactionsCount.periodic}</Badge>
+                      )}
                     </Link>
                     <Link
                       key="nav-link-transactions-confirmed"
                       className={classes.subNavLink}
-                      href={accountTransactionsIndexUrl(accountId, undefined, { executed: true })}
+                      href={accountTransactionsPendingIndexUrl(currentAccount.id)}
                       onNavigate={onNavigate}
                     >
-                      <Text lts={-0.5}>{t('Navbar.executedTransactionsItem')}</Text>
-                      <Badge radius={6} className={classes.noti} px={6}>
-                        {periodSummary.actual}
-                      </Badge>
+                      <Text lts={-0.5}>{t('Navbar.transactionsPendingItem')}</Text>
+                      {transactionsCount?.pending !== undefined && (
+                        <Badge
+                          radius={6}
+                          className={classes.noti}
+                          px={6}
+                          bg={ transactionsCount.pending > 0 ? 'red.3' : ''}
+                        >{transactionsCount?.pending}</Badge>
+                      )}
                     </Link>
                     <Link
                       key="nav-link-transactions-unconfirmed"
                       className={classes.subNavLink}
-                      href={accountTransactionsIndexUrl(accountId, undefined, { executed: false })}
+                      href={accountTransactionsAllIndexUrl(currentAccount.id)}
                       onNavigate={onNavigate}
                     >
-                      <Text lts={-0.5}>{t('Navbar.nonExecutedTransactionsItem')}</Text>
-                      <Badge
-                        radius={6}
-                        className={classes.noti}
-                        px={6}
-                        bg={ periodSummary.expected > periodSummary.actual ? 'red.3' : ''}
-                      >
-                        {periodSummary.expected - periodSummary.actual}
-                      </Badge>
+                      <Text lts={-0.5}>{t('Navbar.transactionsAllItem')}</Text>
+                      {transactionsCount?.all !== undefined && (
+                        <Badge radius={6} className={classes.noti} px={6}>{transactionsCount?.all}</Badge>
+                      )}
                     </Link>
                   </Flex>
                 </Collapse>
@@ -192,7 +184,7 @@ export const Navbar = ({ dto, accountId, onNavigate }: NavbarProps) => {
                 <NavLink
                   icon={IconCalendarDollar}
                   title="Budget"
-                  link={accountBudgetIndexUrl(accountId)}
+                  link={accountBudgetIndexUrl(currentAccount.id)}
                   onNavigate={onNavigate}
                 />
               </Flex>
@@ -231,7 +223,6 @@ const NavLink = ({ title, icon: Icon, link, onNavigate }: NavLinkProps) => {
 
 const AccountComboBoxItem = ({ account }: { account: LayoutAccountsDto['accounts'][number] }) => {
   const t = useTranslations();
-  const format = useCustomFormatter();
 
   return (
     <Flex w="100%" justify="start" align="center" gap={20} p={5}>
@@ -241,13 +232,6 @@ const AccountComboBoxItem = ({ account }: { account: LayoutAccountsDto['accounts
         <Text fz={12} fw={400} c="gray">
           {t('Navbar.accountDescriptionPlaceholder', {
             accountType: t('Enum.AccountType', { value: account.type }) })
-          }
-        </Text>
-        <Text fz={12} fw={400}>
-          {
-            t('Navbar.accountBalanceText', {
-              actual: format.monetary(account.balance.actual, account.currency),
-            })
           }
         </Text>
       </Flex>
