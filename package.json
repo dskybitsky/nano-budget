@@ -18,7 +18,7 @@
     "test": "npm run lint && npm run typecheck && npm run jest"
   },
   "prisma": {
-    "seed": "ts-node --compiler-options {\"module\":\"CommonJS\"} prisma/seed.ts"
+    "seed": "tsx prisma/seed.ts"
   },
   "dependencies": {
     "@mantine/core": "8.3.2",
@@ -33,7 +33,7 @@
     "lodash": "^4.17.21",
     "mantine-form-zod-resolver": "^1.3.0",
     "moment": "^2.30.1",
-    "next": "15.4.7",
+    "next": "15.5.7",
     "next-auth": "^5.0.0-beta.29",
     "next-intl": "^4.3.1",
     "react": "19.1.0",
@@ -64,6 +64,7 @@
     "prisma": "^6.16.2",
     "stylelint": "^16.20.0",
     "stylelint-config-standard-scss": "^15.0.1",
+    "tsx": "^4.21.0",
     "typescript": "5.8.3",
     "typescript-eslint": "^8.37.0"
   },

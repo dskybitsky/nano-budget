@@ -1,7 +1,7 @@
 import React from 'react';
 import { redirect } from 'next/navigation';
-import { PeriodicTransactionsView } from '@/app/accounts/[accountId]/transactions/periodic/view';
-import { transactionsIndexPeriodic } from '@/actions/transaction/transactions-index-periodic';
+import { PeriodTransactionsView } from '@/app/accounts/[accountId]/transactions/period/view';
+import { transactionsIndexPeriod } from '@/actions/transaction/transactions-index-period';
 import { homeUrl } from '@/lib/url';
 
 export default async function Page({ params, searchParams }: {
@@ -10,11 +10,11 @@ export default async function Page({ params, searchParams }: {
 }) {
   const [{ accountId }, { periodId }] = await Promise.all([params, searchParams]);
 
-  const dto = await transactionsIndexPeriodic(accountId, periodId);
+  const dto = await transactionsIndexPeriod(accountId, periodId);
 
   if (!dto) {
     redirect(homeUrl());
   }
 
-  return (<PeriodicTransactionsView dto={dto} />);
+  return (<PeriodTransactionsView dto={dto} />);
 }

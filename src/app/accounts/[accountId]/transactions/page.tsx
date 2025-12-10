@@ -1,5 +1,5 @@
 import { redirect } from 'next/navigation';
-import { accountTransactionsPeriodicIndexUrl, homeUrl } from '@/lib/url';
+import { accountTransactionsPeriodIndexUrl, homeUrl } from '@/lib/url';
 
 export default async function Page({ params }: {
   params: Promise<{ accountId: string, periodId?: string }>
@@ -10,5 +10,5 @@ export default async function Page({ params }: {
     redirect(homeUrl());
   }
 
-  redirect(accountTransactionsPeriodicIndexUrl(accountId, periodId));
+  redirect(accountTransactionsPeriodIndexUrl(accountId, periodId));
 }

@@ -7,25 +7,18 @@ import { getLastPeriod, getPeriod, getPeriods } from '@/lib/server/period';
 import { getCategories } from '@/lib/server/category';
 import { getTransactionsWithCategory, TransactionWithCategory } from '@/lib/server/transaction';
 
-export type TransactionFilterDto = {
-  executed?: boolean;
-  executedFrom?: Date;
-  executedTo?: Date;
-};
-
-export type TransactionsIndexDto = {
+export type TransactionsIndexPeriodDto = {
   account: Account;
   categories: Category[];
   periods: Period[];
-  periodId: string,
+  period: Period,
   transactions: TransactionWithCategory[];
 };
 
-export const transactionsIndex = async (
+export const transactionsIndexPeriod = async (
   accountId: string,
   periodId?: string,
-  filter?: TransactionFilterDto,
-): Promise<TransactionsIndexDto | null> => {
+): Promise<TransactionsIndexPeriodDto | null> => {
   await getSessionUser();
 
   const account = await getAccount(accountId);
@@ -49,14 +42,13 @@ export const transactionsIndex = async (
     categoryIdList: categories.map(c => c.id),
     createdFrom: period.started,
     createdTo: period.ended ?? undefined,
-    ...filter,
   });
 
   return {
     account,
     categories,
     periods,
-    periodId: period.id,
+    period,
     transactions,
   };
 };

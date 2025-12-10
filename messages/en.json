@@ -53,7 +53,7 @@
         "accountDescriptionPlaceholder": "{accountType} account",
         "allAccountsItem": "All Accounts",
         "transactionsItem": "Transactions",
-        "transactionsPeriodicItem": "Periodic",
+        "transactionsLastPeriodItem": "Last Period",
         "transactionsPendingItem": "Pending",
         "transactionsAllItem": "All",
         "executedTransactionsItem": "Executed",
@@ -125,7 +125,7 @@
     "TransactionsIndex": {
         "title": "Transactions",
         "titleAll": "All Transactions",
-        "titlePeriodic": "Periodic Transactions",
+        "titlePeriod": "Transactions: {period}",
         "titlePending": "Pending Transactions",
         "createButtonCaption": "Create Transaction"
     },

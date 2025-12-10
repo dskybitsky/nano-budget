@@ -5,3 +5,4 @@ export type ActualExpected = {
 
 export type ActualExpectedPlanned = ActualExpected & { planned: number };
 
+export type Pagination = { offset: number, count: number };

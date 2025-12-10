@@ -30,7 +30,7 @@ import {
   accountViewUrl,
   accountBudgetIndexUrl,
   settingsUrl,
-  accountTransactionsPeriodicIndexUrl,
+  accountTransactionsPeriodIndexUrl,
   accountTransactionsPendingIndexUrl,
   accountTransactionsAllIndexUrl,
   accountIndexUrl,
@@ -60,7 +60,7 @@ export const Navbar = ({ dto, onNavigate }: NavbarProps) => {
       redirect(accountIndexUrl());
     }
 
-    redirect(accountTransactionsPeriodicIndexUrl(value));
+    redirect(accountTransactionsPeriodIndexUrl(value));
   };
 
   const { currentAccount } = dto;
@@ -142,12 +142,12 @@ export const Navbar = ({ dto, onNavigate }: NavbarProps) => {
                     <Link
                       key="nav-link-transactions-all"
                       className={classes.subNavLink}
-                      href={accountTransactionsPeriodicIndexUrl(currentAccount.id)}
+                      href={accountTransactionsPeriodIndexUrl(currentAccount.id)}
                       onNavigate={onNavigate}
                     >
-                      <Text lts={-0.5}>{t('Navbar.transactionsPeriodicItem')}</Text>
-                      {transactionsCount?.periodic !== undefined && (
-                        <Badge radius={6} className={classes.noti} px={6}>{transactionsCount.periodic}</Badge>
+                      <Text lts={-0.5}>{t('Navbar.transactionsLastPeriodItem')}</Text>
+                      {transactionsCount?.period !== undefined && (
+                        <Badge radius={6} className={classes.noti} px={6}>{transactionsCount.period}</Badge>
                       )}
                     </Link>
                     <Link

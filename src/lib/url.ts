@@ -32,10 +32,10 @@ export const accountTransactionsPendingIndexUrl = (
   accountId: string,
 ) => (`/accounts/${accountId}/transactions/pending`);
 
-export const accountTransactionsPeriodicIndexUrl = (
+export const accountTransactionsPeriodIndexUrl = (
   accountId: string,
   periodId?: string,
-) => (`/accounts/${accountId}/transactions/periodic?periodId=${periodId ?? ''}`);
+) => (`/accounts/${accountId}/transactions/period?periodId=${periodId ?? ''}`);
 
 export const accountBudgetIndexUrl = (accountId: string, periodId?: string) => (
   `/accounts/${accountId}/budget?periodId=${periodId ?? ''}`

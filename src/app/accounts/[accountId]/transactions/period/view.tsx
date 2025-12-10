@@ -3,13 +3,13 @@
 import { Box, Button, Flex, Modal } from '@mantine/core';
 import React from 'react';
 import { TransactionsTable } from '@/components/transaction/transactions-table';
-import { TransactionsIndexDto } from '@/actions/transaction/transactions-index';
 import { transactionCreate } from '@/actions/transaction/transaction-create';
 import { transactionUpdate } from '@/actions/transaction/transaction-update';
 import { transactionDelete } from '@/actions/transaction/transaction-delete';
 import { TransactionForm, TransactionFormValues } from '@/components/transaction/transaction-form';
+import { TransactionsIndexPeriodDto } from '@/actions/transaction/transactions-index-period';
 import { redirect } from 'next/navigation';
-import { accountTransactionsPeriodicIndexUrl } from '@/lib/url';
+import { accountTransactionsPeriodIndexUrl } from '@/lib/url';
 import { PeriodPicker } from '@/components/period/period-picker';
 import { Period } from '@prisma/client';
 import { useDisclosure } from '@mantine/hooks';
@@ -17,11 +17,11 @@ import { IconPlus } from '@tabler/icons-react';
 import { useTranslations } from 'next-intl';
 import { PageHeader } from '@/components/page-header';
 
-export interface PeriodicTransactionsViewProps extends React.HTMLAttributes<HTMLElement> {
-  dto: TransactionsIndexDto,
+export interface PeriodTransactionsViewProps extends React.HTMLAttributes<HTMLElement> {
+  dto: TransactionsIndexPeriodDto,
 }
 
-export const PeriodicTransactionsView = ({ dto }: PeriodicTransactionsViewProps) => {
+export const PeriodTransactionsView = ({ dto }: PeriodTransactionsViewProps) => {
   const t = useTranslations();
 
   const [opened, { open, close }] = useDisclosure(false);
@@ -40,7 +40,7 @@ export const PeriodicTransactionsView = ({ dto }: PeriodicTransactionsViewProps)
   };
 
   const handlePeriodChange = (period: Period) => {
-    redirect(accountTransactionsPeriodicIndexUrl(dto.account.id, period.id));
+    redirect(accountTransactionsPeriodIndexUrl(dto.account.id, period.id));
   };
 
   return (
@@ -52,7 +52,7 @@ export const PeriodicTransactionsView = ({ dto }: PeriodicTransactionsViewProps)
       align="center"
     >
       <PageHeader
-        title={t('TransactionsIndex.titlePeriodic')}
+        title={t('TransactionsIndex.titlePeriod', { period: dto.period.name })}
         rightSection={
           <>
             <Modal opened={opened} onClose={close} title={t('TransactionModal.createTitle')}>
@@ -66,7 +66,7 @@ export const PeriodicTransactionsView = ({ dto }: PeriodicTransactionsViewProps)
         bottomSection={
           <>
             <Box/>
-            <PeriodPicker periods={dto.periods} periodId={dto.periodId} onChange={handlePeriodChange} />
+            <PeriodPicker periods={dto.periods} periodId={dto.period.id} onChange={handlePeriodChange} />
           </>
         }
       />

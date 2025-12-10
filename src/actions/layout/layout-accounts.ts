@@ -14,9 +14,9 @@ export type LayoutAccountsDto = {
   currentAccount?: Account & {
     balance: ActualExpected,
     transactionsCount?: {
-      all: number,
-      periodic?: number,
+      period?: number,
       pending: number,
+      all: number,
     },
   },
 };
@@ -57,7 +57,7 @@ export const layoutAccounts = async (
     };
   }
 
-  const transactionsCountPeriodic = await getTransactionsCount({
+  const transactionsCountPeriod = await getTransactionsCount({
     categoryIdList,
     executed: true,
     createdFrom: period.started,
@@ -67,9 +67,9 @@ export const layoutAccounts = async (
   return {
     accounts,
     currentAccount: { ...currentAccount, balance, transactionsCount: {
-      all: transactionsCountAll,
+      period: transactionsCountPeriod,
       pending: transactionsCountPending,
-      periodic: transactionsCountPeriodic,
+      all: transactionsCountAll,
     } },
   };
 };
