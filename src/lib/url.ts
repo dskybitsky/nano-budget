@@ -19,13 +19,15 @@ export const accountViewUrl = (accountId: string) => (
 export const accountTransactionsAllIndexUrl = (
   accountId: string,
   filter?: TransactionFilterDto,
+  page?: number,
 ) => (
   `/accounts/${accountId}/transactions/all?`
   + `createdFrom=${filter?.createdFrom?.toJSON() ?? ''}&`
   + `createdTo=${filter?.createdTo?.toJSON() ?? ''}&`
   + `executed=${filter?.executed ?? ''}&`
   + `executedFrom=${filter?.executedFrom?.toJSON() ?? ''}&`
-  + `executedTo=${filter?.executedTo?.toJSON() ?? ''}`
+  + `executedTo=${filter?.executedTo?.toJSON() ?? ''}&`
+  + `page=${page ?? ''}`
 );
 
 export const accountTransactionsPendingIndexUrl = (

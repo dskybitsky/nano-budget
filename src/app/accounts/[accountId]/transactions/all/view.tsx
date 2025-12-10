@@ -1,6 +1,6 @@
 'use client';
 
-import { Box, Button, Flex, Modal } from '@mantine/core';
+import { Button, Flex, Modal, Pagination } from '@mantine/core';
 import React from 'react';
 import { TransactionsTable } from '@/components/transaction/transactions-table';
 import { TransactionFilterDto, TransactionsIndexAllDto } from '@/actions/transaction/transactions-index-all';
@@ -19,9 +19,10 @@ import { PageHeader } from '@/components/page-header';
 export interface AllTransactionsViewProps extends React.HTMLAttributes<HTMLElement> {
   dto: TransactionsIndexAllDto,
   filter?: TransactionFilterDto,
+  page?: number,
 }
 
-export const AllTransactionsView = ({ dto, filter }: AllTransactionsViewProps) => {
+export const AllTransactionsView = ({ dto, filter, page }: AllTransactionsViewProps) => {
   const t = useTranslations();
 
   const [opened, { open, close }] = useDisclosure(false);
@@ -42,6 +43,12 @@ export const AllTransactionsView = ({ dto, filter }: AllTransactionsViewProps) =
   const handleFilterChange = useDebouncedCallback((filter: TransactionFilterDto) => {
     redirect(accountTransactionsAllIndexUrl(dto.account.id, filter));
   }, 1000);
+
+  const handlePaginationChange = (page: number) => {
+    redirect(accountTransactionsAllIndexUrl(dto.account.id, filter, page));
+  };
+
+  const totalPages = Math.ceil(dto.transactionsCount / dto.transactionsPerPage);
 
   return (
     <Flex
@@ -65,15 +72,20 @@ export const AllTransactionsView = ({ dto, filter }: AllTransactionsViewProps) =
           </>
         }
       />
-      <Box w="100%">
-        <TransactionsTable
-          account={dto.account}
-          categories={dto.categories}
-          transactions={dto.transactions}
-          onFormSubmit={handleUpdateFormSubmit}
-          onDeleteClick={handleDeleteClick}
-        />
-      </Box>
+      <TransactionsTable
+        account={dto.account}
+        categories={dto.categories}
+        transactions={dto.transactions}
+        onFormSubmit={handleUpdateFormSubmit}
+        onDeleteClick={handleDeleteClick}
+      />
+      <Pagination
+        total={totalPages}
+        value={page}
+        withEdges={true}
+        withControls={false}
+        onChange={handlePaginationChange}
+      />
     </Flex>
   );
 };

@@ -70,15 +70,13 @@ export const PeriodTransactionsView = ({ dto }: PeriodTransactionsViewProps) => 
           </>
         }
       />
-      <Box w="100%">
-        <TransactionsTable
-          account={dto.account}
-          categories={dto.categories}
-          transactions={dto.transactions}
-          onFormSubmit={handleUpdateFormSubmit}
-          onDeleteClick={handleDeleteClick}
-        />
-      </Box>
+      <TransactionsTable
+        account={dto.account}
+        categories={dto.categories}
+        transactions={dto.transactions}
+        onFormSubmit={handleUpdateFormSubmit}
+        onDeleteClick={handleDeleteClick}
+      />
     </Flex>
   );
 };

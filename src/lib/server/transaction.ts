@@ -4,6 +4,7 @@ import { Prisma, Transaction } from '@prisma/client';
 import { revalidateTag } from 'next/cache';
 import { cache } from '@/lib/server/cache';
 import { prisma } from '@/lib/server/prisma';
+import { OffsetCount } from '@/lib/types';
 
 const TRANSACTION_CACHE_TAG = 'transaction';
 const TRANSACTION_CACHE_RETENTION = 3600;
@@ -22,10 +23,12 @@ export type TransactionFilter = {
 };
 
 export const getTransactions = cache(
-  async (filter?: TransactionFilter): Promise<Transaction[]> => {
+  async (filter?: TransactionFilter, offsetCount?: OffsetCount): Promise<Transaction[]> => {
     return prisma.transaction.findMany({
       where: getWhere(filter),
       orderBy: { created: 'desc' },
+      skip: offsetCount?.offset ?? 0,
+      take: offsetCount?.count,
     });
   },
   ['get-transactions'],
@@ -33,11 +36,13 @@ export const getTransactions = cache(
 );
 
 export const getTransactionsWithCategory = cache(
-  async (filter?: TransactionFilter): Promise<TransactionWithCategory[]> => {
+  async (filter?: TransactionFilter, offsetCount?: OffsetCount): Promise<TransactionWithCategory[]> => {
     return prisma.transaction.findMany({
       where: getWhere(filter),
       orderBy: { created: 'desc' },
       include: { category: true },
+      skip: offsetCount?.offset ?? 0,
+      take: offsetCount?.count,
     });
   },
   ['get-transactions-with-category'],

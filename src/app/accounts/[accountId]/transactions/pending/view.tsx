@@ -1,6 +1,6 @@
 'use client';
 
-import { Box, Button, Flex, Modal } from '@mantine/core';
+import { Button, Flex, Modal } from '@mantine/core';
 import React from 'react';
 import { TransactionsTable } from '@/components/transaction/transactions-table';
 import { TransactionsIndexPendingDto } from '@/actions/transaction/transactions-index-pending';
@@ -56,15 +56,13 @@ export const PendingTransactionsView = ({ dto }: PendingTransactionsViewProps) =
           </>
         }
       />
-      <Box w="100%">
-        <TransactionsTable
-          account={dto.account}
-          categories={dto.categories}
-          transactions={dto.transactions}
-          onFormSubmit={handleUpdateFormSubmit}
-          onDeleteClick={handleDeleteClick}
-        />
-      </Box>
+      <TransactionsTable
+        account={dto.account}
+        categories={dto.categories}
+        transactions={dto.transactions}
+        onFormSubmit={handleUpdateFormSubmit}
+        onDeleteClick={handleDeleteClick}
+      />
     </Flex>
   );
 };

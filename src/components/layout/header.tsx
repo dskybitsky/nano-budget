@@ -47,8 +47,8 @@ export const Header = ({ dto, user, opened, toggle }: HeaderProps) => {
         justify="space-between"
         py={10}
       >
-        <TitleText account={currentAccount} useShort={true} fz={24} fw={800} hiddenFrom="md" flex="1" />
-        <TitleText account={currentAccount} useShort={false} fz={24} fw={800} visibleFrom="md" flex="1" />
+        <TitleText account={currentAccount} useShort={true} fz={22} fw={800} hiddenFrom="md" flex="1" />
+        <TitleText account={currentAccount} useShort={false} fz={22} fw={800} visibleFrom="md" flex="1" />
         {currentAccount && (
           <>
             <BalanceText account={currentAccount} useShort={true} hiddenFrom="md" />

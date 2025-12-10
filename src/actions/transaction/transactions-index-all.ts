@@ -4,7 +4,8 @@ import { Account, Category } from '@prisma/client';
 import { getSessionUser } from '@/lib/auth';
 import { getAccount } from '@/lib/server/account';
 import { getCategories } from '@/lib/server/category';
-import { getTransactionsWithCategory, TransactionWithCategory } from '@/lib/server/transaction';
+import { getTransactionsCount, getTransactionsWithCategory, TransactionWithCategory } from '@/lib/server/transaction';
+import { pageToOffsetCount } from '@/lib/utils';
 
 export type TransactionFilterDto = {
   categoryIdList?: string[];
@@ -19,11 +20,14 @@ export type TransactionsIndexAllDto = {
   account: Account;
   categories: Category[];
   transactions: TransactionWithCategory[];
+  transactionsCount: number;
+  transactionsPerPage: number;
 };
 
 export const transactionsIndexAll = async (
   accountId: string,
   filter?: TransactionFilterDto,
+  page?: number,
 ): Promise<TransactionsIndexAllDto | null> => {
   await getSessionUser();
 
@@ -38,16 +42,28 @@ export const transactionsIndexAll = async (
 
   const filterCategoryIdSet = filter?.categoryIdList ? new Set(filter.categoryIdList) : undefined;
 
-  const transactions = await getTransactionsWithCategory({
+  const filterWithCategories = {
     categoryIdList: filterCategoryIdSet
       ? categoriesIdList.filter(c => filterCategoryIdSet.has(c))
       : categoriesIdList,
     ...filter,
-  });
+  };
+  const offsetCount = pageToOffsetCount(page ?? 1, TRANSACTIONS_INDEX_ALL_PAGE_SIZE);
+
+  console.log({ page, offsetCount });
+
+  const [transactions, transactionsCount] = await Promise.all([
+    getTransactionsWithCategory(filterWithCategories, offsetCount),
+    getTransactionsCount(filterWithCategories),
+  ]);
 
   return {
     account,
     categories,
     transactions,
+    transactionsCount,
+    transactionsPerPage: TRANSACTIONS_INDEX_ALL_PAGE_SIZE,
   };
 };
+
+const TRANSACTIONS_INDEX_ALL_PAGE_SIZE = 20;

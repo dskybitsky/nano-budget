@@ -3,67 +3,43 @@ import { redirect } from 'next/navigation';
 import { AllTransactionsView } from '@/app/accounts/[accountId]/transactions/all/view';
 import { homeUrl } from '@/lib/url';
 import { transactionsIndexAll } from '@/actions/transaction/transactions-index-all';
+import { SearchParams } from '@/lib/types';
+import { parseQueryBoolean, parseQueryDate, parseQueryPage } from '@/lib/utils';
 
 export default async function Page({
   params,
   searchParams,
 }: {
   params: Promise<{ accountId: string }>,
-  searchParams: Promise<{ [_: string]: string | undefined }>,
+  searchParams: Promise<SearchParams>,
 }) {
-  const [{ accountId }, {
+  const [{ accountId }, searchParamsResolved ] = await Promise.all([params, searchParams]);
+
+  const {
     createdFrom,
     createdTo,
     executed,
     executedFrom,
     executedTo,
-  }] = await Promise.all([params, searchParams]);
+    page,
+  } = parseSearchParams(searchParamsResolved);
 
-  const filter = createFilter(createdFrom, createdTo, executed, executedFrom, executedTo);
+  const filter = { createdFrom, createdTo, executed, executedFrom, executedTo };
 
-  const dto = await transactionsIndexAll(accountId, filter);
+  const dto = await transactionsIndexAll(accountId, filter, page);
 
   if (!dto) {
     redirect(homeUrl());
   }
 
-  return (<AllTransactionsView dto={dto} filter={filter} />);
+  return (<AllTransactionsView dto={dto} filter={filter} page={page} />);
 }
 
-const createFilter = (
-  createdFrom: unknown,
-  createdTo: unknown,
-  executed: unknown,
-  executedFrom: unknown,
-  executedTo: unknown,
-) => {
-  return {
-    createdFrom: parseFilterDate(createdFrom),
-    createdTo: parseFilterDate(createdTo),
-    executed: (
-      executed === 'true'
-        ? true
-        : (executed === 'false' ? false : undefined)
-    ),
-    executedFrom: parseFilterDate(executedFrom),
-    executedTo: parseFilterDate(executedTo),
-  };
-};
-
-const parseFilterDate = (value: unknown) => {
-  if (!value) {
-    return undefined;
-  }
-
-  if (typeof value !== 'string') {
-    return undefined;
-  }
-
-  const date = new Date(value);
-
-  if (isNaN(date.getTime())) {
-    return undefined;
-  }
-
-  return date;
-};
+const parseSearchParams = (params: SearchParams) => ({
+  createdFrom: parseQueryDate(params.createdFrom),
+  createdTo: parseQueryDate(params.createdTo),
+  executed: parseQueryBoolean(params.executed),
+  executedFrom: parseQueryDate(params.executedFrom),
+  executedTo: parseQueryDate(params.executedTo),
+  page: parseQueryPage(params.page),
+});
