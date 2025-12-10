@@ -3,7 +3,7 @@
 import { Button, Flex, Modal, Pagination } from '@mantine/core';
 import React from 'react';
 import { TransactionsTable } from '@/components/transaction/transactions-table';
-import { TransactionFilterDto, TransactionsIndexAllDto } from '@/actions/transaction/transactions-index-all';
+import { TransactionsIndexAllDto } from '@/actions/transaction/transactions-index-all';
 import { transactionCreate } from '@/actions/transaction/transaction-create';
 import { transactionUpdate } from '@/actions/transaction/transaction-update';
 import { transactionDelete } from '@/actions/transaction/transaction-delete';
@@ -15,10 +15,11 @@ import { useDebouncedCallback, useDisclosure } from '@mantine/hooks';
 import { IconPlus } from '@tabler/icons-react';
 import { useTranslations } from 'next-intl';
 import { PageHeader } from '@/components/page-header';
+import { TransactionsFilter } from '@/lib/server/transaction';
 
 export interface AllTransactionsViewProps extends React.HTMLAttributes<HTMLElement> {
   dto: TransactionsIndexAllDto,
-  filter?: TransactionFilterDto,
+  filter?: TransactionsFilter,
   page?: number,
 }
 
@@ -40,7 +41,7 @@ export const AllTransactionsView = ({ dto, filter, page }: AllTransactionsViewPr
     await transactionDelete(id);
   };
 
-  const handleFilterChange = useDebouncedCallback((filter: TransactionFilterDto) => {
+  const handleFilterChange = useDebouncedCallback((filter: TransactionsFilter) => {
     redirect(accountTransactionsAllIndexUrl(dto.account.id, filter));
   }, 1000);
 

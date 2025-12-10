@@ -6,18 +6,18 @@ import { DateTimePickerInput } from '@/components/date-time-picker-input';
 import { useEffect } from 'react';
 import { IconFilter } from '@tabler/icons-react';
 import { useDisclosure } from '@mantine/hooks';
-import { TransactionFilterDto } from '@/actions/transaction/transactions-index';
 import '@mantine/dates/styles.css';
+import { TransactionsFilter } from '@/lib/server/transaction';
 
 export interface TransactionsFilterPanelProps extends React.HTMLAttributes<HTMLElement> {
-  filter?: TransactionFilterDto;
-  onFilterChange: (filter: TransactionFilterDto) => void;
+  filter?: TransactionsFilter;
+  onFilterChange: (filter: TransactionsFilter) => void;
 }
 
 export const TransactionsFilterPanel = ({ filter, onFilterChange }: TransactionsFilterPanelProps) => {
   const t = useTranslations();
 
-  const form = useForm<TransactionFilterDto>({
+  const form = useForm<TransactionsFilter>({
     mode: 'uncontrolled',
     initialValues: {
       executedFrom: filter?.executedFrom,

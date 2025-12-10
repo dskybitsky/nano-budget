@@ -4,17 +4,13 @@ import { Account, Category } from '@prisma/client';
 import { getSessionUser } from '@/lib/auth';
 import { getAccount } from '@/lib/server/account';
 import { getCategories } from '@/lib/server/category';
-import { getTransactionsCount, getTransactionsWithCategory, TransactionWithCategory } from '@/lib/server/transaction';
+import {
+  getTransactionsCount,
+  getTransactionsWithCategory,
+  TransactionsFilter,
+  TransactionWithCategory,
+} from '@/lib/server/transaction';
 import { pageToOffsetCount } from '@/lib/utils';
-
-export type TransactionFilterDto = {
-  categoryIdList?: string[];
-  createdFrom?: Date;
-  createdTo?: Date;
-  executed?: boolean;
-  executedFrom?: Date;
-  executedTo?: Date;
-};
 
 export type TransactionsIndexAllDto = {
   account: Account;
@@ -26,7 +22,7 @@ export type TransactionsIndexAllDto = {
 
 export const transactionsIndexAll = async (
   accountId: string,
-  filter?: TransactionFilterDto,
+  filter?: TransactionsFilter,
   page?: number,
 ): Promise<TransactionsIndexAllDto | null> => {
   await getSessionUser();

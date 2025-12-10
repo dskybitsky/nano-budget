@@ -1,4 +1,4 @@
-import { TransactionFilterDto } from '@/actions/transaction/transactions-index-all';
+import { TransactionsFilter } from '@/lib/server/transaction';
 
 export const homeUrl = () => (
   '/'
@@ -18,7 +18,7 @@ export const accountViewUrl = (accountId: string) => (
 
 export const accountTransactionsAllIndexUrl = (
   accountId: string,
-  filter?: TransactionFilterDto,
+  filter?: TransactionsFilter,
   page?: number,
 ) => (
   `/accounts/${accountId}/transactions/all?`

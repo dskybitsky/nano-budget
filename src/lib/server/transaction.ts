@@ -13,7 +13,7 @@ export type TransactionWithCategory = Prisma.TransactionGetPayload<{
   include: { category: true }
 }>;
 
-export type TransactionFilter = {
+export type TransactionsFilter = {
   categoryIdList?: string[];
   createdFrom?: Date;
   createdTo?: Date;
@@ -23,7 +23,7 @@ export type TransactionFilter = {
 };
 
 export const getTransactions = cache(
-  async (filter?: TransactionFilter, offsetCount?: OffsetCount): Promise<Transaction[]> => {
+  async (filter?: TransactionsFilter, offsetCount?: OffsetCount): Promise<Transaction[]> => {
     return prisma.transaction.findMany({
       where: getWhere(filter),
       orderBy: { created: 'desc' },
@@ -36,7 +36,7 @@ export const getTransactions = cache(
 );
 
 export const getTransactionsWithCategory = cache(
-  async (filter?: TransactionFilter, offsetCount?: OffsetCount): Promise<TransactionWithCategory[]> => {
+  async (filter?: TransactionsFilter, offsetCount?: OffsetCount): Promise<TransactionWithCategory[]> => {
     return prisma.transaction.findMany({
       where: getWhere(filter),
       orderBy: { created: 'desc' },
@@ -50,7 +50,7 @@ export const getTransactionsWithCategory = cache(
 );
 
 export const getTransactionsCount = cache(
-  async (filter?: TransactionFilter): Promise<number> => {
+  async (filter?: TransactionsFilter): Promise<number> => {
     return prisma.transaction.count({
       where: getWhere(filter),
       orderBy: { created: 'desc' },
@@ -72,7 +72,7 @@ export const deleteTransaction = async(id: string) => {
   return prisma.transaction.delete({ where: { id } }).then(() => revalidateTag(TRANSACTION_CACHE_TAG));
 };
 
-const getWhere = (filter?: TransactionFilter): Prisma.TransactionWhereInput => {
+const getWhere = (filter?: TransactionsFilter): Prisma.TransactionWhereInput => {
   const {
     categoryIdList,
     createdFrom,
