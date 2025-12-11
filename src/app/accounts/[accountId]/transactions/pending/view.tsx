@@ -48,7 +48,11 @@ export const PendingTransactionsView = ({ dto }: PendingTransactionsViewProps) =
         rightSection={
           <>
             <Modal opened={opened} onClose={close} title={t('TransactionModal.createTitle')}>
-              <TransactionForm categories={dto.categories} onFormSubmit={handleCreateFormSubmit} />
+              <TransactionForm
+                categories={dto.categories}
+                onFormSubmit={handleCreateFormSubmit}
+                options={{ noDefaultExecuted: true }}
+              />
             </Modal>
             <Button leftSection={<IconPlus size={14} />} variant="subtle" onClick={open} >
               {t('TransactionsIndex.createButtonCaption')}
@@ -62,6 +66,7 @@ export const PendingTransactionsView = ({ dto }: PendingTransactionsViewProps) =
         transactions={dto.transactions}
         onFormSubmit={handleUpdateFormSubmit}
         onDeleteClick={handleDeleteClick}
+        options={{ showTotal: true }}
       />
     </Flex>
   );

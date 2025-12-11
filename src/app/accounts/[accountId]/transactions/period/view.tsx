@@ -76,6 +76,7 @@ export const PeriodTransactionsView = ({ dto }: PeriodTransactionsViewProps) => 
         transactions={dto.transactions}
         onFormSubmit={handleUpdateFormSubmit}
         onDeleteClick={handleDeleteClick}
+        options={{ showTotal: true }}
       />
     </Flex>
   );

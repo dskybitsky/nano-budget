@@ -11,6 +11,21 @@ export const monetaryEqual = (a: number, b: number): boolean => {
 
 export const dateRound = (date: Date): Date => moment(date).startOf('day').toDate();
 
+export const dateRoundToNextWorkday = (date: Date): Date => {
+  const momentDate = moment(date);
+  const dayOfWeek = momentDate.day();
+
+  if (dayOfWeek === 0) {
+    return momentDate.add(1, 'days').startOf('day').toDate();
+  }
+
+  if (dayOfWeek === 6) {
+    return momentDate.add(2, 'days').startOf('day').toDate();
+  }
+
+  return momentDate.startOf('day').toDate();
+};
+
 export const extractErrorMessage = (error: unknown): string => {
   if (error instanceof Error) {
     return error.message;

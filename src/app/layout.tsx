@@ -6,6 +6,8 @@ import { theme } from '@/theme';
 import { getLocale, getMessages } from 'next-intl/server';
 import { NextIntlClientProvider } from 'next-intl';
 import './global.css';
+import '@mantine/core/styles.css';
+import '@mantine/dates/styles.css';
 import { ModalsProvider } from '@mantine/modals';
 
 export const metadata = {

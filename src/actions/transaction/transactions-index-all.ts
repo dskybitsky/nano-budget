@@ -46,8 +46,6 @@ export const transactionsIndexAll = async (
   };
   const offsetCount = pageToOffsetCount(page ?? 1, TRANSACTIONS_INDEX_ALL_PAGE_SIZE);
 
-  console.log({ page, offsetCount });
-
   const [transactions, transactionsCount] = await Promise.all([
     getTransactionsWithCategory(filterWithCategories, offsetCount),
     getTransactionsCount(filterWithCategories),
@@ -62,4 +60,4 @@ export const transactionsIndexAll = async (
   };
 };
 
-const TRANSACTIONS_INDEX_ALL_PAGE_SIZE = 20;
+const TRANSACTIONS_INDEX_ALL_PAGE_SIZE = 30;

@@ -47,16 +47,14 @@ export const Header = ({ dto, user, opened, toggle }: HeaderProps) => {
         justify="space-between"
         py={10}
       >
-        <TitleText account={currentAccount} useShort={true} fz={22} fw={800} hiddenFrom="md" flex="1" />
-        <TitleText account={currentAccount} useShort={false} fz={22} fw={800} visibleFrom="md" flex="1" />
+        <TitleText account={currentAccount} flex="1" />
         {currentAccount && (
           <>
-            <BalanceText account={currentAccount} useShort={true} hiddenFrom="md" />
-            <BalanceText account={currentAccount} useShort={false} visibleFrom="md"/>
+            <BalanceText account={currentAccount} />
             <Divider orientation="vertical" />
           </>
         )}
-        <Flex align="center" gap={24} flex="0">
+        <Flex align="center" gap={16} flex="0">
           <TextInput
             visibleFrom="sm"
             radius="md"
@@ -118,42 +116,57 @@ export const Header = ({ dto, user, opened, toggle }: HeaderProps) => {
   );
 };
 
-const TitleText = ({ account, useShort, ...props }: {
+const TitleText = ({ account, ...props }: {
   account: LayoutAccountsDto['currentAccount'],
-  useShort?: boolean,
 } & TextProps) => {
   const t = useTranslations();
 
+  if (!account) {
+    return (
+      <Text fz={22} fw={800} {...props}>{t('Header.titleText')}</Text>
+    );
+  }
+
   return (
-    <Text fz={24} fw={800} {...props}>
-      {
-        account
-          ? t(useShort ? 'Header.titleTextShort': 'Header.titleTextLong', { accountName: account.name })
-          : t('Header.titleText')
-      }
-    </Text>
+    <>
+      <Text fz={22} fw={800} {...props} hiddenFrom="md">
+        {t('Header.titleTextShort', { accountName: account.name })}
+      </Text>
+      <Text fz={22} fw={800} {...props} visibleFrom="md">
+        {t('Header.titleTextLong', { accountName: account.name })}
+      </Text>
+    </>
   );
 };
 
-const BalanceText = ({ account, useShort, ...props }: {
+const BalanceText = ({ account, ...props }: {
   account: NonNullable<LayoutAccountsDto['currentAccount']>,
-  useShort?: boolean,
 } & TextProps) => {
   const t = useTranslations();
   const format = useCustomFormatter();
 
+  const useActualExpected = !monetaryEqual(account.balance.actual, account.balance.expected);
+
+  const shortBalanceString = useActualExpected
+    ? t('Header.balanceActualExpectedTextShort', {
+      actual: format.monetary(account.balance.actual, account.currency),
+      expected: format.monetary(account.balance.expected, account.currency),
+    }) : t('Header.balanceActualTextShort', {
+      actual: format.monetary(account.balance.actual, account.currency),
+    });
+
+  const longBalanceString = useActualExpected
+    ? t('Header.balanceActualExpectedTextLong', {
+      actual: format.monetary(account.balance.actual, account.currency),
+      expected: format.monetary(account.balance.expected, account.currency),
+    }) : t('Header.balanceActualTextLong', {
+      actual: format.monetary(account.balance.actual, account.currency),
+    });
+
   return (
-    <Text fz={16} fw={600} {...props}>
-      {
-        monetaryEqual(account.balance.actual, account.balance.expected)
-          ? t(useShort ? 'Header.balanceTextShort' : 'Header.balanceTextLong', {
-            actual: format.monetary(account.balance.actual, account.currency),
-          })
-          : t(useShort ? 'Header.balanceFullTextShort' : 'Header.balanceFullTextLong', {
-            actual: format.monetary(account.balance.actual, account.currency),
-            expected: format.monetary(account.balance.expected, account.currency),
-          })
-      }
-    </Text>
+    <>
+      <Text fz={16} fw={600} {...props} hiddenFrom="md">{shortBalanceString}</Text>
+      <Text fz={16} fw={600} {...props} visibleFrom="md">{longBalanceString}</Text>
+    </>
   );
 };

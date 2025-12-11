@@ -43,10 +43,10 @@
         "titleText": "Nano Budget",
         "titleTextShort": "{accountName} Account",
         "titleTextLong": "Nano Budget: {accountName} Account",
-        "balanceTextShort": "{actual}",
-        "balanceTextLong": "Balance: {actual}",
-        "balanceFullTextShort": "{actual} ({expected})",
-        "balanceFullTextLong": "Balance: {actual} ({expected})"
+        "balanceActualTextShort": "{actual}",
+        "balanceActualTextLong": "Balance: {actual}",
+        "balanceActualExpectedTextShort": "{actual} ({expected})",
+        "balanceActualExpectedTextLong": "Balance: {actual} ({expected})"
     },
     "Navbar": {
         "accountPlaceholder": "Choose account",
@@ -127,7 +127,8 @@
         "titleAll": "All Transactions",
         "titlePeriod": "Transactions: {period}",
         "titlePending": "Pending Transactions",
-        "createButtonCaption": "Create Transaction"
+        "createButtonCaption": "Create Transaction",
+        "filterButtonCaption": "Filter"
     },
     "TransactionsTable": {
         "caption": "Transactions on the account",
@@ -152,6 +153,15 @@
         "namePlaceholder": "Name",
         "typePlaceholder": "Type",
         "valuePlaceholder": "Value"
+    },
+    "TransactionFilterModal": {
+        "title": "Filter Transactions"
+    },
+    "TransactionFilterForm": {
+        "createdFromPlaceholder": "Created After",
+        "createdToPlaceholder": "Created Before",
+        "executedFromPlaceholder": "Executed After",
+        "executedToPlaceholder": "Executed Before"
     },
     "BudgetsIndex": {
         "title": "Budgets"

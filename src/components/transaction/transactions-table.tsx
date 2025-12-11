@@ -19,6 +19,9 @@ export interface TransactionsTableProps {
   transactions: TransactionWithCategory[];
   onFormSubmit: (id: string, data: TransactionFormValues) => Promise<void>;
   onDeleteClick: (id: string) => Promise<void>;
+  options?: {
+    showTotal?: boolean;
+  };
 }
 
 export const TransactionsTable = ({
@@ -27,6 +30,7 @@ export const TransactionsTable = ({
   transactions,
   onFormSubmit,
   onDeleteClick,
+  options,
 }: TransactionsTableProps) => {
   const categoriesIndex = categories.reduce((acc, category) => {
     acc.set(category.id, category);
@@ -42,8 +46,6 @@ export const TransactionsTable = ({
 
     return accountSign * sign * transaction.value;
   };
-
-  const total = calculateTransactionsTotal(transactions);
 
   return (
     <Table>
@@ -90,20 +92,36 @@ export const TransactionsTable = ({
           );
         })}
       </Table.Tbody>
-      <Table.Tfoot>
-        <Table.Tr>
-          <Table.Th colSpan={5} visibleFrom="md">{t('TransactionsTable.totalText')}</Table.Th>
-          <Table.Th colSpan={3} hiddenFrom="md">{t('TransactionsTable.totalText')}</Table.Th>
-          <Table.Th ta="right">
-            {format.monetary(total.expected, account.currency)}
-            {!monetaryEqual(total.actual, total.expected) && (
-              <Box>({format.monetary(total.actual, account.currency)})</Box>
-            )}
-          </Table.Th>
-          <Table.Th/>
-        </Table.Tr>
-      </Table.Tfoot>
+      {options?.showTotal && (
+        <TransactionsTableFooter account={account} transactions={transactions} />
+      )}
     </Table>
+  );
+};
+
+const TransactionsTableFooter = ({ account, transactions }: {
+  account: Account,
+  transactions: TransactionWithCategory[]
+}) => {
+  const t = useTranslations();
+  const format = useCustomFormatter();
+
+  const total = calculateTransactionsTotal(transactions);
+
+  return (
+    <Table.Tfoot>
+      <Table.Tr>
+        <Table.Th colSpan={5} visibleFrom="md">{t('TransactionsTable.totalText')}</Table.Th>
+        <Table.Th colSpan={3} hiddenFrom="md">{t('TransactionsTable.totalText')}</Table.Th>
+        <Table.Th ta="right">
+          {format.monetary(total.expected, account.currency)}
+          {!monetaryEqual(total.actual, total.expected) && (
+            <Box>({format.monetary(total.actual, account.currency)})</Box>
+          )}
+        </Table.Th>
+        <Table.Th/>
+      </Table.Tr>
+    </Table.Tfoot>
   );
 };
 
