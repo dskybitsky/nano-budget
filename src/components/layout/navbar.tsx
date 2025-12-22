@@ -238,9 +238,13 @@ const AccountsIndexComboBoxItem = () => {
   const t = useTranslations();
 
   return (
-    <Flex w="100%" justify="center" align="center" gap={10} p={5}>
-      <IconList size={20} />
-      <Text fz={14}>{t('Navbar.allAccountsItem')}</Text>
+    <Flex w="100%" justify="start" align="center" gap={20} p={5}>
+      <Flex w={36} align="center" justify="center">
+        <IconList size={24} />
+      </Flex>
+      <Flex direction="column" align="start" gap={2}>
+        <Text className={classes.accountTitle}>{t('Navbar.allAccountsItem')}</Text>
+      </Flex>
     </Flex>
   );
 };
