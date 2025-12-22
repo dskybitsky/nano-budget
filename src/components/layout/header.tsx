@@ -14,6 +14,10 @@ import { LayoutAccountsDto } from '@/actions/layout/layout-accounts';
 import { useTranslations } from 'next-intl';
 import { monetaryEqual } from '@/lib/utils';
 import { useCustomFormatter } from '@/hooks/use-custom-formatter';
+import {KeyboardEventHandler} from "react";
+import {redirect} from "next/navigation";
+import {accountTransactionsAllIndexUrl} from "@/lib/url";
+import {useInputState} from "@mantine/hooks";
 
 export interface HeaderProps {
   dto: LayoutAccountsDto,
@@ -24,6 +28,15 @@ export interface HeaderProps {
 
 export const Header = ({ dto, user, opened, toggle }: HeaderProps) => {
   const { currentAccount } = dto;
+
+  const [ search, setSearch ] = useInputState('');
+
+  const handleSearchTextInputKeyDown: KeyboardEventHandler = (e) => {
+    if (e.key === 'Enter') {
+      setSearch('');
+      redirect(accountTransactionsAllIndexUrl(currentAccount!.id, { name: search }));
+    }
+  };
 
   return (
     <Flex
@@ -61,6 +74,9 @@ export const Header = ({ dto, user, opened, toggle }: HeaderProps) => {
             w={260}
             leftSection={<IconSearch size={14} />}
             placeholder="Search"
+            onKeyDown={handleSearchTextInputKeyDown}
+            onChange={setSearch}
+            value={search}
           />
           <Flex align="center" gap={8}>
             <Flex pos="relative">
