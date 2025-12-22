@@ -9,6 +9,7 @@ import './global.css';
 import '@mantine/core/styles.css';
 import '@mantine/dates/styles.css';
 import { ModalsProvider } from '@mantine/modals';
+import { AppContextProvider } from '@/components/app-context';
 
 export const metadata = {
   title: {
@@ -47,7 +48,9 @@ export default async function layout({ children }: { children: React.ReactNode }
         >
           <MantineProvider theme={theme}>
             <ModalsProvider>
-              {children}
+              <AppContextProvider appInfo={{ version: process.env.npm_package_version }}>
+                {children}
+              </AppContextProvider>
             </ModalsProvider>
           </MantineProvider>
         </NextIntlClientProvider>

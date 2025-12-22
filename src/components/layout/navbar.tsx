@@ -36,6 +36,8 @@ import {
 import { useTranslations } from 'next-intl';
 import { EntityImage } from '@/components/entity-image';
 import { LayoutAccountsDto } from '@/actions/layout/layout-accounts';
+import { useContext } from 'react';
+import { AppContext } from '@/components/app-context';
 
 export interface NavbarProps {
   dto: LayoutAccountsDto,
@@ -44,6 +46,8 @@ export interface NavbarProps {
 
 export const Navbar = ({ dto, onNavigate }: NavbarProps) => {
   const t = useTranslations();
+
+  const appContext = useContext(AppContext);
 
   const [transactionsOpened, { toggle: transactionsToggle }] = useDisclosure(true);
 
@@ -192,7 +196,7 @@ export const Navbar = ({ dto, onNavigate }: NavbarProps) => {
       </ScrollArea>
       <Divider />
       <Flex w="100%" direction="column" align="center" gap={6}>
-        <Text size="xs">Nano Budget v.0.2-wip</Text>
+        <Text size="xs">Nano Budget v.{appContext.version}</Text>
       </Flex>
     </Stack>
   );

@@ -18,7 +18,7 @@ import { TransactionsFilter } from '@/lib/server/transaction';
 import { TransactionFilterForm } from '@/components/transaction/transaction-filter-form';
 import { Category } from '@prisma/client';
 import _ from 'lodash';
-import {useCustomFormatter} from "@/hooks/use-custom-formatter";
+import { useCustomFormatter } from '@/hooks/use-custom-formatter';
 
 export interface AllTransactionsViewProps extends React.HTMLAttributes<HTMLElement> {
   dto: TransactionsIndexAllDto,
