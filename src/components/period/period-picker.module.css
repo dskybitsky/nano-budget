@@ -1,0 +1,30 @@
+.root {
+    min-width: 0;
+}
+
+.root > div {
+    flex-wrap: nowrap;
+}
+
+.root > div > a {
+    padding: 0;
+}
+
+.link-text {
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.control {
+    border: none;
+    background-color: transparent;
+
+    &:hover {
+        background-color: transparent;
+    }
+
+    &:where([data-active]) {
+        font-weight: bold;
+        color: inherit;
+    }
+}

@@ -20,7 +20,7 @@ model Account {
   value    Float
   icon     String
   order    Int         @default(0)
-  Category Category[]
+  Category Category[]  @relation("AccountCategory")
   Period   Period[]
 }
 
@@ -28,6 +28,7 @@ enum AccountType {
   checking
   savings
   credit
+  virtual
 }
 
 model Category {
@@ -37,9 +38,9 @@ model Category {
   type        OperationType
   icon        String
   order       Int           @default(0)
-  account     Account       @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  account     Account       @relation("AccountCategory", fields: [accountId], references: [id], onDelete: Cascade)
   Budget      Budget[]
-  Transaction Transaction[]
+  Transaction Transaction[] @relation("CategoryTransactions")
 }
 
 model Period {
@@ -53,13 +54,13 @@ model Period {
 }
 
 model Budget {
-  periodId   String
   categoryId String
+  periodId   String
   value      Float
-  category   Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
   period     Period   @relation(fields: [periodId], references: [id], onDelete: Cascade)
+  category   Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
 
-  @@id(name: "periodCategoryId", [periodId, categoryId])
+  @@id(name: "categoryPeriodId", [categoryId, periodId])
 }
 
 model Transaction {
@@ -70,7 +71,7 @@ model Transaction {
   name       String
   type       OperationType
   value      Float
-  category   Category      @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  category   Category      @relation("CategoryTransactions", fields: [categoryId], references: [id], onDelete: Cascade)
 }
 
 enum OperationType {
