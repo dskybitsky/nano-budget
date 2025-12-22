@@ -23,6 +23,12 @@ export default async function layout({ children }: { children: React.ReactNode }
   const locale = await getLocale();
   const messages = await getMessages();
 
+  const appInfo = {
+    version:process.env.npm_package_version
+      ?? process.env.NEXT_PUBLIC_APP_VERSION
+      ?? '0',
+  };
+
   return (
     <html lang={locale} {...mantineHtmlProps}>
       <head>
@@ -48,7 +54,7 @@ export default async function layout({ children }: { children: React.ReactNode }
         >
           <MantineProvider theme={theme}>
             <ModalsProvider>
-              <AppContextProvider appInfo={{ version: process.env.npm_package_version }}>
+              <AppContextProvider appInfo={appInfo}>
                 {children}
               </AppContextProvider>
             </ModalsProvider>
