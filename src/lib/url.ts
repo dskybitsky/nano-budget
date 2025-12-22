@@ -22,12 +22,13 @@ export const accountTransactionsAllIndexUrl = (
   page?: number,
 ) => (
   `/accounts/${accountId}/transactions/all?`
-  + `createdFrom=${filter?.createdFrom?.toJSON() ?? ''}&`
-  + `createdTo=${filter?.createdTo?.toJSON() ?? ''}&`
-  + `executed=${filter?.executed ?? ''}&`
-  + `executedFrom=${filter?.executedFrom?.toJSON() ?? ''}&`
-  + `executedTo=${filter?.executedTo?.toJSON() ?? ''}&`
-  + `page=${page ?? ''}`
+  + (filter?.name ? `name=${filter.name}&` : '')
+  + (filter?.categoryIdList ? filter.categoryIdList.map(c => `categoryId=${c}`).join('&') + '&' : '')
+  + (filter?.createdFrom ? `createdFrom=${filter.createdFrom?.toJSON()}&` : '')
+  + (filter?.createdTo ? `createdTo=${filter.createdTo?.toJSON()}&` : '')
+  + (filter?.executedFrom ? `executedFrom=${filter.executedFrom?.toJSON()}&` : '')
+  + (filter?.executedTo ? `executedTo=${filter.executedTo?.toJSON()}&` : '')
+  + (page ? `page=${page}` : '')
 );
 
 export const accountTransactionsPendingIndexUrl = (

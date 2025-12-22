@@ -39,6 +39,14 @@ export const pageToOffsetCount = (page: number, perPage: number): OffsetCount =>
   count: perPage,
 });
 
+export const parseQueryStringArray = (value: unknown): string[] | undefined => {
+  if (value === undefined) {
+    return undefined;
+  }
+
+  return Array.isArray(value) ? value : [value as string];
+};
+
 export const parseQueryDate = (value: unknown) => {
   if (!value) {
     return undefined;
@@ -74,3 +82,4 @@ export const parseQueryBoolean = (value: unknown) => {
     ? true
     : (value === 'false' ? false : undefined);
 };
+

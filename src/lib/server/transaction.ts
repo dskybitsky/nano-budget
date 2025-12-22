@@ -14,6 +14,7 @@ export type TransactionWithCategory = Prisma.TransactionGetPayload<{
 }>;
 
 export type TransactionsFilter = {
+  name?: string,
   categoryIdList?: string[];
   createdFrom?: Date;
   createdTo?: Date;
@@ -74,6 +75,7 @@ export const deleteTransaction = async(id: string) => {
 
 const getWhere = (filter?: TransactionsFilter): Prisma.TransactionWhereInput => {
   const {
+    name,
     categoryIdList,
     createdFrom,
     createdTo,
@@ -84,6 +86,7 @@ const getWhere = (filter?: TransactionsFilter): Prisma.TransactionWhereInput => 
 
   return {
     AND: [
+      ...(name ? [{ name: { contains: name } }] : []),
       ...(categoryIdList ? [{ categoryId: { in: categoryIdList } }] : []),
       ...(createdFrom ? [{ created: { gte: createdFrom } }] : []),
       ...(createdTo ? [{ created: { lte: createdTo } }] : []),

@@ -158,10 +158,10 @@
         "title": "Filter Transactions"
     },
     "TransactionFilterForm": {
-        "createdFromPlaceholder": "Created After",
-        "createdToPlaceholder": "Created Before",
-        "executedFromPlaceholder": "Executed After",
-        "executedToPlaceholder": "Executed Before"
+        "namePlaceholder": "Name",
+        "categoriesPlaceholder": "Categories",
+        "fromPlaceholder": "After",
+        "toPlaceholder": "Before"
     },
     "BudgetsIndex": {
         "title": "Budgets"
@@ -195,7 +195,8 @@
         "error": "Error: {error}",
         "delete": "Delete",
         "ok": "Ok",
-        "submit": "Submit"
+        "submit": "Submit",
+        "reset": "Reset"
     },
     "Validation": {
         "tooShort": "{property} must be at least {min} characters.",

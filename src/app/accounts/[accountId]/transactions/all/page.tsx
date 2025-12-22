@@ -4,7 +4,7 @@ import { AllTransactionsView } from '@/app/accounts/[accountId]/transactions/all
 import { homeUrl } from '@/lib/url';
 import { transactionsIndexAll } from '@/actions/transaction/transactions-index-all';
 import { SearchParams } from '@/lib/types';
-import { parseQueryBoolean, parseQueryDate, parseQueryPage } from '@/lib/utils';
+import { parseQueryDate, parseQueryPage, parseQueryStringArray } from '@/lib/utils';
 
 export default async function Page({
   params,
@@ -16,15 +16,16 @@ export default async function Page({
   const [{ accountId }, searchParamsResolved ] = await Promise.all([params, searchParams]);
 
   const {
+    name,
+    categoryIdList,
     createdFrom,
     createdTo,
-    executed,
     executedFrom,
     executedTo,
     page,
   } = parseSearchParams(searchParamsResolved);
 
-  const filter = { createdFrom, createdTo, executed, executedFrom, executedTo };
+  const filter = { name, categoryIdList, createdFrom, createdTo, executedFrom, executedTo };
 
   const dto = await transactionsIndexAll(accountId, filter, page);
 
@@ -36,9 +37,10 @@ export default async function Page({
 }
 
 const parseSearchParams = (params: SearchParams) => ({
+  name: params.name,
+  categoryIdList: parseQueryStringArray(params.categoryId),
   createdFrom: parseQueryDate(params.createdFrom),
   createdTo: parseQueryDate(params.createdTo),
-  executed: parseQueryBoolean(params.executed),
   executedFrom: parseQueryDate(params.executedFrom),
   executedTo: parseQueryDate(params.executedTo),
   page: parseQueryPage(params.page),

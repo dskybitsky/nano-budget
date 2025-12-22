@@ -68,7 +68,7 @@ export const AllTransactionsView = ({ dto, filter, page }: AllTransactionsViewPr
         rightSection={
           <Group gap="xs">
             <Modal opened={filterOpened} onClose={closeFilter} title={t('TransactionFilterModal.title')}>
-              <TransactionFilterForm filter={filter} onFormSubmit={handleFilterChange} />
+              <TransactionFilterForm categories={dto.categories} filter={filter} onFormSubmit={handleFilterChange} />
             </Modal>
             <Button
               leftSection={filtered ? <IconFilterFilled size={14} /> : <IconFilter size={14} />}
