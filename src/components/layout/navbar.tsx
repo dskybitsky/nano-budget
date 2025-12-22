@@ -20,7 +20,6 @@ import {
   IconChevronRight,
   IconList,
   IconReceipt,
-  IconSettings,
 } from '@tabler/icons-react';
 import classes from './navbar.module.css';
 import Link from 'next/link';
@@ -29,7 +28,6 @@ import {
   accountCreateUrl,
   accountViewUrl,
   accountBudgetIndexUrl,
-  settingsUrl,
   accountTransactionsPeriodIndexUrl,
   accountTransactionsPendingIndexUrl,
   accountTransactionsAllIndexUrl,
@@ -113,13 +111,6 @@ export const Navbar = ({ dto, onNavigate }: NavbarProps) => {
         <Flex h="100%" gap={4} direction="column" align="start">
           {currentAccount && (
             <>
-              <NavLink
-                icon={IconBuildingBank}
-                title="Account"
-                link={currentAccount ? accountViewUrl(currentAccount.id) : accountCreateUrl()}
-                onNavigate={onNavigate}
-              />
-              <Divider my={10} w="100%" />
               <Flex direction="column" align="start" w="100%">
                 <UnstyledButton
                   h={36.15}
@@ -189,13 +180,17 @@ export const Navbar = ({ dto, onNavigate }: NavbarProps) => {
                 />
               </Flex>
               <Divider my={10} w="100%" />
+              <NavLink
+                icon={IconBuildingBank}
+                title="Account"
+                link={currentAccount ? accountViewUrl(currentAccount.id) : accountCreateUrl()}
+                onNavigate={onNavigate}
+              />
             </>
           )}
-          <Flex w="100%" direction="column" align="start" key="nav-link-settings">
-            <NavLink icon={IconSettings} title="Settings" link={settingsUrl()} onNavigate={onNavigate} />
-          </Flex>
         </Flex>
       </ScrollArea>
+      <Divider />
       <Flex w="100%" direction="column" align="center" gap={6}>
         <Text size="xs">Nano Budget v.0.2-wip</Text>
       </Flex>

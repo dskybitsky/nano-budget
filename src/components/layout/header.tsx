@@ -7,17 +7,17 @@ import {
   Text,
   TextInput, TextProps, UnstyledButton,
 } from '@mantine/core';
-import { IconLogout, IconSearch, IconSettings } from '@tabler/icons-react';
+import { IconLogout, IconSearch } from '@tabler/icons-react';
 import { signOut } from 'next-auth/react';
 import { User } from 'next-auth';
 import { LayoutAccountsDto } from '@/actions/layout/layout-accounts';
 import { useTranslations } from 'next-intl';
 import { monetaryEqual } from '@/lib/utils';
 import { useCustomFormatter } from '@/hooks/use-custom-formatter';
-import {KeyboardEventHandler} from "react";
-import {redirect} from "next/navigation";
-import {accountTransactionsAllIndexUrl} from "@/lib/url";
-import {useInputState} from "@mantine/hooks";
+import { KeyboardEventHandler } from 'react';
+import { redirect } from 'next/navigation';
+import { accountTransactionsAllIndexUrl } from '@/lib/url';
+import { useInputState } from '@mantine/hooks';
 
 export interface HeaderProps {
   dto: LayoutAccountsDto,
@@ -102,17 +102,6 @@ export const Header = ({ dto, user, opened, toggle }: HeaderProps) => {
                 </Menu.Target>
 
                 <Menu.Dropdown>
-                  <Menu.Label>Preferences</Menu.Label>
-                  <Menu.Item
-                    leftSection={
-                      <IconSettings style={{ width: rem(14), height: rem(14) }} />
-                    }
-                    component="a"
-                    href="/settings"
-                  >
-                    Settings
-                  </Menu.Item>
-                  <Menu.Divider />
                   <Menu.Item
                     color="red"
                     leftSection={
