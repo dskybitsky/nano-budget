@@ -1,6 +1,6 @@
 'use client';
 
-import { Button, Flex, Group, Modal, Pagination } from '@mantine/core';
+import { Button, Flex, Group, Modal, Pagination, Text } from '@mantine/core';
 import React from 'react';
 import { TransactionsTable } from '@/components/transaction/transactions-table';
 import { TransactionsIndexAllDto } from '@/actions/transaction/transactions-index-all';
@@ -16,6 +16,9 @@ import { useTranslations } from 'next-intl';
 import { PageHeader } from '@/components/page-header';
 import { TransactionsFilter } from '@/lib/server/transaction';
 import { TransactionFilterForm } from '@/components/transaction/transaction-filter-form';
+import { Category } from '@prisma/client';
+import _ from 'lodash';
+import {useCustomFormatter} from "@/hooks/use-custom-formatter";
 
 export interface AllTransactionsViewProps extends React.HTMLAttributes<HTMLElement> {
   dto: TransactionsIndexAllDto,
@@ -85,6 +88,9 @@ export const AllTransactionsView = ({ dto, filter, page }: AllTransactionsViewPr
             </Button>
           </Group>
         }
+        bottomSection={
+          filtered ? <FilterDescriptionText filter={filter} categories={dto.categories} /> : undefined
+        }
       />
       <TransactionsTable
         account={dto.account}
@@ -102,4 +108,68 @@ export const AllTransactionsView = ({ dto, filter, page }: AllTransactionsViewPr
       />
     </Flex>
   );
+};
+
+const FilterDescriptionText = ({ filter, categories }: {
+  filter: TransactionsFilter,
+  categories: Category[]
+}) => {
+  const strings: string[] = [];
+
+  const t = useTranslations();
+  const format = useCustomFormatter();
+
+  const categoryIndex = _.keyBy(categories, 'id');
+
+  if (filter.name) {
+    strings.push(t('TransactionsIndex.filterTextName', { name: filter.name }));
+  }
+
+  if (filter.categoryIdList) {
+    strings.push(t('TransactionsIndex.filterTextCategories', {
+      categories: filter.categoryIdList
+        .map((id) => categoryIndex[id].name)
+        .join(', '),
+    }));
+  }
+
+  if (filter.createdFrom || filter.createdTo) {
+    if (filter.createdFrom && !filter.createdTo) {
+      strings.push(t('TransactionsIndex.filterTextCreated', {
+        created: t('Common.parts.after', { from: format.dateTimeShort(filter.createdFrom) }),
+      }));
+    } else if (!filter.createdFrom && filter.createdTo) {
+      strings.push(t('TransactionsIndex.filterTextCreated', {
+        created: t('Common.parts.before', { to: format.dateTimeShort(filter.createdTo) }),
+      }));
+    } else {
+      strings.push(t('TransactionsIndex.filterTextCreated', {
+        created: t('Common.parts.between', {
+          from: format.dateTimeShort(filter.createdFrom),
+          to: format.dateTimeShort(filter.createdTo),
+        }),
+      }));
+    }
+  }
+
+  if (filter.executedFrom || filter.executedTo) {
+    if (filter.executedFrom && !filter.executedTo) {
+      strings.push(t('TransactionsIndex.filterTextExecuted', {
+        executed: t('Common.parts.after', { from: format.dateTimeShort(filter.executedFrom) }),
+      }));
+    } else if (!filter.executedFrom && filter.executedTo) {
+      strings.push(t('TransactionsIndex.filterTextExecuted', {
+        executed: t('Common.parts.before', { to: format.dateTimeShort(filter.executedTo) }),
+      }));
+    } else {
+      strings.push(t('TransactionsIndex.filterTextExecuted', {
+        executed: t('Common.parts.between', {
+          from: format.dateTimeShort(filter.executedFrom),
+          to: format.dateTimeShort(filter.executedTo),
+        }),
+      }));
+    }
+  }
+
+  return <Text fz={12}>{ strings.join('. ') }</Text>;
 };

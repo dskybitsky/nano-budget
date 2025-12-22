@@ -128,7 +128,11 @@
         "titlePeriod": "Transactions: {period}",
         "titlePending": "Pending Transactions",
         "createButtonCaption": "Create Transaction",
-        "filterButtonCaption": "Filter"
+        "filterButtonCaption": "Filter",
+        "filterTextName": "Name matches \"{name}\"",
+        "filterTextCategories": "Category is one of ({categories})",
+        "filterTextCreated": "Created {created}",
+        "filterTextExecuted": "Executed {executed}"
     },
     "TransactionsTable": {
         "caption": "Transactions on the account",
@@ -196,7 +200,12 @@
         "delete": "Delete",
         "ok": "Ok",
         "submit": "Submit",
-        "reset": "Reset"
+        "reset": "Reset",
+        "parts": {
+            "after": "after {from}",
+            "before": "before {to}",
+            "between": "between {from} and {to}"
+        }
     },
     "Validation": {
         "tooShort": "{property} must be at least {min} characters.",

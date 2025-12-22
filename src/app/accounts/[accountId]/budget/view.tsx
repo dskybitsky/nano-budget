@@ -1,6 +1,6 @@
 'use client';
 
-import { Flex, Title } from '@mantine/core';
+import { Box, Flex } from '@mantine/core';
 import React from 'react';
 import { redirect } from 'next/navigation';
 import { accountBudgetIndexUrl } from '@/lib/url';
@@ -11,6 +11,7 @@ import { BudgetFormValues } from '@/components/budget/budget-form';
 import { budgetSet } from '@/actions/budget/budget-set';
 import { BudgetsTable } from '@/components/budget/budgets-table';
 import { useTranslations } from 'next-intl';
+import { PageHeader } from '@/components/page-header';
 
 export interface BudgetsViewProps extends React.HTMLAttributes<HTMLElement> {
   dto: BudgetsIndexDto,
@@ -35,10 +36,15 @@ export const BudgetsView = ({ dto }: BudgetsViewProps) => {
       direction="column"
       align="center"
     >
-      <Flex justify="space-between" align="center" w="100%" wrap="wrap" gap={20}>
-        <Title order={3}>{t('BudgetsIndex.title')}</Title>
-        <PeriodPicker periods={dto.periods} periodId={dto.periodId} onChange={handlePeriodChange} />
-      </Flex>
+      <PageHeader
+        title={t('BudgetsIndex.title')}
+        bottomSection={
+          <>
+            <Box/>
+            <PeriodPicker periods={dto.periods} periodId={dto.periodId} onChange={handlePeriodChange} />
+          </>
+        }
+      />
       <BudgetsTable
         account={dto.account}
         categories={dto.categories}
