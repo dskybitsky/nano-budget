@@ -227,7 +227,7 @@ const AccountComboBoxItem = ({ account }: { account: LayoutAccountsDto['accounts
     <Flex w="100%" justify="start" align="center" gap={20} p={5}>
       <EntityImage size={36} entity={account} />
       <Flex direction="column" align="start" gap={2}>
-        <Text className={classes.accountTitle}>{account.name}</Text>
+        <Text className={classes.accountComboItemText}>{account.name}</Text>
         <Text fz={12} fw={400} c="gray">
           {t('Navbar.accountDescriptionPlaceholder', {
             accountType: t('Enum.AccountType', { value: account.type }) })

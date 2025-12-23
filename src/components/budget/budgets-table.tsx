@@ -73,7 +73,7 @@ export const BudgetsTable = ({
                 <EntityImageText size={18} entity={category} />
               </Table.Td>
               <Table.Td ta="right">{format.monetary(planned, account.currency)}</Table.Td>
-              <Table.Td ta="right" visibleFrom="md">
+              <Table.Td ta="right" visibleFrom="xs">
                 {format.monetary(expected, account.currency)}
                 {!monetaryEqual(actual, expected) && (
                   <Box>({format.monetary(actual, account.currency)})</Box>
@@ -94,7 +94,7 @@ export const BudgetsTable = ({
         <Table.Tr>
           <Table.Th>{t('BudgetsTable.totalText')}</Table.Th>
           <Table.Th ta="right">{format.monetary(total.planned, account.currency)}</Table.Th>
-          <Table.Th ta="right">
+          <Table.Th ta="right" visibleFrom="xs">
             {format.monetary(total.expected, account.currency)}
             {!monetaryEqual(total.actual, total.expected) && (
               <Box>({format.monetary(total.actual, account.currency)})</Box>

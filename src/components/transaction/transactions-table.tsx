@@ -66,13 +66,13 @@ export const TransactionsTable = ({
 
           return (
             <Table.Tr key={transaction.id}>
-              <Table.Td>{format.dateTimeShort(transaction.created)}</Table.Td>
+              <Table.Td visibleFrom="xs">{format.dateTimeShort(transaction.created)}</Table.Td>
               <Table.Td visibleFrom="md">{format.dateShort(transaction.executed)}</Table.Td>
-              <Table.Td visibleFrom="md">
-                <EntityImageText size={18} entity={category} />
-              </Table.Td>
               <Table.Td hiddenFrom="md">
                 <EntityImageText size={18} entity={{ icon: category.icon, name: transaction.name }} />
+              </Table.Td>
+              <Table.Td visibleFrom="md">
+                <EntityImageText size={18} entity={category} />
               </Table.Td>
               <Table.Td visibleFrom="md">
                 {transaction.name}
@@ -111,8 +111,9 @@ const TransactionsTableFooter = ({ account, transactions }: {
   return (
     <Table.Tfoot>
       <Table.Tr>
+        <Table.Th colSpan={2} hiddenFrom="xs">{t('TransactionsTable.totalText')}</Table.Th>
+        <Table.Th colSpan={3} visibleFrom="xs" hiddenFrom="md">{t('TransactionsTable.totalText')}</Table.Th>
         <Table.Th colSpan={5} visibleFrom="md">{t('TransactionsTable.totalText')}</Table.Th>
-        <Table.Th colSpan={3} hiddenFrom="md">{t('TransactionsTable.totalText')}</Table.Th>
         <Table.Th ta="right">
           {format.monetary(total.expected, account.currency)}
           {!monetaryEqual(total.actual, total.expected) && (

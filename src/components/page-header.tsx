@@ -15,15 +15,15 @@ export const PageHeader = ({
   bottomSection,
 }: PageHeaderProps) => {
   return (
-    <Flex justify="space-between" align="center" w="100%" wrap="wrap" mb={10}>
-      <Flex justify="start" align="center" gap={10} p={5}>
+    <Flex justify="space-between" align="center" w="100%" wrap="wrap" gap="md" mb="md">
+      <Flex justify="start" align="center">
         {leftSection}
         <Title order={3}>{title}</Title>
       </Flex>
       {rightSection && (<Flex flex={1} w="100%" justify="end">
         {rightSection}
       </Flex>)}
-      {bottomSection && (<Flex w="100%" justify="space-between" align="center" p={5}>
+      {bottomSection && (<Flex w="100%" justify="space-between" align="center">
         {bottomSection}
       </Flex>)}
     </Flex>
