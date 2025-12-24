@@ -18,5 +18,5 @@ export const calculateBudgetRest = (
 
   return accountSign * categorySign < 0
     ? budget.value - Math.abs(expected)
-    : Math.abs(expected)- budget.value;
+    : Math.abs(expected) - budget.value;
 };
