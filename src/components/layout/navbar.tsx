@@ -18,20 +18,17 @@ import {
   IconCalendarDollar,
   IconChevronDown,
   IconChevronRight,
-  IconList,
   IconReceipt,
 } from '@tabler/icons-react';
 import classes from './navbar.module.css';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
 import {
-  accountCreateUrl,
-  accountViewUrl,
   accountBudgetIndexUrl,
   accountTransactionsPeriodIndexUrl,
   accountTransactionsPendingIndexUrl,
   accountTransactionsAllIndexUrl,
-  accountIndexUrl,
+  accountsIndexUrl, accountViewUrl,
 } from '@/lib/url';
 import { useTranslations } from 'next-intl';
 import { EntityImage } from '@/components/entity-image';
@@ -59,7 +56,7 @@ export const Navbar = ({ dto, onNavigate }: NavbarProps) => {
     combobox.closeDropdown();
 
     if (value.length === 0) {
-      redirect(accountIndexUrl());
+      redirect(accountsIndexUrl());
     }
 
     redirect(accountTransactionsPeriodIndexUrl(value));
@@ -103,10 +100,6 @@ export const Navbar = ({ dto, onNavigate }: NavbarProps) => {
                   <AccountComboBoxItem account={item} />
                 </Combobox.Option>
               ))}
-              <Divider w="100%" />
-              <Combobox.Option value={''} key='account-option-index'>
-                <AccountsIndexComboBoxItem />
-              </Combobox.Option>
             </Combobox.Options>
           </Combobox.Dropdown>
         </Combobox>
@@ -178,7 +171,7 @@ export const Navbar = ({ dto, onNavigate }: NavbarProps) => {
               <Flex w="100%" direction="column" align="start" key="nav-link-budget">
                 <NavLink
                   icon={IconCalendarDollar}
-                  title="Budget"
+                  title={t('Navbar.budgetItem')}
                   link={accountBudgetIndexUrl(currentAccount.id)}
                   onNavigate={onNavigate}
                 />
@@ -186,8 +179,8 @@ export const Navbar = ({ dto, onNavigate }: NavbarProps) => {
               <Divider my={10} w="100%" />
               <NavLink
                 icon={IconBuildingBank}
-                title="Account"
-                link={currentAccount ? accountViewUrl(currentAccount.id) : accountCreateUrl()}
+                title={t('Navbar.accountItem')}
+                link={accountViewUrl(currentAccount.id)}
                 onNavigate={onNavigate}
               />
             </>
@@ -233,21 +226,6 @@ const AccountComboBoxItem = ({ account }: { account: LayoutAccountsDto['accounts
             accountType: t('Enum.AccountType', { value: account.type }) })
           }
         </Text>
-      </Flex>
-    </Flex>
-  );
-};
-
-const AccountsIndexComboBoxItem = () => {
-  const t = useTranslations();
-
-  return (
-    <Flex w="100%" justify="start" align="center" gap={20} p={5}>
-      <Flex w={36} align="center" justify="center">
-        <IconList size={24} />
-      </Flex>
-      <Flex direction="column" align="start" gap={2}>
-        <Text className={classes.accountTitle}>{t('Navbar.allAccountsItem')}</Text>
       </Flex>
     </Flex>
   );

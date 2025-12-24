@@ -69,7 +69,7 @@ export const AllTransactionsView = ({ dto, filter, page }: AllTransactionsViewPr
       <PageHeader
         title={t('TransactionsIndex.titleAll')}
         rightSection={
-          <Group gap="xs">
+          <Group gap="xs" wrap="nowrap">
             <Modal opened={filterOpened} onClose={closeFilter} title={t('TransactionFilterModal.title')}>
               <TransactionFilterForm categories={dto.categories} filter={filter} onFormSubmit={handleFilterChange} />
             </Modal>

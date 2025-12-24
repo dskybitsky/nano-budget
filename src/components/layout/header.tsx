@@ -3,11 +3,12 @@ import {
   Box,
   Burger, Divider,
   Flex,
-  Group, Menu, rem,
+  Group,
+  Menu,
   Text,
   TextInput, TextProps, UnstyledButton,
 } from '@mantine/core';
-import { IconLogout, IconSearch } from '@tabler/icons-react';
+import { IconList, IconLogout, IconSearch } from '@tabler/icons-react';
 import { signOut } from 'next-auth/react';
 import { User } from 'next-auth';
 import { LayoutAccountsDto } from '@/actions/layout/layout-accounts';
@@ -16,7 +17,7 @@ import { monetaryEqual } from '@/lib/utils';
 import { useCustomFormatter } from '@/hooks/use-custom-formatter';
 import { KeyboardEventHandler } from 'react';
 import { redirect } from 'next/navigation';
-import { accountTransactionsAllIndexUrl } from '@/lib/url';
+import { accountsIndexUrl, accountTransactionsAllIndexUrl } from '@/lib/url';
 import { useInputState } from '@mantine/hooks';
 import classes from './header.module.css';
 
@@ -29,6 +30,8 @@ export interface HeaderProps {
 
 export const Header = ({ dto, user, opened, toggle }: HeaderProps) => {
   const { currentAccount } = dto;
+
+  const t = useTranslations();
 
   const [ search, setSearch ] = useInputState('');
 
@@ -104,13 +107,17 @@ export const Header = ({ dto, user, opened, toggle }: HeaderProps) => {
 
                 <Menu.Dropdown>
                   <Menu.Item
+                    leftSection={<IconList size={14} />}
+                    component="a"
+                    href={accountsIndexUrl()}
+                  >{t('UserMenu.myAccounts')}</Menu.Item>
+                  <Menu.Divider />
+                  <Menu.Item
                     color="red"
-                    leftSection={
-                      <IconLogout style={{ width: rem(14), height: rem(14) }} />
-                    }
+                    leftSection={<IconLogout size={14} />}
                     onClick={() => signOut()}
                   >
-                    Logout
+                    {t('UserMenu.logout')}
                   </Menu.Item>
                 </Menu.Dropdown>
               </Menu>

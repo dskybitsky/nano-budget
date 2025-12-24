@@ -57,7 +57,13 @@
         "transactionsPendingItem": "Pending",
         "transactionsAllItem": "All",
         "executedTransactionsItem": "Executed",
-        "nonExecutedTransactionsItem": "Not Executed"
+        "nonExecutedTransactionsItem": "Not Executed",
+        "budgetItem": "Budget",
+        "accountItem": "Account"
+    },
+    "UserMenu": {
+        "myAccounts": "My Accounts",
+        "logout": "Logout"
     },
     "SignInView": {
         "title": "Please Sign in",
