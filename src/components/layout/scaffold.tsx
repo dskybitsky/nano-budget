@@ -28,7 +28,7 @@ export const Scaffold = ({ dto, user, children }: ScaffoldProps) => {
       <AppShell.Header bg="gray.0" withBorder={true}>
         <Header dto={dto} user={user} opened={opened} toggle={toggle} />
       </AppShell.Header>
-      <AppShell.Navbar bg="gray.0" p={10} hidden={true}>
+      <AppShell.Navbar bg="gray.0" p={10}>
         <Navbar dto={dto} onNavigate={toggle} />
       </AppShell.Navbar>
       <AppShell.Main>
