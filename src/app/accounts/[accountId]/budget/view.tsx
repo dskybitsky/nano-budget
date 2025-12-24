@@ -12,6 +12,7 @@ import { budgetSet } from '@/actions/budget/budget-set';
 import { BudgetsTable } from '@/components/budget/budgets-table';
 import { useTranslations } from 'next-intl';
 import { PageHeader } from '@/components/page-header';
+import { IconCalendarDollar } from '@tabler/icons-react';
 
 export interface BudgetsViewProps extends React.HTMLAttributes<HTMLElement> {
   dto: BudgetsIndexDto,
@@ -38,6 +39,7 @@ export const BudgetsView = ({ dto }: BudgetsViewProps) => {
     >
       <PageHeader
         title={t('BudgetsIndex.title')}
+        leftSection={<IconCalendarDollar size={36} />}
         bottomSection={
           <>
             <Box/>

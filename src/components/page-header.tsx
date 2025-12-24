@@ -16,7 +16,7 @@ export const PageHeader = ({
 }: PageHeaderProps) => {
   return (
     <Flex justify="space-between" align="center" w="100%" wrap="wrap" gap="md" mb="md">
-      <Flex justify="start" align="center">
+      <Flex justify="start" align="center" gap="sm">
         {leftSection}
         <Title order={3}>{title}</Title>
       </Flex>
