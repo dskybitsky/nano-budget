@@ -316,41 +316,41 @@ async function main() {
   );
 
   const categories = await Promise.all(
-    categoriesData.map((accountCategoriesData, accountIndex) =>
+    categoriesData.map(async (accountCategoriesData, accountIndex) => await Promise.all(
       accountCategoriesData.map((accountCategoryData) =>
         prisma.category.create({
           data: { ...accountCategoryData, accountId: accounts[accountIndex].id },
         }),
       ),
-    ).flat(),
+    )),
   );
 
   const periods = await Promise.all(
-    periodsData.map((accountPeriodsData, accountIndex) =>
+    periodsData.map(async (accountPeriodsData, accountIndex) => await Promise.all(
       accountPeriodsData.map((accountPeriodData) =>
         prisma.period.create({
           data: { ...accountPeriodData, accountId: accounts[accountIndex].id },
         }),
       ),
-    ).flat(),
+    )),
   );
 
   const transactions = await Promise.all(
-    transactionsData.map((accountTransactionsData, accountIndex) =>
-      accountTransactionsData.map((accountCategoryTransactionsData, accountCategoryIndex) =>
-        accountCategoryTransactionsData.map((accountCategoryTransactionData) =>
+    transactionsData.map(async (accountTransactionsData, accountIndex) => await Promise.all(
+      accountTransactionsData.map(async (accountCategoryTransactionsData, accountCategoryIndex) => Promise.all(
+        accountCategoryTransactionsData.map(async (accountCategoryTransactionData) =>
           prisma.transaction.create({
             data: {
               ...accountCategoryTransactionData,
-              categoryId: categories[accountIndex + accountCategoryIndex].id,
+              categoryId: categories[accountIndex][accountCategoryIndex].id,
             },
           }),
         ),
-      ).flat(),
-    ).flat(),
+      )),
+    )),
   );
 
-  console.log(accounts, categories, periods, transactions);
+  console.log(JSON.stringify({ accounts, categories, periods, transactions }, null, 2));
 }
 main()
   .then(async () => {

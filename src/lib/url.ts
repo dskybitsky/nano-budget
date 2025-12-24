@@ -4,7 +4,7 @@ export const homeUrl = () => (
   '/'
 );
 
-export const accountIndexUrl = () => (
+export const accountsIndexUrl = () => (
   '/accounts'
 );
 

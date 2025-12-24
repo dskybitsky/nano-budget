@@ -35,7 +35,7 @@ export const AccountsTable = ({
           <Table.Th w="20">{t('AccountsTable.orderColumnHeader')}</Table.Th>
           <Table.Th>{t('Account.name')}</Table.Th>
           <Table.Th w="150">{t('Account.type')}</Table.Th>
-          <Table.Th w="120">{t('Account.value')}</Table.Th>
+          <Table.Th w="120" visibleFrom="xs">{t('Account.value')}</Table.Th>
           <Table.Th w="50"></Table.Th>
         </Table.Tr>
       </Table.Thead>
@@ -47,7 +47,7 @@ export const AccountsTable = ({
               <EntityImageText size={18} entity={account} />
             </Table.Td>
             <Table.Td>{t('Enum.AccountType', { value: account.type })}</Table.Td>
-            <Table.Td>{format.monetary(account.value, account.currency)}</Table.Td>
+            <Table.Td visibleFrom="xs">{format.monetary(account.value, account.currency)}</Table.Td>
             <Table.Td>
               <AccountTableActionCell
                 account={account}

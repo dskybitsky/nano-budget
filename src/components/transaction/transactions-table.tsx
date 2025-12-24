@@ -12,6 +12,7 @@ import { EntityImageText } from '@/components/entity-image-text';
 import { monetaryEqual } from '@/lib/utils';
 import { calculateTransactionsTotal } from '@/lib/transaction';
 import { TransactionWithCategory } from '@/lib/server/transaction';
+import _ from 'lodash';
 
 export interface TransactionsTableProps {
   account: Account;
@@ -32,10 +33,7 @@ export const TransactionsTable = ({
   onDeleteClick,
   options,
 }: TransactionsTableProps) => {
-  const categoriesIndex = categories.reduce((acc, category) => {
-    acc.set(category.id, category);
-    return acc;
-  }, new Map<string, Category>());
+  const categoriesIndex = _.keyBy(categories, 'id');
 
   const t = useTranslations();
   const format = useCustomFormatter();
@@ -62,17 +60,17 @@ export const TransactionsTable = ({
       </Table.Thead>
       <Table.Tbody>
         {transactions.map((transaction) => {
-          const category = categoriesIndex.get(transaction.categoryId)!;
+          const category = categoriesIndex[transaction.categoryId];
 
           return (
             <Table.Tr key={transaction.id}>
-              <Table.Td>{format.dateTimeShort(transaction.created)}</Table.Td>
+              <Table.Td visibleFrom="xs">{format.dateTimeShort(transaction.created)}</Table.Td>
               <Table.Td visibleFrom="md">{format.dateShort(transaction.executed)}</Table.Td>
-              <Table.Td visibleFrom="md">
-                <EntityImageText size={18} entity={category} />
-              </Table.Td>
               <Table.Td hiddenFrom="md">
                 <EntityImageText size={18} entity={{ icon: category.icon, name: transaction.name }} />
+              </Table.Td>
+              <Table.Td visibleFrom="md">
+                <EntityImageText size={18} entity={category} />
               </Table.Td>
               <Table.Td visibleFrom="md">
                 {transaction.name}
@@ -111,8 +109,9 @@ const TransactionsTableFooter = ({ account, transactions }: {
   return (
     <Table.Tfoot>
       <Table.Tr>
+        <Table.Th colSpan={2} hiddenFrom="xs">{t('TransactionsTable.totalText')}</Table.Th>
+        <Table.Th colSpan={3} visibleFrom="xs" hiddenFrom="md">{t('TransactionsTable.totalText')}</Table.Th>
         <Table.Th colSpan={5} visibleFrom="md">{t('TransactionsTable.totalText')}</Table.Th>
-        <Table.Th colSpan={3} hiddenFrom="md">{t('TransactionsTable.totalText')}</Table.Th>
         <Table.Th ta="right">
           {format.monetary(total.expected, account.currency)}
           {!monetaryEqual(total.actual, total.expected) && (

@@ -3,11 +3,12 @@ import {
   Box,
   Burger, Divider,
   Flex,
-  Group, Menu, rem,
+  Group,
+  Menu,
   Text,
   TextInput, TextProps, UnstyledButton,
 } from '@mantine/core';
-import { IconLogout, IconSearch } from '@tabler/icons-react';
+import { IconList, IconLogout, IconSearch } from '@tabler/icons-react';
 import { signOut } from 'next-auth/react';
 import { User } from 'next-auth';
 import { LayoutAccountsDto } from '@/actions/layout/layout-accounts';
@@ -16,8 +17,9 @@ import { monetaryEqual } from '@/lib/utils';
 import { useCustomFormatter } from '@/hooks/use-custom-formatter';
 import { KeyboardEventHandler } from 'react';
 import { redirect } from 'next/navigation';
-import { accountTransactionsAllIndexUrl } from '@/lib/url';
+import { accountsIndexUrl, accountTransactionsAllIndexUrl } from '@/lib/url';
 import { useInputState } from '@mantine/hooks';
+import classes from './header.module.css';
 
 export interface HeaderProps {
   dto: LayoutAccountsDto,
@@ -28,6 +30,8 @@ export interface HeaderProps {
 
 export const Header = ({ dto, user, opened, toggle }: HeaderProps) => {
   const { currentAccount } = dto;
+
+  const t = useTranslations();
 
   const [ search, setSearch ] = useInputState('');
 
@@ -60,7 +64,7 @@ export const Header = ({ dto, user, opened, toggle }: HeaderProps) => {
         justify="space-between"
         py={10}
       >
-        <TitleText account={currentAccount} flex="1" />
+        <TitleText account={currentAccount} flex="1" className={classes.accountTitle} />
         {currentAccount && (
           <>
             <BalanceText account={currentAccount} />
@@ -103,13 +107,17 @@ export const Header = ({ dto, user, opened, toggle }: HeaderProps) => {
 
                 <Menu.Dropdown>
                   <Menu.Item
+                    leftSection={<IconList size={14} />}
+                    component="a"
+                    href={accountsIndexUrl()}
+                  >{t('UserMenu.myAccounts')}</Menu.Item>
+                  <Menu.Divider />
+                  <Menu.Item
                     color="red"
-                    leftSection={
-                      <IconLogout style={{ width: rem(14), height: rem(14) }} />
-                    }
+                    leftSection={<IconLogout size={14} />}
                     onClick={() => signOut()}
                   >
-                    Logout
+                    {t('UserMenu.logout')}
                   </Menu.Item>
                 </Menu.Dropdown>
               </Menu>
@@ -134,7 +142,10 @@ const TitleText = ({ account, ...props }: {
 
   return (
     <>
-      <Text fz={22} fw={800} {...props} hiddenFrom="md">
+      <Text fz={22} fw={800} {...props} hiddenFrom="xs">
+        {account.name}
+      </Text>
+      <Text fz={22} fw={800} {...props} visibleFrom="xs"  hiddenFrom="md">
         {t('Header.titleTextShort', { accountName: account.name })}
       </Text>
       <Text fz={22} fw={800} {...props} visibleFrom="md">
@@ -152,7 +163,9 @@ const BalanceText = ({ account, ...props }: {
 
   const useActualExpected = !monetaryEqual(account.balance.actual, account.balance.expected);
 
-  const shortBalanceString = useActualExpected
+  const smallBalanceString = format.monetary(account.balance.actual, account.currency);
+
+  const mediumBalanceString = useActualExpected
     ? t('Header.balanceActualExpectedTextShort', {
       actual: format.monetary(account.balance.actual, account.currency),
       expected: format.monetary(account.balance.expected, account.currency),
@@ -170,7 +183,8 @@ const BalanceText = ({ account, ...props }: {
 
   return (
     <>
-      <Text fz={16} fw={600} {...props} hiddenFrom="md">{shortBalanceString}</Text>
+      <Text fz={16} fw={600} {...props} hiddenFrom="xs">{smallBalanceString}</Text>
+      <Text fz={16} fw={600} {...props} visibleFrom="xs" hiddenFrom="md">{mediumBalanceString}</Text>
       <Text fz={16} fw={600} {...props} visibleFrom="md">{longBalanceString}</Text>
     </>
   );

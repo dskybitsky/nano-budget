@@ -34,15 +34,16 @@ export const transactionsIndexAll = async (
   }
 
   const categories = await getCategories(accountId);
+
   const categoriesIdList = categories.map(c => c.id);
 
   const filterCategoryIdSet = filter?.categoryIdList ? new Set(filter.categoryIdList) : undefined;
 
   const filterWithCategories = {
+    ...filter,
     categoryIdList: filterCategoryIdSet
       ? categoriesIdList.filter(c => filterCategoryIdSet.has(c))
       : categoriesIdList,
-    ...filter,
   };
   const offsetCount = pageToOffsetCount(page ?? 1, TRANSACTIONS_INDEX_ALL_PAGE_SIZE);
 
