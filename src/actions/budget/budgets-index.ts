@@ -10,7 +10,7 @@ import { getTransactionsWithCategory } from '@/lib/server/transaction';
 import { ActualExpectedPlanned } from '@/lib/types';
 import _ from 'lodash';
 import { calculateTransactionsTotal } from '@/lib/transaction';
-import { calculateBudgetValue } from '@/lib/budget';
+import { calculateBudgetRest, calculateBudgetValue } from '@/lib/budget';
 
 export type BudgetsIndexDto = {
   account: Account,
@@ -60,11 +60,9 @@ export const budgetsIndex = async (
   const total = { planned: 0, actual: 0, expected: 0, rest: 0 };
 
   const budgetsByCategory = categories.reduce((acc, category) => {
-    const planned = calculateBudgetValue(
-      budgetsIndex[category.id] ?? { value: 0 },
-      category.type,
-      account.type,
-    );
+    const budget = budgetsIndex[category.id] ?? { value: 0 };
+
+    const planned = calculateBudgetValue(budget, category.type, account.type);
 
     const transactionsTotal = calculateTransactionsTotal(
       transactionsIndex[category.id] ?? [],
@@ -75,7 +73,7 @@ export const budgetsIndex = async (
       planned: Math.abs(planned),
       actual: Math.abs(transactionsTotal.actual),
       expected: Math.abs(transactionsTotal.expected),
-      rest: Math.abs(planned) - Math.abs(transactionsTotal.expected),
+      rest: calculateBudgetRest(budget, transactionsTotal.expected, category.type, account.type),
     };
 
     total.planned += planned;
