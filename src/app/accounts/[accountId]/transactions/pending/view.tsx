@@ -9,7 +9,7 @@ import { transactionUpdate } from '@/actions/transaction/transaction-update';
 import { transactionDelete } from '@/actions/transaction/transaction-delete';
 import { TransactionForm, TransactionFormValues } from '@/components/transaction/transaction-form';
 import { useDisclosure } from '@mantine/hooks';
-import { IconPlus } from '@tabler/icons-react';
+import { IconPlus, IconReceipt } from '@tabler/icons-react';
 import { useTranslations } from 'next-intl';
 import { PageHeader } from '@/components/page-header';
 
@@ -45,6 +45,7 @@ export const PendingTransactionsView = ({ dto }: PendingTransactionsViewProps) =
     >
       <PageHeader
         title={t('TransactionsIndex.titlePending')}
+        leftSection={<IconReceipt size={36} />}
         rightSection={
           <>
             <Modal opened={opened} onClose={close} title={t('TransactionModal.createTitle')}>

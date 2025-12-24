@@ -11,7 +11,11 @@ export const cache = <T, P extends unknown[]>(
     return stringify(result);
   };
 
-  const cachedFn = unstable_cache(wrap, keys, opts);
+  const version = process.env.CACHE_VERSION ?? '1';
+
+  const versionedKeys = keys ? [...keys, version] : [version];
+
+  const cachedFn = unstable_cache(wrap, versionedKeys, opts);
 
   return async (...params: P): Promise<T> => {
     const result = await cachedFn(params);

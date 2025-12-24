@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import { Account, AccountType, Category, OperationType } from '@prisma/client';
+import { Account, Category } from '@prisma/client';
 import { ActionIcon, Box, Modal, Table } from '@mantine/core';
 import { useTranslations } from 'next-intl';
 import { IconPencil } from '@tabler/icons-react';
@@ -32,10 +32,6 @@ export const BudgetsTable = ({
   const t = useTranslations();
   const format = useCustomFormatter();
 
-  const accountSign = account.type == AccountType.credit ? -1 : 1;
-
-  let totalRest = 0;
-
   return (
     <Table>
       <Table.Caption>{t('BudgetsTable.caption')}</Table.Caption>
@@ -51,13 +47,8 @@ export const BudgetsTable = ({
       <Table.Tbody>
         {Object.entries(budgetsByCategory).map(([categoryId, budget]) => {
           const category = categoryIndex[categoryId];
-          const categorySign = category.type === OperationType.debit ? -1 : 1;
 
-          const { planned, actual, expected } = budget;
-
-          const rest = (planned - expected) * categorySign * accountSign;
-
-          totalRest += rest;
+          const { planned, actual, expected, rest } = budget;
 
           const handleSetFormSubmit = async (formValues: BudgetFormValues) => {
             await onSetFormSubmit(categoryId, formValues);
@@ -100,7 +91,7 @@ export const BudgetsTable = ({
               <Box>({format.monetary(total.actual, account.currency)})</Box>
             )}
           </Table.Th>
-          <Table.Th ta="right">{format.monetary(totalRest, account.currency)}</Table.Th>
+          <Table.Th ta="right">{format.monetary(total.rest, account.currency)}</Table.Th>
         </Table.Tr>
       </Table.Tfoot>
     </Table>

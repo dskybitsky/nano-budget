@@ -13,7 +13,7 @@ import { accountTransactionsPeriodIndexUrl } from '@/lib/url';
 import { PeriodPicker } from '@/components/period/period-picker';
 import { Period } from '@prisma/client';
 import { useDisclosure } from '@mantine/hooks';
-import { IconPlus } from '@tabler/icons-react';
+import { IconPlus, IconReceipt } from '@tabler/icons-react';
 import { useTranslations } from 'next-intl';
 import { PageHeader } from '@/components/page-header';
 
@@ -53,6 +53,7 @@ export const PeriodTransactionsView = ({ dto }: PeriodTransactionsViewProps) => 
     >
       <PageHeader
         title={t('TransactionsIndex.titlePeriod', { period: dto.period.name })}
+        leftSection={<IconReceipt size={36} />}
         rightSection={
           <>
             <Modal opened={opened} onClose={close} title={t('TransactionModal.createTitle')}>

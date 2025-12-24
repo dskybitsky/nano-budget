@@ -11,7 +11,7 @@ import { TransactionForm, TransactionFormValues } from '@/components/transaction
 import { redirect } from 'next/navigation';
 import { accountTransactionsAllIndexUrl } from '@/lib/url';
 import { useDisclosure } from '@mantine/hooks';
-import { IconFilter, IconFilterFilled, IconPlus } from '@tabler/icons-react';
+import { IconFilter, IconFilterFilled, IconPlus, IconReceipt } from '@tabler/icons-react';
 import { useTranslations } from 'next-intl';
 import { PageHeader } from '@/components/page-header';
 import { TransactionsFilter } from '@/lib/server/transaction';
@@ -68,6 +68,7 @@ export const AllTransactionsView = ({ dto, filter, page }: AllTransactionsViewPr
     >
       <PageHeader
         title={t('TransactionsIndex.titleAll')}
+        leftSection={<IconReceipt size={36} />}
         rightSection={
           <Group gap="xs" wrap="nowrap">
             <Modal opened={filterOpened} onClose={closeFilter} title={t('TransactionFilterModal.title')}>

@@ -1,25 +1,26 @@
-import { Period, Transaction } from '@prisma/client';
+import { AccountType, OperationType, Transaction } from '@prisma/client';
 import { ActualExpected } from '@/lib/types';
-import { TransactionWithCategory } from '@/lib/server/transaction';
 
-export const calculateTransactionsTotal = (transactions: TransactionWithCategory[]): ActualExpected => {
+export const calculateTransactionValue = (transaction: Transaction, accountType: AccountType): number => {
+  const accountSign = accountType == AccountType.credit ? -1 : 1;
+  const sign = transaction.type == OperationType.credit ? -1 : 1;
+
+  return accountSign * sign * transaction.value;
+};
+
+export const calculateTransactionsTotal = (transactions: Transaction[], accountType: AccountType): ActualExpected => {
   let actual = 0;
   let expected = 0;
 
   transactions.forEach((transaction) => {
-    const sign = transaction.type === transaction.category.type ? 1 : -1;
+    const value = calculateTransactionValue(transaction, accountType);
 
     if (transaction.executed) {
-      actual += sign * transaction.value;
+      actual += value;
     }
 
-    expected += sign * transaction.value;
+    expected += value;
   });
 
   return { actual, expected };
 };
-
-export const isTransactionInPeriod = (transaction: Transaction, period: Period) => (
-  transaction.created >= period.started
-  && (!period.ended || transaction.created <= period.ended)
-);
