@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import { Account, AccountType, Category, OperationType, Transaction } from '@prisma/client';
+import { Account, Category, Transaction } from '@prisma/client';
 import { Flex, Modal, Table, Text, ActionIcon, Box } from '@mantine/core';
 import { useTranslations } from 'next-intl';
 import { IconPencil, IconTrash } from '@tabler/icons-react';
@@ -10,7 +10,7 @@ import { useCustomFormatter } from '@/hooks/use-custom-formatter';
 import { TransactionForm, TransactionFormValues } from '@/components/transaction/transaction-form';
 import { EntityImageText } from '@/components/entity-image-text';
 import { monetaryEqual } from '@/lib/utils';
-import { calculateTransactionsTotal } from '@/lib/transaction';
+import { calculateTransactionsTotal, calculateTransactionValue } from '@/lib/transaction';
 import { TransactionWithCategory } from '@/lib/server/transaction';
 import _ from 'lodash';
 
@@ -37,13 +37,6 @@ export const TransactionsTable = ({
 
   const t = useTranslations();
   const format = useCustomFormatter();
-
-  const getValue = (transaction: Transaction) => {
-    const accountSign = account.type == AccountType.credit ? -1 : 1;
-    const sign = transaction.type == OperationType.credit ? -1 : 1;
-
-    return accountSign * sign * transaction.value;
-  };
 
   return (
     <Table>
@@ -76,7 +69,7 @@ export const TransactionsTable = ({
                 {transaction.name}
               </Table.Td>
               <Table.Td ta="right">
-                {format.monetary(getValue(transaction), account.currency)}
+                {format.monetary(calculateTransactionValue(transaction, account.type), account.currency)}
               </Table.Td>
               <Table.Td ta="right">
                 <TransactionsTableActionCell
@@ -104,7 +97,7 @@ const TransactionsTableFooter = ({ account, transactions }: {
   const t = useTranslations();
   const format = useCustomFormatter();
 
-  const total = calculateTransactionsTotal(transactions);
+  const total = calculateTransactionsTotal(transactions, account.type);
 
   return (
     <Table.Tfoot>

@@ -3,7 +3,10 @@ export type ActualExpected = {
   expected: number,
 };
 
-export type ActualExpectedPlanned = ActualExpected & { planned: number };
+export type ActualExpectedPlanned = ActualExpected & {
+  planned: number,
+  rest: number,
+};
 
 export type OffsetCount = { offset: number, count: number };
 

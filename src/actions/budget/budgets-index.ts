@@ -1,6 +1,6 @@
 'use server';
 
-import { Account, AccountType, Category, OperationType, Period } from '@prisma/client';
+import { Account, Category, Period } from '@prisma/client';
 import { getSessionUser } from '@/lib/auth';
 import { getAccount } from '@/lib/server/account';
 import { getLastPeriod, getPeriod, getPeriods } from '@/lib/server/period';
@@ -10,6 +10,7 @@ import { getTransactionsWithCategory } from '@/lib/server/transaction';
 import { ActualExpectedPlanned } from '@/lib/types';
 import _ from 'lodash';
 import { calculateTransactionsTotal } from '@/lib/transaction';
+import { calculateBudgetValue } from '@/lib/budget';
 
 export type BudgetsIndexDto = {
   account: Account,
@@ -54,34 +55,36 @@ export const budgetsIndex = async (
     createdTo: period.ended ?? undefined,
   });
 
-  const accountSign = account.type == AccountType.credit ? -1 : 1;
-
   const transactionsIndex = _.groupBy(transactions, 'categoryId');
 
+  const total = { planned: 0, actual: 0, expected: 0, rest: 0 };
+
   const budgetsByCategory = categories.reduce((acc, category) => {
-    const transactionsTotal = calculateTransactionsTotal(transactionsIndex[category.id] ?? []);
+    const planned = calculateBudgetValue(
+      budgetsIndex[category.id] ?? { value: 0 },
+      category.type,
+      account.type,
+    );
+
+    const transactionsTotal = calculateTransactionsTotal(
+      transactionsIndex[category.id] ?? [],
+      account.type,
+    );
 
     acc[category.id] = {
-      planned: accountSign * (budgetsIndex[category.id]?.value ?? 0),
-      actual: accountSign * transactionsTotal.actual,
-      expected: accountSign * transactionsTotal.expected,
+      planned: Math.abs(planned),
+      actual: Math.abs(transactionsTotal.actual),
+      expected: Math.abs(transactionsTotal.expected),
+      rest: Math.abs(planned) - Math.abs(transactionsTotal.expected),
     };
+
+    total.planned += planned;
+    total.actual += transactionsTotal.actual;
+    total.expected += transactionsTotal.expected;
+    total.rest += acc[category.id].rest;
 
     return acc;
   }, {} as { [p: Category['id']] : ActualExpectedPlanned });
-
-  const total = categories.reduce(
-    (acc, category) => {
-      const sign = category.type === OperationType.credit ? -1 : 1;
-
-      acc.planned += accountSign * sign * (budgetsByCategory[category.id]?.planned ?? 0);
-      acc.actual += accountSign * sign * (budgetsByCategory[category.id]?.actual ?? 0);
-      acc.expected += accountSign * sign * (budgetsByCategory[category.id]?.expected ?? 0);
-
-      return acc;
-    },
-    { planned: 0, actual: 0, expected: 0 },
-  );
 
   return {
     account,
