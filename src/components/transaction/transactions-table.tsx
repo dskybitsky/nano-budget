@@ -20,9 +20,6 @@ export interface TransactionsTableProps {
   transactions: TransactionWithCategory[];
   onFormSubmit: (id: string, data: TransactionFormValues) => Promise<void>;
   onDeleteClick: (id: string) => Promise<void>;
-  options?: {
-    showTotal?: boolean;
-  };
 }
 
 export const TransactionsTable = ({
@@ -31,7 +28,6 @@ export const TransactionsTable = ({
   transactions,
   onFormSubmit,
   onDeleteClick,
-  options,
 }: TransactionsTableProps) => {
   const categoriesIndex = _.keyBy(categories, 'id');
 
@@ -54,9 +50,10 @@ export const TransactionsTable = ({
       <Table.Tbody>
         {transactions.map((transaction) => {
           const category = categoriesIndex[transaction.categoryId];
+          const color = transaction.executed ? undefined : 'gray';
 
           return (
-            <Table.Tr key={transaction.id}>
+            <Table.Tr key={transaction.id} c={color}>
               <Table.Td visibleFrom="xs">{format.dateTimeShort(transaction.created)}</Table.Td>
               <Table.Td visibleFrom="md">{format.dateShort(transaction.executed)}</Table.Td>
               <Table.Td hiddenFrom="md">
@@ -83,9 +80,7 @@ export const TransactionsTable = ({
           );
         })}
       </Table.Tbody>
-      {options?.showTotal && (
-        <TransactionsTableFooter account={account} transactions={transactions} />
-      )}
+      <TransactionsTableFooter account={account} transactions={transactions} />
     </Table>
   );
 };

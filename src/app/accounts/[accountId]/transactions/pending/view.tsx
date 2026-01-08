@@ -67,7 +67,6 @@ export const PendingTransactionsView = ({ dto }: PendingTransactionsViewProps) =
         transactions={dto.transactions}
         onFormSubmit={handleUpdateFormSubmit}
         onDeleteClick={handleDeleteClick}
-        options={{ showTotal: true }}
       />
     </Flex>
   );
