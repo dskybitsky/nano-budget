@@ -17,7 +17,8 @@ model Account {
   name     String
   type     AccountType
   currency String
-  value    Float
+  opening  Float       @default(0)
+  value    Float       @default(0)
   icon     String
   order    Int         @default(0)
   Category Category[]  @relation("AccountCategory")

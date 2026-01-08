@@ -2,12 +2,12 @@ import { PrismaClient, AccountType, Account, Category, Period, Transaction, Oper
 
 const prisma = new PrismaClient();
 
-const accountsData: Omit<Account, 'id'>[] = [
+const accountsData: Omit<Account, 'id'|'value'>[] = [
   {
     name: 'Main',
     type: AccountType.checking,
     currency: 'CAD',
-    value: 0,
+    opening: 0,
     icon: '',
     order: 0,
   },
@@ -15,7 +15,7 @@ const accountsData: Omit<Account, 'id'>[] = [
     name: 'Secondary',
     type: AccountType.checking,
     currency: 'USD',
-    value: 0,
+    opening: 0,
     icon: '',
     order: 1,
   },
@@ -23,7 +23,7 @@ const accountsData: Omit<Account, 'id'>[] = [
     name: 'Savings',
     type: AccountType.savings,
     currency: 'CAD',
-    value: 0,
+    opening: 0,
     icon: '',
     order: 0,
   },

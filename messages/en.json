@@ -3,7 +3,7 @@
         "name": "Name",
         "type": "Type",
         "currency": "Currency",
-        "value": "Initial balance",
+        "opening": "Opening",
         "icon": "Icon",
         "order": "View Order"
     },
@@ -77,7 +77,7 @@
         "title": "{name} Account",
         "editButtonCaption": "Edit Account",
         "deleteButtonCaption": "Delete Account",
-        "descriptionLabel": "{type} account with initial balance {value} {currency}",
+        "descriptionLabel": "{type} account with opening balance {opening} {currency}",
         "categoriesTabCaption": "Categories",
         "periodsTabCaption": "Periods",
         "createCategoryButtonCaption": "Create Category",
@@ -97,7 +97,7 @@
         "namePlaceholder": "Name",
         "typePlaceholder": "Type",
         "currencyPlaceholder": "Currency",
-        "valuePlaceholder": "Initial balance",
+        "openingPlaceholder": "Opening Balance",
         "iconPlaceholder": "Icon URL or emoji",
         "orderPlaceholder": "View order"
     },

@@ -20,8 +20,10 @@ export const getAccounts = cache(
   { revalidate: ACCOUNT_CACHE_RETENTION, tags: [ACCOUNT_CACHE_TAG] },
 );
 
-export const createAccount = async (data: Omit<Account, 'id'>) => {
-  const account = await prisma.account.create({ data });
+export const createAccount = async (data: Omit<Account, 'id' | 'value'>) => {
+  const account = await prisma.account.create({
+    data: refineAccountData(data),
+  });
 
   revalidateTag(ACCOUNT_CACHE_TAG);
 
@@ -29,10 +31,16 @@ export const createAccount = async (data: Omit<Account, 'id'>) => {
 };
 
 export const updateAccount = async (id: string, data: Partial<Omit<Account, 'id'>>) => {
-  return prisma.account.update({ where: { id }, data }).then(() => revalidateTag(ACCOUNT_CACHE_TAG));
+  return prisma.account
+    .update({ where: { id }, data: refineAccountData(data) })
+    .then(() => revalidateTag(ACCOUNT_CACHE_TAG));
 };
 
 export const deleteAccount = async (id: string) => {
   return prisma.account.delete({ where: { id } }).then(() => revalidateTag(ACCOUNT_CACHE_TAG));
 };
 
+const refineAccountData = <T extends Partial<Account>>(data: T) => ({
+  ...data,
+  value: data.opening,
+});

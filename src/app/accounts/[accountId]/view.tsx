@@ -104,7 +104,7 @@ export const AccountView = ({ dto }: AccountViewProps) => {
       <Text c="gray">
         {t('AccountView.descriptionLabel', {
           type: t('Enum.AccountType', { value: dto.account.type }),
-          value: dto.account.value,
+          opening: dto.account.opening,
           currency: dto.account.currency,
         })}
       </Text>

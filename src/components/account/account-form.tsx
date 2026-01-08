@@ -9,7 +9,7 @@ import { useTranslations } from 'next-intl';
 import { ErrorText } from '@/components/error-text';
 import { CurrencyInput } from '@/components/currency-input';
 
-export type AccountFormValues = Pick<Account, 'name' | 'type' | 'currency' | 'value' | 'icon' | 'order'>;
+export type AccountFormValues = Pick<Account, 'name' | 'type' | 'currency' | 'opening' | 'icon' | 'order'>;
 
 export interface AccountFormProps extends React.HTMLAttributes<HTMLElement> {
   account?: Account;
@@ -34,7 +34,7 @@ export const AccountForm = ({ account, onFormSubmit }: AccountFormProps) => {
     currency: z.string().max(5, {
       message: t('Validation.tooLong', { property: t('Account.currency'), max: 5 }),
     }),
-    value: z.coerce.number(),
+    opening: z.coerce.number(),
     icon: z.string(),
     order: z.coerce.number(),
   });
@@ -45,7 +45,7 @@ export const AccountForm = ({ account, onFormSubmit }: AccountFormProps) => {
       name: account?.name ?? '',
       type: account?.type ?? AccountType.checking,
       currency: account?.currency ?? 'USD',
-      value: account?.value ?? 0,
+      opening: account?.opening ?? 0,
       icon: account?.icon ?? '',
       order: account?.order ?? 0,
     },
@@ -89,11 +89,11 @@ export const AccountForm = ({ account, onFormSubmit }: AccountFormProps) => {
         {...form.getInputProps('currency')}
       />
       <CurrencyInput
-        label={t('Account.value')}
-        placeholder={t('AccountForm.valuePlaceholder')}
-        key={form.key('value')}
+        label={t('Account.opening')}
+        placeholder={t('AccountForm.openingPlaceholder')}
+        key={form.key('opening')}
         mt="md"
-        {...form.getInputProps('value')}
+        {...form.getInputProps('opening')}
       />
       <TextInput
         label={t('Account.icon')}

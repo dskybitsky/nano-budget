@@ -9,7 +9,7 @@ export const calculateAccountBalance = (
   const transactionsTotal = calculateTransactionsTotal(transactions, account.type);
 
   return {
-    actual: account.value + transactionsTotal.actual,
-    expected: account.value + transactionsTotal.expected,
+    actual: account.opening + transactionsTotal.actual,
+    expected: account.opening + transactionsTotal.expected,
   };
 };
